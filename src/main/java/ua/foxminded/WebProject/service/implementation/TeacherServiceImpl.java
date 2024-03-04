@@ -22,7 +22,6 @@ public class TeacherServiceImpl implements TeacherService {
 
     private TeacherRepository teacherRepository;
     private LessonRepository lessonRepository;
-    private LessonService lessonService;
 
     @Override
     public Teacher saveTeacher(TeacherDto teacherDto) {
