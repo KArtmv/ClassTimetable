@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.LessonDto;
 import ua.foxminded.WebProject.exception.InvalidIdException;
 import ua.foxminded.WebProject.persistence.entity.Course;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
+import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.service.*;
 
@@ -50,6 +52,18 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public Lesson getById(Long id) {
         return repository.findById(id).orElseThrow(() -> new InvalidIdException("Not found given id:" + id));
+    }
+
+    @Transactional
+    @Override
+    public List<Student> getParticipantsOfLesson(Lesson lessonId) {
+        try {
+            Lesson lesson = getById(lessonId.getId());
+            return lesson.getGroup().getStudents().stream().toList();
+        } catch (InvalidIdException e) {
+            log.error("Failed to get participants of lessons: {}", e.getMessage());
+            return Collections.emptyList();
+        }
     }
 
     private Lesson verifyId(LessonDto lesson) {

@@ -14,5 +14,4 @@ public interface TeacherService extends AbstractService<Teacher, Long> {
     List<Teacher> findAll();
     List<Lesson> getLessonForDay(Teacher teacher, LocalDate localDate);
     List<Lesson> getLessonForWeek(Teacher teacher, LocalDate start, LocalDate end);
-    List<Student> getParticipantsOfLesson(Lesson lesson);
 }
