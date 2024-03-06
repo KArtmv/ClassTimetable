@@ -6,7 +6,7 @@ spring:
     password: admin
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
   flyway:
     enabled: true
     baseline-on-migrate: true
