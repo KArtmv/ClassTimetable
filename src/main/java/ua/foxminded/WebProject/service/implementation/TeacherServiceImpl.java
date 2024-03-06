@@ -1,15 +1,15 @@
 package ua.foxminded.WebProject.service.implementation;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.TeacherDto;
-import ua.foxminded.WebProject.exception.InvalidIdException;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.TeacherRepository;
-import ua.foxminded.WebProject.service.LessonService;
 import ua.foxminded.WebProject.service.TeacherService;
 
 import java.time.LocalDate;
@@ -18,12 +18,14 @@ import java.util.List;
 @Service
 @Slf4j
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class TeacherServiceImpl implements TeacherService {
 
     private TeacherRepository teacherRepository;
     private LessonRepository lessonRepository;
 
     @Override
+    @Transactional
     public Teacher saveTeacher(TeacherDto teacherDto) {
         Teacher teacher = new Teacher();
         teacher.setFirstName(teacher.getFirstName());
@@ -32,6 +34,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    @Transactional
     public void removeTeacherById(Teacher teacher) {
         teacherRepository.delete(getById(teacher.getId()));
     }
@@ -53,6 +56,7 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public Teacher getById(Long id) {
-        return teacherRepository.findById(id).orElseThrow(() -> new InvalidIdException("Not found given id:" + id));
+        return teacherRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Not found teacher by given id:" + id));
     }
 }

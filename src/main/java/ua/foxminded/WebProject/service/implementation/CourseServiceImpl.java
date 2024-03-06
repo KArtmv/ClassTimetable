@@ -1,8 +1,9 @@
 package ua.foxminded.WebProject.service.implementation;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.foxminded.WebProject.exception.InvalidIdException;
+import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.persistence.entity.Course;
 import ua.foxminded.WebProject.persistence.repository.CourseRepository;
 import ua.foxminded.WebProject.service.CourseService;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class CourseServiceImpl implements CourseService {
 
     private CourseRepository repository;
@@ -22,6 +24,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course getById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new InvalidIdException("Not found given id:" + id));
+        return repository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Not found course by given id:" + id));
     }
 }

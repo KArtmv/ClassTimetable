@@ -1,11 +1,11 @@
 package ua.foxminded.WebProject.service.implementation;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.StudentDto;
-import ua.foxminded.WebProject.exception.InvalidIdException;
-import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
@@ -20,6 +20,7 @@ import java.util.List;
 @Service
 @Slf4j
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class StudentServiceImpl implements StudentService {
 
     private GroupService groupService;
@@ -28,22 +29,27 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student getById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new InvalidIdException("Not found given id:" + id));
+        return repository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Not found student by given id:" + id));
     }
 
     @Override
+    @Transactional
     public Student saveStudent(StudentDto studentDto) {
-        Student finality = new Student();
+        Student student = new Student();
         try {
-            finality.setGroup(groupService.getById(studentDto.getGroup().getId()));
-            return repository.save(finality);
-        } catch (InvalidIdException e){
+            student.setFirstName(studentDto.getFirstName());
+            student.setLastName(studentDto.getLastName());
+            student.setGroup(groupService.getById(studentDto.getGroup().getId()));
+            return repository.save(student);
+        } catch (EntityNotFoundException e){
             log.error("Saving new student is failed: {}", e.getMessage());
-            return finality;
+            return student;
         }
     }
 
     @Override
+    @Transactional
     public void removeStudentById(Student student) {
         repository.delete(getById(student.getId()));
     }
@@ -51,9 +57,8 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Lesson> getLessonsForDay(Student student, LocalDate localDate) {
         try {
-            Group group = groupService.getById(student.getGroup().getId());
-            return lessonRepository.getLessonByGroupAndDate(group, localDate);
-        } catch (InvalidIdException e) {
+            return lessonRepository.getLessonByGroupAndDate(student.getGroup(), localDate);
+        } catch (EntityNotFoundException e) {
             log.error("failed to get lessons of student: {}", e.getMessage());
             return Collections.emptyList();
         }
@@ -62,9 +67,8 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Lesson> getLessonsForWeek(Student student, LocalDate start, LocalDate end) {
         try {
-            Group group = groupService.getById(student.getGroup().getId());
-            return lessonRepository.findByGroupAndDateBetween(group, start, end);
-        } catch (InvalidIdException e) {
+            return lessonRepository.findByGroupAndDateBetween(student.getGroup(), start, end);
+        } catch (EntityNotFoundException e) {
             log.error("failed to get lessons of student: {}", e.getMessage());
             return Collections.emptyList();
         }
