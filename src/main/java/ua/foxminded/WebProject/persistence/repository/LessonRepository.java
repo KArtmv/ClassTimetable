@@ -13,10 +13,8 @@ import java.util.List;
 @Repository
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
     List<Lesson> getLessonByGroupAndDate(Group group, LocalDate date);
-
     List<Lesson> findByGroupAndDateBetween(Group group, LocalDate start, LocalDate ent);
-
     List<Lesson> getLessonsByTeacherAndDate(Teacher teacher, LocalDate date);
-
     List<Lesson> getLessonsByTeacherAndDateBetween(Teacher teacher, LocalDate start, LocalDate end);
+    List<Lesson> getAllByDate(LocalDate localDate);
 }
