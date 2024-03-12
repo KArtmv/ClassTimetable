@@ -23,6 +23,12 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
+    public Group saveGroup(Group group) {
+        return repository.save(group);
+    }
+
+    @Override
     public Group getById(Long id) {
         return repository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Not found course by given id:" + id));
