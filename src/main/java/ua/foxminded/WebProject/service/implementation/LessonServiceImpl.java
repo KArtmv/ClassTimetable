@@ -42,7 +42,7 @@ public class LessonServiceImpl implements LessonService {
             lesson = verifyId(lessonDto);
             lesson = findAvailableWeek(lesson);
         } catch (EntityNotFoundException | DataIntegrityViolationException e){
-            log.error("Failed adding lessonDto: {}", e.getMessage());
+            log.error("Failed adding lesson: {}", e.getMessage());
         }
         return lesson;
     }
@@ -50,6 +50,11 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public List<Lesson> getAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public List<Lesson> getAllLessonsPerDay(LocalDate date) {
+        return repository.getAllByDate(date);
     }
 
     @Override
