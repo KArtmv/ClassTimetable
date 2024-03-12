@@ -29,7 +29,7 @@ public class Lesson extends BaseEntity {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "classroom_id")
     private Classroom classroom;
 
