@@ -56,21 +56,11 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Lesson> getLessonsForDay(Student student, LocalDate localDate) {
-        try {
-            return lessonRepository.getLessonByGroupAndDate(student.getGroup(), localDate);
-        } catch (EntityNotFoundException e) {
-            log.error("failed to get lessons of student: {}", e.getMessage());
-            return Collections.emptyList();
-        }
+        return lessonRepository.getLessonByGroupAndDate(student.getGroup(), localDate);
     }
 
     @Override
     public List<Lesson> getLessonsForWeek(Student student, LocalDate start, LocalDate end) {
-        try {
-            return lessonRepository.findByGroupAndDateBetween(student.getGroup(), start, end);
-        } catch (EntityNotFoundException e) {
-            log.error("failed to get lessons of student: {}", e.getMessage());
-            return Collections.emptyList();
-        }
+        return lessonRepository.findByGroupAndDateBetween(student.getGroup(), start, end);
     }
 }
