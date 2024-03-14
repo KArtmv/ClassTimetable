@@ -13,6 +13,7 @@ import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.service.*;
+import ua.foxminded.WebProject.util.MyLocalDate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -33,6 +34,7 @@ public class LessonServiceImpl implements LessonService {
     private final TeacherService teacherService;
     private final GroupService groupService;
     private final ClassroomService classroomService;
+    private final MyLocalDate localDate;
 
     @Override
     @Transactional
@@ -85,7 +87,7 @@ public class LessonServiceImpl implements LessonService {
     private Lesson findAvailableWeek(Lesson lesson){
         Group group = lesson.getGroup();
         Course course = lesson.getCourse();
-        LocalDate date = LocalDate.now();
+        LocalDate date = localDate.getCurrentDate();
         int attempts = 0;
         int maxAttempts = 3;
         LocalDate monday;
