@@ -31,6 +31,15 @@ public class Group extends BaseEntity {
     public Group(Long id) {
         super(id);
     }
+
+    public Group(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public Group(Long id, String groupName) {
+        super(id);
+        this.groupName = groupName;
+    }
 }
 
 

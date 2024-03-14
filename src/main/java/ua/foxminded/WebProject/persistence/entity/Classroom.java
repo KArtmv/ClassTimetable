@@ -26,4 +26,9 @@ public class Classroom extends BaseEntity {
     public Classroom(Long id) {
         super(id);
     }
+
+    public Classroom(Long id, String classroomName) {
+        super(id);
+        this.classroomName = classroomName;
+    }
 }

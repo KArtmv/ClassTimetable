@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "course")
 public class Course extends BaseEntity {
@@ -19,5 +20,11 @@ public class Course extends BaseEntity {
 
     public Course(Long id) {
         super(id);
+    }
+
+    public Course(Long id, String courseName, String courseDescription) {
+        super(id);
+        this.courseDescription = courseDescription;
+        this.courseName = courseName;
     }
 }

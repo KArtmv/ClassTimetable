@@ -1,16 +1,14 @@
 package ua.foxminded.WebProject.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "lesson")
 public class Lesson extends BaseEntity {
@@ -39,5 +37,15 @@ public class Lesson extends BaseEntity {
 
     public Lesson(Long id) {
         super(id);
+    }
+
+    public Lesson(Long id, LocalDate date, Integer lessonNum, Course course, Group group, Classroom classroom, Teacher teacher) {
+        super(id);
+        this.date = date;
+        this.lessonNum = lessonNum;
+        this.course = course;
+        this.group = group;
+        this.classroom = classroom;
+        this.teacher = teacher;
     }
 }

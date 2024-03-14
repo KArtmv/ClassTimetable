@@ -24,4 +24,12 @@ public class Teacher extends BasePerson {
     public Teacher(Long id) {
         super(id);
     }
+
+    public Teacher(String firstName, String lastName) {
+        super(firstName, lastName);
+    }
+
+    public Teacher(Long id, String firstName, String lastName) {
+        super(id, firstName, lastName);
+    }
 }

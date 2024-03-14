@@ -3,6 +3,7 @@ package ua.foxminded.WebProject.persistence.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,17 @@ public class BasePerson extends BaseEntity {
 
     public BasePerson(Long id) {
         super(id);
+    }
+
+    public BasePerson(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public BasePerson(Long id, String firstName, String lastName) {
+        super(id);
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 }
 
