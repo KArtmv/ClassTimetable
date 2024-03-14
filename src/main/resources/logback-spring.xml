@@ -1,0 +1,60 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <property name="LOG_PATH" value="var/logs"/>
+    <property name="LOG_FILE_NAME" value="%d{yyyy-MM-dd}.%i"/>
+
+    <appender name="SQL_STATEMENT_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/sqlStatement-log-${LOG_FILE_NAME}.log</fileNamePattern>
+            <maxFileSize>5MB</maxFileSize>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="APP_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/APP-log-${LOG_FILE_NAME}.log</fileNamePattern>
+            <maxFileSize>5MB</maxFileSize>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SPRING_DEBUG_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/SPRING_DEBUG-log-${LOG_FILE_NAME}.log</fileNamePattern>
+            <maxFileSize>5MB</maxFileSize>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework.transaction" level="TRACE" additivity="false">
+        <appender-ref ref="SQL_STATEMENT_LOG_FILE"/>
+    </logger>
+
+    <logger name="org.hibernate.SQL" level="TRACE" additivity="false">
+        <appender-ref ref="SQL_STATEMENT_LOG_FILE"/>
+    </logger>
+
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
+        <appender-ref ref="SQL_STATEMENT_LOG_FILE"/>
+    </logger>
+
+    <logger name="ua.foxminded.WebProject" level="DEBUG" additivity="false">
+        <appender-ref ref="APP_LOG_FILE"/>
+    </logger>
+
+    <logger name="org.springframework" level="DEBUG" additivity="false">
+        <appender-ref ref="SPRING_DEBUG_LOG_FILE"/>
+    </logger>
+</configuration>
+
