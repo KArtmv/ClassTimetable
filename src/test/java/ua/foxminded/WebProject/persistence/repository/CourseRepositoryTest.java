@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @FlywayTest
 class CourseRepositoryTest {
 
-    private static final TestData TEST_DATA = new TestData();
+    private final TestData testData = new TestData();
 
     @Autowired
     private CourseRepository repository;
@@ -33,22 +33,22 @@ class CourseRepositoryTest {
     @Test
     @Sql("/sql/course/course.sql")
     void findById(){
-        Optional<Course> result = repository.findById(TEST_DATA.courseId);
+        Optional<Course> result = repository.findById(testData.getCourseId());
         assertAll(() -> {
             assertTrue(result.isPresent());
             Course course = result.get();
-            assertThat(course.getCourseName()).isEqualTo(TEST_DATA.courseName);
-            assertThat(course.getCourseDescription()).isEqualTo(TEST_DATA.courseDescription);
+            assertThat(course.getCourseName()).isEqualTo(testData.getCourseName());
+            assertThat(course.getCourseDescription()).isEqualTo(testData.getCourseDescription());
         });
     }
 
     @Test
     void saveCourse_shouldReturnCourseInstanceWithId_whenIsSavedSuccessfully(){
-        Course result = repository.save(TEST_DATA.getCourse());
+        Course result = repository.save(testData.getCourse());
         assertAll(() -> {
             assertThat(result.getId()).isNotNull();
-            assertThat(result.getCourseName()).isEqualTo(TEST_DATA.courseName);
-            assertThat(result.getCourseDescription()).isEqualTo(TEST_DATA.courseDescription);
+            assertThat(result.getCourseName()).isEqualTo(testData.getCourseName());
+            assertThat(result.getCourseDescription()).isEqualTo(testData.getCourseDescription());
         });
     }
 }

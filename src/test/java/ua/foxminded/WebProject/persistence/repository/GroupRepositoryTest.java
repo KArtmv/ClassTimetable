@@ -32,11 +32,11 @@ class GroupRepositoryTest {
     @Test
     @Sql("/sql/group/group.sql")
     void findById_shouldReturnGroupInstance_whenIsFound(){
-        Optional<Group> result = repository.findById(testData.groupId);
+        Optional<Group> result = repository.findById(testData.getGroupId());
         assertAll(() -> {
             assertTrue(result.isPresent());
             Group group = result.get();
-            assertThat(group.getGroupName()).isEqualTo(testData.groupName);
+            assertThat(group.getGroupName()).isEqualTo(testData.getGroupName());
         });
     }
 

@@ -1,21 +1,16 @@
 package ua.foxminded.WebProject.persistence.repository;
 
 import org.flywaydb.test.annotation.FlywayTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
-import org.springframework.test.context.jdbc.SqlMergeMode;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
-import ua.foxminded.WebProject.persistence.entity.Teacher;
 import ua.foxminded.WebProject.util.TestData;
 import ua.foxminded.WebProject.util.TestItems;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,13 +41,13 @@ class LessonRepositoryTest {
     @Test
     @Sql("/sql/lesson/lesson.sql")
     void getById_shouldReturnLessonInstance_whenIsFound(){
-        Optional<Lesson> result = repository.findById(testData.lessonId);
+        Optional<Lesson> result = repository.findById(testData.getLessonId());
         assertAll(() -> {
             assertTrue(result.isPresent());
             Lesson lesson = result.get();
-            assertThat(lesson.getLessonNum()).isEqualTo(testData.lessenNum);
+            assertThat(lesson.getLessonNum()).isEqualTo(testData.getLessenNum());
             assertThat(lesson.getDate()).isEqualTo(testData.getDate());
-            assertThat(lesson.getCourse().getId()).isEqualTo(testItems.getCourse().getId());
+            assertThat(lesson.getCourse().getId()).isEqualTo(testItems.getCourseWithIdSeven().getId());
             assertThat(lesson.getGroup().getId()).isEqualTo(testItems.getGroup().getId());
             assertThat(lesson.getClassroom().getId()).isEqualTo(testItems.getClassroom().getId());
             assertThat(lesson.getTeacher().getId()).isEqualTo(testItems.getTeacher().getId());
@@ -70,8 +65,8 @@ class LessonRepositoryTest {
     void findByGroupAndDateBetween() {
         assertThat(repository.findByGroupAndDateBetween(
                 testItems.getGroup(),
-                testData.getDate().with(DayOfWeek.TUESDAY),
-                testData.getDate().with(DayOfWeek.THURSDAY))).hasSize(20);
+                testData.getDateStudentStart(),
+                testData.getDateStudentEnd())).hasSize(20);
     }
 
     @Test
@@ -85,8 +80,8 @@ class LessonRepositoryTest {
     void getLessonsByTeacherAndDateBetween() {
         assertThat(repository.getLessonsByTeacherAndDateBetween(
                 testItems.getTeacher(),
-                testData.getDate().with(DayOfWeek.WEDNESDAY),
-                testData.getDate().with(DayOfWeek.FRIDAY))).hasSize(13);
+                testData.getDateTeacherStart(),
+                testData.getDateTeacherEnd())).hasSize(13);
     }
 
     @Test

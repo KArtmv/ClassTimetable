@@ -33,8 +33,14 @@ class TeacherRepositoryTest {
     @Test
     @Sql("/sql/teacher/teacher.sql")
     void findById_shouldReturnTeacherInstance_whenIsFounded(){
-        Optional<Teacher> result = repository.findById(testData.teacherId);
-        assertTrue(result.isPresent());
+        Optional<Teacher> result = repository.findById(testData.getTeacherId());
+
+        assertAll(() -> {
+            assertTrue(result.isPresent());
+            Teacher teacher = result.get();
+            assertThat(teacher.getFirstName()).isEqualTo(testData.getTeacherFirstName());
+            assertThat(teacher.getLastName()).isEqualTo(testData.getTeacherLastName());
+        });
     }
 
     @Test

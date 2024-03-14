@@ -32,11 +32,11 @@ class ClassroomRepositoryTest {
     @Test
     @Sql("/sql/classroom/classroom.sql")
     void findById_shouldReturnClassroom_whenIsFound(){
-        Optional<Classroom> result = repository.findById(testData.classroomId);
+        Optional<Classroom> result = repository.findById(testData.getClassroomId());
         assertAll(() -> {
             assertTrue(result.isPresent());
             Classroom classroom = result.get();
-            assertThat(classroom.getClassroomName()).isEqualTo(testData.classroomName);
+            assertThat(classroom.getClassroomName()).isEqualTo(testData.getClassroomName());
         });
     }
 }

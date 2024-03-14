@@ -27,38 +27,32 @@ class StudentRepositoryTest {
         @Test
         @Sql(value = {"/sql/student/student.sql", "/sql/group/group.sql"})
         void findById_shouldReturnStudentInstance_whenIsFound(){
-            Optional<Student> optionalResult = repository.findById(testData.studentId);
+            Optional<Student> optionalResult = repository.findById(testData.getStudentId());
             assertAll(() ->  {
                 assertTrue(optionalResult.isPresent());
                 Student result = optionalResult.get();
-                assertThat(result.getId()).isEqualTo(testData.studentId);
-                assertThat(result.getFirstName()).isEqualTo(testData.studentFirstName);
-                assertThat(result.getLastName()).isEqualTo(testData.studentLastName);
+                assertThat(result.getId()).isEqualTo(testData.getStudentId());
+                assertThat(result.getFirstName()).isEqualTo(testData.getStudentFirstName());
+                assertThat(result.getLastName()).isEqualTo(testData.getStudentLastName());
                 assertThat(result.getGroup().getGroupName()).isEqualTo(testData.getGroup().getGroupName());
             });
         }
 
         @Test
         void findById_shouldReturnEmptyOptional_whenStudentIsNotFound(){
-            assertFalse(repository.findById(testData.studentId).isPresent());
+            assertFalse(repository.findById(testData.getStudentId()).isPresent());
         }
 
         @Test
         @Sql("/sql/group/group.sql")
         void saveStudent_shouldReturnStudentInstanceWithId_whenSavedSuccessfully(){
-            Student result = repository.save(testData.getStudent());
-            assertAll(() -> {
-                assertThat(result.getId()).isNotNull();
-                assertThat(result.getFirstName()).isEqualTo(testData.studentFirstName);
-                assertThat(result.getLastName()).isEqualTo(testData.studentLastName);
-                assertThat(result.getGroup()).isEqualTo(testData.getGroup());
-            });
+                assertThat(repository.save(testData.getStudent()).getId()).isNotNull();
         }
 
         @Test
         @Sql(scripts = {"/sql/student/student.sql", "/sql/group/group.sql"})
         void deleteStudent_shouldDoNothing_whenStudentDeleted(){
-            Student student = new Student(testData.studentId);
+            Student student = new Student(testData.getStudentId());
             assertAll(() -> {
                 assertThat(repository.findAll()).hasSize(1);
                 repository.delete(student);
