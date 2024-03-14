@@ -4,8 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.WebProject.persistence.entity.Course;
 import ua.foxminded.WebProject.DTO.CourseDto;
+import ua.foxminded.WebProject.persistence.entity.Course;
 import ua.foxminded.WebProject.persistence.repository.CourseRepository;
 import ua.foxminded.WebProject.service.CourseService;
 

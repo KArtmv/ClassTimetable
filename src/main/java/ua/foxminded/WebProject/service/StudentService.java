@@ -9,7 +9,10 @@ import java.util.List;
 
 public interface StudentService extends AbstractService<Student, Long> {
     Student saveStudent(StudentDto studentDto);
+
     void removeStudentById(Student student);
+
     List<Lesson> getLessonsForDay(Student student, LocalDate localDate);
+
     List<Lesson> getLessonsForWeek(Student student, LocalDate start, LocalDate end);
 }

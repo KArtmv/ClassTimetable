@@ -18,10 +18,11 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class StudentServiceImplTest {
     private final TestData testData = new TestData();
@@ -36,7 +37,7 @@ class StudentServiceImplTest {
     private StudentServiceImpl studentService;
 
     @BeforeEach
-    void init(){
+    void init() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -50,7 +51,7 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void getById_shouldThrowEntityNotFoundException_whenIdIsNotFound(){
+    void getById_shouldThrowEntityNotFoundException_whenIdIsNotFound() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> studentService.getById(testData.getStudentId()));
@@ -69,7 +70,7 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void saveStudent_shouldReturnStudentInstanceWithoutId_whenGroupIdIsNotFound(){
+    void saveStudent_shouldReturnStudentInstanceWithoutId_whenGroupIdIsNotFound() {
         when(groupService.getById(anyLong())).thenThrow(EntityNotFoundException.class);
 
         assertThat(studentService.saveStudent(testItems.getStudentDto()).getId()).isNull();
@@ -86,7 +87,7 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void removeStudentById_shouldThrowEntityNotFoundException_whenStudentIsNotFound(){
+    void removeStudentById_shouldThrowEntityNotFoundException_whenStudentIsNotFound() {
         when(repository.findById(anyLong())).thenThrow(EntityNotFoundException.class);
 
         assertThrows(EntityNotFoundException.class, () -> studentService.removeStudentById(new Student(testData.getStudentId())));

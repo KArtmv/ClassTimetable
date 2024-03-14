@@ -7,11 +7,11 @@ import java.util.stream.Stream;
 public class DataOfParametrizedTest {
     private static final TestItems testItems = new TestItems();
 
-    public static Stream<Arguments> getLessons(){
+    public static Stream<Arguments> getLessons() {
         return Stream.of(
                 Arguments.of(testItems.getAllLessonsOfGroupPerWeek(), testItems.getAllLessonsOfGroupPerDay()),
                 Arguments.of(testItems.getAllLessonsOfGroupPerWeekWithoutCourse(), testItems.getAllLessonsOfGroupPerDayWithoutCourse())
-                );
+        );
     }
 
 }

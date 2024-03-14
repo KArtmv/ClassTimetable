@@ -13,7 +13,8 @@ import ua.foxminded.WebProject.util.TestItems;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -25,14 +26,14 @@ class TeacherRepositoryTest {
     private TeacherRepository repository;
 
     @Test
-    void save_shouldReturnTeacherInstanceWithId_whenIsSavedSuccessfully(){
+    void save_shouldReturnTeacherInstanceWithId_whenIsSavedSuccessfully() {
         Teacher result = repository.save(testData.getTeacher());
         assertThat(result.getId()).isNotNull();
     }
 
     @Test
     @Sql("/sql/teacher/teacher.sql")
-    void findById_shouldReturnTeacherInstance_whenIsFounded(){
+    void findById_shouldReturnTeacherInstance_whenIsFounded() {
         Optional<Teacher> result = repository.findById(testData.getTeacherId());
 
         assertAll(() -> {
@@ -45,13 +46,13 @@ class TeacherRepositoryTest {
 
     @Test
     @Sql("/sql/teacher/teachers.sql")
-    void findAll_shouldReturnListOfTeachers_whenIsInvoke(){
+    void findAll_shouldReturnListOfTeachers_whenIsInvoke() {
         assertThat(repository.findAll()).hasSize(8);
     }
 
     @Test
     @Sql("/sql/teacher/teachers.sql")
-    void delete_shouldDeleteStudent_whenIsInvoke(){
+    void delete_shouldDeleteStudent_whenIsInvoke() {
         assertAll(() -> {
             assertThat(repository.findAll()).hasSize(8);
             repository.delete(testItems.getTeacher());

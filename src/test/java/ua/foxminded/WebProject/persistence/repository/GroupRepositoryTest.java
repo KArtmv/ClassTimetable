@@ -12,7 +12,8 @@ import ua.foxminded.WebProject.util.TestData;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -25,13 +26,13 @@ class GroupRepositoryTest {
 
     @Test
     @Sql("/sql/group/groups.sql")
-    void findAll_shouldReturnListOfGroup_whenIsInvoke(){
+    void findAll_shouldReturnListOfGroup_whenIsInvoke() {
         assertThat(repository.findAll()).hasSize(4);
     }
 
     @Test
     @Sql("/sql/group/group.sql")
-    void findById_shouldReturnGroupInstance_whenIsFound(){
+    void findById_shouldReturnGroupInstance_whenIsFound() {
         Optional<Group> result = repository.findById(testData.getGroupId());
         assertAll(() -> {
             assertTrue(result.isPresent());
@@ -41,7 +42,7 @@ class GroupRepositoryTest {
     }
 
     @Test
-    void save_shouldReturnGroupInstanceWithId_whenIsSavedSuccessfully(){
+    void save_shouldReturnGroupInstanceWithId_whenIsSavedSuccessfully() {
         Group result = repository.save(testData.getGroup());
         assertThat(result.getId()).isNotNull();
     }

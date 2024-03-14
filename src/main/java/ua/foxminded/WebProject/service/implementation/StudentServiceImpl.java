@@ -14,7 +14,6 @@ import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.service.StudentService;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -42,7 +41,7 @@ public class StudentServiceImpl implements StudentService {
             student.setLastName(studentDto.getLastName());
             student.setGroup(groupService.getById(studentDto.getGroup().getId()));
             return repository.save(student);
-        } catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             log.error("Saving new student is failed: {}", e.getMessage());
             return student;
         }

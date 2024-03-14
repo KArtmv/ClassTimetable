@@ -12,7 +12,8 @@ import ua.foxminded.WebProject.util.TestData;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -25,13 +26,13 @@ class ClassroomRepositoryTest {
 
     @Test
     @Sql("/sql/classroom/classrooms.sql")
-    void findAll_shouldReturnListOfClassroom_whenIsInvoke(){
+    void findAll_shouldReturnListOfClassroom_whenIsInvoke() {
         assertThat(repository.findAll()).hasSize(5);
     }
 
     @Test
     @Sql("/sql/classroom/classroom.sql")
-    void findById_shouldReturnClassroom_whenIsFound(){
+    void findById_shouldReturnClassroom_whenIsFound() {
         Optional<Classroom> result = repository.findById(testData.getClassroomId());
         assertAll(() -> {
             assertTrue(result.isPresent());

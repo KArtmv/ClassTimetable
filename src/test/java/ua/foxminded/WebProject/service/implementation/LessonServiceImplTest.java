@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -50,7 +50,7 @@ class LessonServiceImplTest {
     private LessonServiceImpl lessonService;
 
     @BeforeEach
-    void init(){
+    void init() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -76,7 +76,7 @@ class LessonServiceImplTest {
     }
 
     @Test
-    void saveLesson_shouldThrowEntityNotFoundException_whenGroupIdIsNotFound(){
+    void saveLesson_shouldThrowEntityNotFoundException_whenGroupIdIsNotFound() {
         when(groupService.getById(anyLong())).thenThrow(EntityNotFoundException.class);
 
         assertThat(lessonService.saveLesson(testItems.getLessonDto()).getId()).isNull();
@@ -85,7 +85,7 @@ class LessonServiceImplTest {
     }
 
     @Test
-    void saveLesson_shouldThrowEntityNotFoundException_whenCourseIdIsNotFound(){
+    void saveLesson_shouldThrowEntityNotFoundException_whenCourseIdIsNotFound() {
         when(groupService.getById(anyLong())).thenReturn(testItems.getGroup());
         when(courseService.getById(anyLong())).thenThrow(EntityNotFoundException.class);
 
@@ -96,7 +96,7 @@ class LessonServiceImplTest {
     }
 
     @Test
-    void saveLesson_shouldThrowEntityNotFoundException_whenClassroomIdIsNotFound(){
+    void saveLesson_shouldThrowEntityNotFoundException_whenClassroomIdIsNotFound() {
         when(groupService.getById(anyLong())).thenReturn(testItems.getGroup());
         when(courseService.getById(anyLong())).thenReturn(testItems.getCourseWithIdSeven());
         when(classroomService.getById(anyLong())).thenThrow(EntityNotFoundException.class);
@@ -109,7 +109,7 @@ class LessonServiceImplTest {
     }
 
     @Test
-    void saveLesson_shouldThrowEntityNotFoundException_whenTeacherIdIsNotFound(){
+    void saveLesson_shouldThrowEntityNotFoundException_whenTeacherIdIsNotFound() {
         when(groupService.getById(anyLong())).thenReturn(testItems.getGroup());
         when(courseService.getById(anyLong())).thenReturn(testItems.getCourseWithIdSeven());
         when(classroomService.getById(anyLong())).thenReturn(testItems.getClassroom());
@@ -151,7 +151,7 @@ class LessonServiceImplTest {
     }
 
     @Test
-    void getById_shouldThrowEntityNotFoundException_whenIdIsNotFound(){
+    void getById_shouldThrowEntityNotFoundException_whenIdIsNotFound() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> lessonService.getById(testData.getLessonId()));

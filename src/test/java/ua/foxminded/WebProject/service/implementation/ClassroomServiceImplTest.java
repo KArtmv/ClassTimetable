@@ -28,7 +28,7 @@ class ClassroomServiceImplTest {
     private ClassroomServiceImpl service;
 
     @BeforeEach
-    void init(){
+    void init() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -56,7 +56,7 @@ class ClassroomServiceImplTest {
     }
 
     @Test
-    void getById_shouldThrowEntityNotFoundException_whenIdIsNotFound(){
+    void getById_shouldThrowEntityNotFoundException_whenIdIsNotFound() {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> service.getById(testItems.getClassroomId()));

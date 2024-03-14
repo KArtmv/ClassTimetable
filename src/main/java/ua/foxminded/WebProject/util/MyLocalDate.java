@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Component
 public class MyLocalDate {
 
-    public LocalDate getCurrentDate(){
+    public LocalDate getCurrentDate() {
         return LocalDate.now();
     }
 }

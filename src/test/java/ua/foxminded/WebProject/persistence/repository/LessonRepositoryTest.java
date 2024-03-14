@@ -10,11 +10,11 @@ import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.util.TestData;
 import ua.foxminded.WebProject.util.TestItems;
 
-import java.time.DayOfWeek;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -28,19 +28,19 @@ class LessonRepositoryTest {
 
     @Test
     @Sql("/sql/lesson/lessons.sql")
-    void findAll(){
+    void findAll() {
         assertThat(repository.findAll()).hasSize(206);
     }
 
     @Test
     @Sql("/sql/lesson/lessons.sql")
-    void getAllLessonsPerDay_shouldReturnListOfLessons_whenIsInvoke(){
+    void getAllLessonsPerDay_shouldReturnListOfLessons_whenIsInvoke() {
         assertThat(repository.getAllByDate(testData.getDate())).hasSize(63);
     }
 
     @Test
     @Sql("/sql/lesson/lesson.sql")
-    void getById_shouldReturnLessonInstance_whenIsFound(){
+    void getById_shouldReturnLessonInstance_whenIsFound() {
         Optional<Lesson> result = repository.findById(testData.getLessonId());
         assertAll(() -> {
             assertTrue(result.isPresent());
@@ -85,7 +85,7 @@ class LessonRepositoryTest {
     }
 
     @Test
-    void save_shouldReturnLessonInstanceWithId_whenIsSavedSuccessfully(){
+    void save_shouldReturnLessonInstanceWithId_whenIsSavedSuccessfully() {
         Lesson result = repository.save(testData.getLesson());
         assertThat(result.getId()).isNotNull();
     }

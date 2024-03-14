@@ -38,12 +38,12 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     @Transactional
-    public Lesson saveLesson(LessonDto lessonDto){
+    public Lesson saveLesson(LessonDto lessonDto) {
         Lesson lesson = new Lesson();
-        try{
+        try {
             lesson = verifyId(lessonDto);
             lesson = findAvailableWeek(lesson);
-        } catch (EntityNotFoundException | DataIntegrityViolationException e){
+        } catch (EntityNotFoundException | DataIntegrityViolationException e) {
             log.error("Failed adding lesson: {}", e.getMessage());
         }
         return lesson;
@@ -84,7 +84,7 @@ public class LessonServiceImpl implements LessonService {
         return lesson;
     }
 
-    private Lesson findAvailableWeek(Lesson lesson){
+    private Lesson findAvailableWeek(Lesson lesson) {
         Group group = lesson.getGroup();
         Course course = lesson.getCourse();
         LocalDate date = localDate.getCurrentDate();
@@ -94,15 +94,15 @@ public class LessonServiceImpl implements LessonService {
 
         do {
             monday = date.with(DayOfWeek.MONDAY);
-            if (attempts > 0){
+            if (attempts > 0) {
                 date = monday;
             }
 
             if (repository.findByGroupAndDateBetween(group, monday, date.with(DayOfWeek.FRIDAY)).stream()
-                    .filter(l -> l.getCourse().getId().equals(course.getId())).count() < MAX_AMOUNT_LESSONS_BY_COURSE_PER_WEEK){
+                    .filter(l -> l.getCourse().getId().equals(course.getId())).count() < MAX_AMOUNT_LESSONS_BY_COURSE_PER_WEEK) {
 
                 lesson = addLessonToAvailableDay(group, date, lesson.getCourse(), lesson);
-                if (lesson.getId() != null){
+                if (lesson.getId() != null) {
                     return lesson;
                 }
             }
@@ -112,19 +112,19 @@ public class LessonServiceImpl implements LessonService {
         return lesson;
     }
 
-    private Lesson addLessonToAvailableDay(Group group, LocalDate date, Course course, Lesson lesson){
+    private Lesson addLessonToAvailableDay(Group group, LocalDate date, Course course, Lesson lesson) {
         do {
-                List<Lesson> lessonsPerDay = repository.getLessonByGroupAndDate(group, date);
+            List<Lesson> lessonsPerDay = repository.getLessonByGroupAndDate(group, date);
 
-                if (lessonsPerDay.size() < MAX_AMOUNT_LESSONS_PER_DAY && lessonsPerDay.stream().noneMatch(l -> l.getCourse().getId().equals(course.getId()))) {
-                    lesson.setLessonNum(lessonsPerDay.isEmpty() ? 1 : lessonsPerDay.size() + 1);
-                    lesson.setDate(date);
+            if (lessonsPerDay.size() < MAX_AMOUNT_LESSONS_PER_DAY && lessonsPerDay.stream().noneMatch(l -> l.getCourse().getId().equals(course.getId()))) {
+                lesson.setLessonNum(lessonsPerDay.isEmpty() ? 1 : lessonsPerDay.size() + 1);
+                lesson.setDate(date);
 
-                    lesson = repository.save(lesson);
-                    if (lesson.getId() != null) {
-                        return lesson;
-                    }
+                lesson = repository.save(lesson);
+                if (lesson.getId() != null) {
+                    return lesson;
                 }
+            }
             date = date.plusDays(1);
         } while (date.getDayOfWeek().getValue() < DayOfWeek.SATURDAY.getValue());
         return lesson;

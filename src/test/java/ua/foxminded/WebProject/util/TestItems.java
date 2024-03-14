@@ -70,7 +70,7 @@ public class TestItems {
             new Group(3L, "QM-09"));
 
 
-    public Lesson getParticipants(){
+    public Lesson getParticipants() {
         Lesson lesson1 = getLesson();
         lesson1.getGroup().setStudents(new HashSet<>(getStudents()));
         return lesson1;

@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
@@ -33,7 +33,7 @@ class TeacherServiceImplTest {
     private TeacherServiceImpl service;
 
     @BeforeEach
-    void init(){
+    void init() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -104,7 +104,7 @@ class TeacherServiceImplTest {
     void getById_shouldThrowEntityNotFoundException_whenIdIsNotFound() {
         when(teacherRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class,() -> service.getById(testItems.getTeacherId()));
+        assertThrows(EntityNotFoundException.class, () -> service.getById(testItems.getTeacherId()));
 
         verify(teacherRepository).findById(testItems.getTeacherId());
     }
