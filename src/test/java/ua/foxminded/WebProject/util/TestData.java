@@ -1,66 +1,52 @@
 package ua.foxminded.WebProject.util;
 
+import lombok.Getter;
+import ua.foxminded.WebProject.DTO.CourseDto;
 import ua.foxminded.WebProject.persistence.entity.*;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
+@Getter
 public class TestData {
-    public Long studentId = 1L;
-    public String studentFirstName = "Lucas";
-    public String studentLastName = "Thompson";
-    public Long groupId = 1L;
-    public String groupName = "YS-27";
-    public Long courseId = 1L;
-    public String courseName = "Principles of Economics";
-    public String courseDescription = "Learn about the fundamentals of economics";
-    public Long classroomId = 1L;
-    public String classroomName = "Room 101";
-    public Long lessonId = 2L;
-    public Integer lessenNum = 1;
-    public Long teacherId = 1L;
-    public String teacherFirstName = "John";
-    public String teacherLastName = "Smith";
-    private final Course course = new Course();
-    private final Group group = new Group();
-    private final Student student = new Student();
-    private final Lesson lesson = new Lesson();
-    private final Teacher teacher = new Teacher();
+    private final Long studentId = 1L;
+    private final String studentFirstName = "Lucas";
+    private final String studentLastName = "Thompson";
+    private final Student student = new Student(studentFirstName, studentLastName, getGroup());
 
-    public Student getStudent() {
-        student.setFirstName(studentFirstName);
-        student.setLastName(studentLastName);
-        student.setGroup(getGroup());
-        return student;
-    }
+    private final Long groupId = 1L;
+    private final String groupName = "YS-27";
+    private final Group group = new Group(groupName);
 
-    public Group getGroup() {
-        group.setGroupName(groupName);
-        return group;
-    }
+    private final Long courseId = 1L;
+    private final String courseName = "Principles of Economics";
+    private final String courseDescription = "Learn about the fundamentals of economics";
+    private final Course course = new Course(courseDescription, courseName);
+    private final CourseDto courseDto = new CourseDto(courseDescription, courseName);
 
-    public Course getCourse() {
-        course.setCourseName(courseName);
-        course.setCourseDescription(courseDescription);
-        return course;
-    }
+    private final Long classroomId = 1L;
+    private final String classroomName = "Room 101";
 
-    public LocalDate getDate(){
-        return LocalDate.of(2024, 3, 11);
-    }
+    private final Long lessonId = 2L;
+    private final Integer lessenNum = 1;
+    private final Lesson lesson = new Lesson(getDate(),
+            lessenNum,
+            new Course(getCourseId()),
+            new Group(getGroupId()),
+            new Classroom(getClassroomId()),
+            new Teacher(getTeacherId()));
 
-    public Lesson getLesson() {
-        lesson.setLessonNum(lessenNum);
-        lesson.setDate(getDate());
-        lesson.setGroup(new Group(groupId));
-        lesson.setCourse(new Course(courseId));
-        lesson.setClassroom(new Classroom(classroomId));
-        lesson.setTeacher(new Teacher(teacherId));
-        return lesson;
-    }
+    private final Long teacherId = 1L;
+    private final String teacherFirstName = "John";
+    private final String teacherLastName = "Smith";
+    private final Teacher teacher = new Teacher(teacherFirstName, teacherLastName);
 
-    public Teacher getTeacher() {
-        teacher.setFirstName(teacherFirstName);
-        teacher.setLastName(teacherLastName);
-        return teacher;
-    }
+    private final LocalDate date = LocalDate.of(2024, 3, 11);
+
+    private final LocalDate dateStudentStart = getDate().with(DayOfWeek.TUESDAY);
+    private final LocalDate dateStudentEnd = getDate().with(DayOfWeek.THURSDAY);
+
+    private final LocalDate dateTeacherStart = getDate().with(DayOfWeek.WEDNESDAY);
+    private final LocalDate dateTeacherEnd = getDate().with(DayOfWeek.FRIDAY);
+
 }
