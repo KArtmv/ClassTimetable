@@ -1,0 +1,23 @@
+<div th:fragment="teacher">
+    <div class="d-grid gap-2 col-2 mb-3 mt-3 mx-3">
+<!--        <div th:insert="~{fragments/teacher/view/addNewTeacher :: addTeacher}"></div>-->
+        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTeacher">
+            Add new teacher</a>
+
+<!--        <div th:inert="~{fragments/teacher/view/deleteTecher :: deleteTeacher}"></div>-->
+        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteTeacher">
+            Delete teacher</a>
+
+<!--        <div th:inert="~{fragments/teacher/view/getTeacherById :: teacherById}"></div>-->
+        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#teacherById">
+            Get teacher by id</a>
+
+<!--        <div th:inert="~{fragments/lesson/view/lessonsPerWeek  :: lessonsPerDay}"></div>-->
+        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lessonsPerDay">
+            View lessons per day</a>
+
+<!--        <div th:inert="~{fragments/lesson/view/lessonsPerWeek  :: lessonsPerWeek}"></div>-->
+        <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lessonsPerWeek">
+            View lessons per week</a>
+    </div>
+</div>

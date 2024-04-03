@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Available Groups</title>
+</head>
+<body>
+<table>
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>Group</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="group : ${groups}">
+            <td><span th:text="${group.id}">id</span></td>
+            <td><span th:text="${group.name}">group</span></td>
+        </tr>
+    </tbody>
+</table>
+
+<form>
+
+</form>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+<label for="groups">Choose a group:</label>
+<select id="groups" name="groupId" class="form-control">
+    <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}"></option>
+</select>

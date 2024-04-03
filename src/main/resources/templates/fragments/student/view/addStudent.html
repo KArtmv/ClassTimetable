@@ -1,0 +1,38 @@
+<div th:fragment="addStudent">
+    <div class="modal fade" id="addStudent" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add new student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/addNewStudent}" id="newStudent" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="fname">Student first name:</label>
+                            <input type="text"
+                                   name="firstName"
+                                   class="form-control"
+                                   id="fname"
+                                   placeholder="Enter student first name"/>
+<!--                        </div>-->
+<!--                        <div class="mb-3">-->
+                            <label for="lname">Student last name:</label>
+                            <input type="text"
+                                   name="lastName"
+                                   class="form-control"
+                                   id="lname"
+                                   placeholder="Enter student last name"/>
+<!--                        </div>-->
+<!--                        <div class="mb-3 mt-3">-->
+                            <label>Available groups</label>
+                            <div th:insert="~{fragments/chooseGroup :: #groups}"></div>
+                        </div>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Add Student</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

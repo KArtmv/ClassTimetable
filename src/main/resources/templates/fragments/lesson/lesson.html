@@ -1,0 +1,15 @@
+<div th:fragment="lesson">
+        <div class="d-grid gap-2 col-2 mb-3 mt-3 mx-3">
+<!--            <div th:insert="~{fragments/lesson/view/addLesson :: addLesson}"></div>-->
+            <a class="btn btn-primary" data-bs-toggle="model" data-bs-target="#addLesson"
+            >Add new lesson</a>
+
+<!--            <div th:insert="~{fragments/lesson/view/lessonParticipants :: lessonParticipants}"></div>-->
+            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lessonParticipants">
+                Lesson participants</a>
+
+<!--            <div th:insert="~{fragments/lesson/view/allLessonsPerDay :: allLessonsPerDay}"></div>-->
+            <a class="btn btn-primary" data-bs-toggle="model" data-bs-target="#allLessonsPerDay">
+                All lesson by specify day</a>
+        </div>
+</div>

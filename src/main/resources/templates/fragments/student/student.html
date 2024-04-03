@@ -1,0 +1,23 @@
+<div th:fragment="student">
+        <div class="d-grid gap-2 col-2 mb-3 mt-3 mx-3">
+            <div th:insert="~{fragments/student/view/addStudent :: addStudent}"></div>
+            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudent">
+                Add new student</a>
+
+            <!--                        <div th:inert="~{fragments/deleteStudent :: deleteStudent}"></div>-->
+            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteStudent">
+                Delete student</a>
+
+            <!--                        <div th:inert="~{fragments/getStudentById :: getStudentById}"></div>-->
+            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#getStudentById">
+                Get student by id</a>
+
+<!--                                    <div th:inert="~{fragments/lesson/view/lessonsPerDay :: lessonsPerDay}"></div>-->
+            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lessonsPerDay">
+                View lessons per day</a>
+
+<!--                                    <div th:inert="~{fragments/lesson/view/lessonsPerWeek :: lessonsPerWeek}"></div>-->
+            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lessonsPerWeek">
+                View lessons per week</a>
+        </div>
+</div>
