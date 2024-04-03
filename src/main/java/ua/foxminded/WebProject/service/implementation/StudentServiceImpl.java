@@ -23,12 +23,12 @@ import java.util.List;
 public class StudentServiceImpl implements StudentService {
 
     private GroupService groupService;
-    private StudentRepository repository;
+    private StudentRepository studentRepository;
     private LessonRepository lessonRepository;
 
     @Override
     public Student getById(Long id) {
-        return repository.findById(id).orElseThrow(() ->
+        return studentRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Not found student by given id:" + id));
     }
 
@@ -40,7 +40,7 @@ public class StudentServiceImpl implements StudentService {
             student.setFirstName(studentDto.getFirstName());
             student.setLastName(studentDto.getLastName());
             student.setGroup(groupService.getById(studentDto.getGroup().getId()));
-            return repository.save(student);
+            return studentRepository.save(student);
         } catch (EntityNotFoundException e) {
             log.error("Saving new student is failed: {}", e.getMessage());
             return student;
@@ -50,7 +50,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public void removeStudentById(Student student) {
-        repository.delete(getById(student.getId()));
+        studentRepository.delete(getById(student.getId()));
     }
 
     @Override
