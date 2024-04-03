@@ -60,6 +60,11 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
+    public boolean isEmpty() {
+        return repository.count() == 0;
+    }
+
+    @Override
     public Lesson getById(Long id) {
         return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found given id:" + id));
     }
@@ -88,6 +93,7 @@ public class LessonServiceImpl implements LessonService {
         Group group = lesson.getGroup();
         Course course = lesson.getCourse();
         LocalDate date = localDate.getCurrentDate();
+        date = date.isEqual(date.with(DayOfWeek.SATURDAY)) || date.isEqual(date.with(DayOfWeek.SUNDAY)) ? date.plusWeeks(1).with(DayOfWeek.MONDAY) : date;
         int attempts = 0;
         int maxAttempts = 3;
         LocalDate monday;
@@ -120,7 +126,7 @@ public class LessonServiceImpl implements LessonService {
                 lesson.setLessonNum(lessonsPerDay.isEmpty() ? 1 : lessonsPerDay.size() + 1);
                 lesson.setDate(date);
 
-                lesson = repository.save(lesson);
+                lesson = repository.saveAndFlush(lesson);
                 if (lesson.getId() != null) {
                     return lesson;
                 }
