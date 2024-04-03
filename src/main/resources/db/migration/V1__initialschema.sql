@@ -23,11 +23,11 @@ create table "groups"
 
 create table student
 (
-    group_id   bigint,
     id         bigserial
         primary key,
     first_name varchar(20),
-    last_name  varchar(20)
+    last_name  varchar(20),
+    group_id   bigint
 );
 
 create table teacher
