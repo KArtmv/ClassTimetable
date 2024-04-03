@@ -9,10 +9,8 @@ import java.util.List;
 
 public interface LessonService extends AbstractService<Lesson, Long> {
     Lesson saveLesson(LessonDto lesson);
-
     List<Student> getParticipantsOfLesson(Lesson lesson);
-
     List<Lesson> getAll();
-
     List<Lesson> getAllLessonsPerDay(LocalDate date);
+    boolean isEmpty();
 }
