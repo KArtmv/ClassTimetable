@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Teacher</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet" />
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
     <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
 </head>
 <body>
@@ -26,17 +26,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="lesson : ${lessons}">
-                            <th scope="row" class="col-2" th:text="${lesson.date}"></th>
-                            <td th:text="${lesson.lessonNum}"></td>
-                            <td th:text="${lesson.getGroup.groupName}"></td>
-                            <td th:text="${lesson.getCourse.courseName}"></td>
-                            <td>
-                                <a th:text="${lesson.getTeacher.firstName}"></a>
-                                <a th:text=" ${lesson.getTeacher.lastName}"></a>
-                            </td>
-                            <td th:text="${lesson.getClassroom.classroomName}"></td>
-                        </tr>
+                    <tr th:each="lesson : ${lessons}">
+                        <th scope="row" class="col-2" th:text="${lesson.date}"></th>
+                        <td th:text="${lesson.lessonNum}"></td>
+                        <td th:text="${lesson.getGroup.groupName}"></td>
+                        <td th:text="${lesson.getCourse.courseName}"></td>
+                        <td>
+                            <a th:text="${lesson.getTeacher.firstName}"></a>
+                            <a th:text=" ${lesson.getTeacher.lastName}"></a>
+                        </td>
+                        <td th:text="${lesson.getClassroom.classroomName}"></td>
+                    </tr>
                     </tbody>
                 </table>
             </div>

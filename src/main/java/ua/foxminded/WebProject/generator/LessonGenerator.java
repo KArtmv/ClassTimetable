@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.LessonDto;
 import ua.foxminded.WebProject.persistence.entity.Classroom;
 import ua.foxminded.WebProject.persistence.entity.Course;
@@ -30,19 +29,19 @@ public class LessonGenerator {
     private LessonService lessonService;
 
     @PostConstruct
-    public void populateIfEmpty(){
-        if (lessonService.isEmpty()){
+    public void populateIfEmpty() {
+        if (lessonService.isEmpty()) {
             populateLessonTable();
         }
     }
 
-    public void populateLessonTable(){
+    public void populateLessonTable() {
         List<Group> groups = groupService.getAll();
         List<Course> courses = courseService.getAll();
         List<Teacher> teachers = teacherService.findAll();
         List<Classroom> classrooms = classroomService.getAll();
 
-        RandomGenerator randomGenerator  = new Random();
+        RandomGenerator randomGenerator = new Random();
 
         while (lessonService.getAll().size() < 350) {
             saveNewLesson(new LessonDto(
@@ -53,8 +52,8 @@ public class LessonGenerator {
         }
     }
 
-    public void saveNewLesson(LessonDto lessonDto){
-        try{
+    public void saveNewLesson(LessonDto lessonDto) {
+        try {
             lessonService.saveLesson(lessonDto);
         } catch (DataIntegrityViolationException | ConstraintViolationException e) {
             log.error(e.getMessage());

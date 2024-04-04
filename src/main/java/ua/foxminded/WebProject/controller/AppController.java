@@ -20,31 +20,31 @@ public class AppController {
     private final GroupService groupService;
 
     @GetMapping("/student")
-    public String studentPage(Model model){
+    public String studentPage(Model model) {
         model.addAttribute("students", studentService.getAll());
         return "student/student";
     }
 
     @GetMapping("/teacher")
-    public String teacherPage(Model model){
+    public String teacherPage(Model model) {
         model.addAttribute("teachers", teacherService.findAll());
         return "teacher/teacher";
     }
 
     @GetMapping("/lesson")
-    public String lessonPage(Model model){
+    public String lessonPage(Model model) {
         model.addAttribute("lessons", lessonService.getAll().stream().sorted(Comparator.comparing(Lesson::getDate)));
         return "lesson/lesson";
     }
 
     @GetMapping("/course")
-    public String coursePage(Model model){
+    public String coursePage(Model model) {
         model.addAttribute("courses", courseService.getAll());
         return "course/course";
     }
 
     @GetMapping("/group")
-    public String groupPage(Model model){
+    public String groupPage(Model model) {
         model.addAttribute("groups", groupService.getAll());
         return "group/group";
     }
