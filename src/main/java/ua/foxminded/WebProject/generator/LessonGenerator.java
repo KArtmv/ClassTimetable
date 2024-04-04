@@ -3,6 +3,7 @@ package ua.foxminded.WebProject.generator;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,6 @@ import java.util.random.RandomGenerator;
 @Component
 @AllArgsConstructor
 @Slf4j
-@Transactional
 public class LessonGenerator {
 
     private GroupService groupService;
@@ -37,14 +37,14 @@ public class LessonGenerator {
     }
 
     public void populateLessonTable(){
-        List<Group> groups = groupService.findAll();
-        List<Course> courses = courseService.findAll();
+        List<Group> groups = groupService.getAll();
+        List<Course> courses = courseService.getAll();
         List<Teacher> teachers = teacherService.findAll();
-        List<Classroom> classrooms = classroomService.findAll();
+        List<Classroom> classrooms = classroomService.getAll();
 
         RandomGenerator randomGenerator  = new Random();
 
-        while (lessonService.getAll().size() < 500) {
+        while (lessonService.getAll().size() < 350) {
             saveNewLesson(new LessonDto(
                     courses.get(randomGenerator.nextInt(courses.size())),
                     groups.get(randomGenerator.nextInt(groups.size())),
@@ -56,9 +56,8 @@ public class LessonGenerator {
     public void saveNewLesson(LessonDto lessonDto){
         try{
             lessonService.saveLesson(lessonDto);
-        } catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
             log.error(e.getMessage());
-            System.out.println(e.getMessage());
         }
 
     }
