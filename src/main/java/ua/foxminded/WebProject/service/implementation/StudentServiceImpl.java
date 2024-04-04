@@ -33,6 +33,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public List<Student> getAll() {
+        return studentRepository.findAll();
+    }
+
+    @Override
     @Transactional
     public Student saveStudent(StudentDto studentDto) {
         Student student = new Student();

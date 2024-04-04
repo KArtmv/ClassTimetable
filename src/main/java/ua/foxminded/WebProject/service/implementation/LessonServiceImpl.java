@@ -3,6 +3,7 @@ package ua.foxminded.WebProject.service.implementation;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,13 +38,13 @@ public class LessonServiceImpl implements LessonService {
     private final MyLocalDate localDate;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = DataIntegrityViolationException.class)
     public Lesson saveLesson(LessonDto lessonDto) {
         Lesson lesson = new Lesson();
         try {
             lesson = verifyId(lessonDto);
             lesson = findAvailableWeek(lesson);
-        } catch (EntityNotFoundException | DataIntegrityViolationException e) {
+        } catch (EntityNotFoundException e) {
             log.error("Failed adding lesson: {}", e.getMessage());
         }
         return lesson;

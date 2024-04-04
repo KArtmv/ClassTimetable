@@ -59,4 +59,9 @@ public class TeacherServiceImpl implements TeacherService {
         return teacherRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Not found teacher by given id:" + id));
     }
+
+    @Override
+    public List<Teacher> getAll() {
+        return teacherRepository.findAll();
+    }
 }
