@@ -63,10 +63,10 @@ class TeacherServiceImplTest {
     }
 
     @Test
-    void findAll_shouldReturnListOfTeachers_whenIsInvoke() {
+    void getAll_shouldReturnListOfTeachers_whenIsInvoke() {
         when(teacherRepository.findAll()).thenReturn(testItems.getTeachers());
 
-        assertThat(service.findAll()).hasSize(8);
+        assertThat(service.getAll()).hasSize(8);
 
         verify(teacherRepository).findAll();
     }

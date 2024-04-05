@@ -36,7 +36,7 @@ class ClassroomServiceImplTest {
     void findAll_shouldReturnListOfClassroom_whenIsInvoke() {
         when(repository.findAll()).thenReturn(testItems.getClassrooms());
 
-        assertThat(service.findAll()).hasSize(4);
+        assertThat(service.getAll()).hasSize(4);
 
         verify(repository).findAll();
     }
