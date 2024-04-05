@@ -38,7 +38,7 @@ public class LessonGenerator {
     public void populateLessonTable() {
         List<Group> groups = groupService.getAll();
         List<Course> courses = courseService.getAll();
-        List<Teacher> teachers = teacherService.findAll();
+        List<Teacher> teachers = teacherService.getAll();
         List<Classroom> classrooms = classroomService.getAll();
 
         RandomGenerator randomGenerator = new Random();
