@@ -40,11 +40,6 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Teacher> findAll() {
-        return teacherRepository.findAll();
-    }
-
-    @Override
     public List<Lesson> getLessonForDay(Teacher teacher, LocalDate localDate) {
         return lessonRepository.getLessonsByTeacherAndDate(teacher, localDate);
     }
