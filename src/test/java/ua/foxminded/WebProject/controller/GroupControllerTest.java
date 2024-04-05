@@ -30,13 +30,13 @@ class GroupControllerTest {
         when(groupService.getAll()).thenReturn(testItems.getGroups());
 
         mockMvc.perform(get("/group")).andDo(print())
-            .andExpectAll(
-                status().isOk(),
-                model().attributeExists("groups"),
-                model().attribute("groups", groupService.getAll()),
-                view().name("group/group"),
-                content().string(containsString("YS-27")),
-                content().string(containsString("HV-14")),
-                content().string(containsString("QM-09")));
+                .andExpectAll(
+                        status().isOk(),
+                        model().attributeExists("groups"),
+                        model().attribute("groups", groupService.getAll()),
+                        view().name("group/group"),
+                        content().string(containsString("YS-27")),
+                        content().string(containsString("HV-14")),
+                        content().string(containsString("QM-09")));
     }
 }
