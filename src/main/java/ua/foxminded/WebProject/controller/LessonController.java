@@ -19,7 +19,7 @@ public class LessonController {
 
     @GetMapping
     public String lessonPage(Model model) {
-        model.addAttribute("lessons", lessonService.getAll().stream().sorted(Comparator.comparing(Lesson::getDate)));
+        model.addAttribute("lessons", lessonService.getAll().stream().sorted(Comparator.comparing(Lesson::getDate)).toList());
         return "lesson/lesson";
     }
 }
