@@ -65,9 +65,9 @@ class LessonServiceImplTest {
 
         when(repository.findByGroupAndDateBetween(any(Group.class), any(LocalDate.class), any(LocalDate.class))).thenReturn(lessonsPerWeek).thenReturn(Collections.emptyList());
         when(repository.getLessonByGroupAndDate(any(Group.class), any(LocalDate.class))).thenReturn(lessonsPerDay).thenReturn(Collections.emptyList());
-        when(repository.save(any(Lesson.class))).thenReturn(testItems.getLesson());
+        when(repository.saveAndFlush(any(Lesson.class))).thenReturn(testItems.getLesson());
 
-        assertThat(lessonService.saveLesson(testItems.getLessonDto())).isNotNull();
+        assertThat(lessonService.saveLesson(testItems.getLessonDto()).getId()).isNotNull();
 
         verify(groupService).getById(testData.getGroupId());
         verify(courseService).getById(testItems.getCourseId());
