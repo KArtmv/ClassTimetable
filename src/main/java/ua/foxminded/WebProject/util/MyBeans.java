@@ -16,7 +16,7 @@ public class MyBeans {
     }
 
     @Bean
-    public Integer maxAmountLessons(@Value("${amount.maxLessons}") Integer maxLessons){
+    public Integer maxAmountLessons(@Value("${amount.maxLessons}") Integer maxLessons) {
         return maxLessons;
     }
 }

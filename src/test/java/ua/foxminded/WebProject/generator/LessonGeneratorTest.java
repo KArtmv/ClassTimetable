@@ -14,8 +14,6 @@ import ua.foxminded.WebProject.util.TestItems;
 import java.util.Collections;
 import java.util.random.RandomGenerator;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,7 +38,7 @@ class LessonGeneratorTest {
     private LessonGenerator lessonGenerator;
 
     @BeforeEach
-    void init(){
+    void init() {
         MockitoAnnotations.openMocks(this);
     }
 
@@ -55,7 +53,7 @@ class LessonGeneratorTest {
         when(classroomService.getAll()).thenReturn(testItems.getClassrooms());
         when(lessonService.getAll()).thenReturn(Collections.emptyList()).thenReturn(Collections.singletonList(testItems.getLesson()));
         when(lessonService.saveLesson(any(LessonDto.class))).thenReturn(testItems.getLesson());
-        when(randomGenerator.nextInt()).thenReturn(7).thenReturn(1).thenReturn( 3).thenReturn(6);
+        when(randomGenerator.nextInt()).thenReturn(7).thenReturn(1).thenReturn(3).thenReturn(6);
 
         lessonGenerator.populateIfEmpty();
 
