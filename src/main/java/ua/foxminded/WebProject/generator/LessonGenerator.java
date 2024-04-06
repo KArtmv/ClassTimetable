@@ -3,7 +3,6 @@ package ua.foxminded.WebProject.generator;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import ua.foxminded.WebProject.DTO.LessonDto;
@@ -14,7 +13,6 @@ import ua.foxminded.WebProject.persistence.entity.Teacher;
 import ua.foxminded.WebProject.service.*;
 
 import java.util.List;
-import java.util.Random;
 import java.util.random.RandomGenerator;
 
 @Component
@@ -22,11 +20,13 @@ import java.util.random.RandomGenerator;
 @Slf4j
 public class LessonGenerator {
 
+    private Integer maxLessons;
     private GroupService groupService;
     private CourseService courseService;
     private TeacherService teacherService;
     private ClassroomService classroomService;
     private LessonService lessonService;
+    private RandomGenerator randomGenerator;
 
     @PostConstruct
     public void populateIfEmpty() {
@@ -35,15 +35,13 @@ public class LessonGenerator {
         }
     }
 
-    public void populateLessonTable() {
+    private void populateLessonTable() {
         List<Group> groups = groupService.getAll();
         List<Course> courses = courseService.getAll();
         List<Teacher> teachers = teacherService.getAll();
         List<Classroom> classrooms = classroomService.getAll();
 
-        RandomGenerator randomGenerator = new Random();
-
-        while (lessonService.getAll().size() < 350) {
+        while (lessonService.getAll().size() < maxLessons) {
             saveNewLesson(new LessonDto(
                     courses.get(randomGenerator.nextInt(courses.size())),
                     groups.get(randomGenerator.nextInt(groups.size())),
@@ -52,12 +50,11 @@ public class LessonGenerator {
         }
     }
 
-    public void saveNewLesson(LessonDto lessonDto) {
+    private void saveNewLesson(LessonDto lessonDto) {
         try {
             lessonService.saveLesson(lessonDto);
-        } catch (DataIntegrityViolationException | ConstraintViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             log.error(e.getMessage());
         }
-
     }
 }
