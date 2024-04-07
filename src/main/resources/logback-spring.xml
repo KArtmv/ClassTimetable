@@ -56,5 +56,9 @@
     <logger name="org.springframework" level="DEBUG" additivity="false">
         <appender-ref ref="SPRING_DEBUG_LOG_FILE"/>
     </logger>
+
+    <logger name="org.hibernate" level="ERROR" additivity="false">
+        <appender-ref ref="SQL_STATEMENT_LOG_FILE"/>
+    </logger>
 </configuration>
 

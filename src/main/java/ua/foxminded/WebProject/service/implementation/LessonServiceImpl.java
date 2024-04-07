@@ -37,13 +37,13 @@ public class LessonServiceImpl implements LessonService {
     private final MyLocalDate localDate;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = DataIntegrityViolationException.class)
     public Lesson saveLesson(LessonDto lessonDto) {
         Lesson lesson = new Lesson();
         try {
             lesson = verifyId(lessonDto);
             lesson = findAvailableWeek(lesson);
-        } catch (EntityNotFoundException | DataIntegrityViolationException e) {
+        } catch (EntityNotFoundException e) {
             log.error("Failed adding lesson: {}", e.getMessage());
         }
         return lesson;
@@ -57,6 +57,11 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public List<Lesson> getAllLessonsPerDay(LocalDate date) {
         return repository.getAllByDate(date);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return repository.count() == 0;
     }
 
     @Override
@@ -88,6 +93,7 @@ public class LessonServiceImpl implements LessonService {
         Group group = lesson.getGroup();
         Course course = lesson.getCourse();
         LocalDate date = localDate.getCurrentDate();
+        date = date.isEqual(date.with(DayOfWeek.SATURDAY)) || date.isEqual(date.with(DayOfWeek.SUNDAY)) ? date.plusWeeks(1).with(DayOfWeek.MONDAY) : date;
         int attempts = 0;
         int maxAttempts = 3;
         LocalDate monday;
@@ -120,7 +126,7 @@ public class LessonServiceImpl implements LessonService {
                 lesson.setLessonNum(lessonsPerDay.isEmpty() ? 1 : lessonsPerDay.size() + 1);
                 lesson.setDate(date);
 
-                lesson = repository.save(lesson);
+                lesson = repository.saveAndFlush(lesson);
                 if (lesson.getId() != null) {
                     return lesson;
                 }

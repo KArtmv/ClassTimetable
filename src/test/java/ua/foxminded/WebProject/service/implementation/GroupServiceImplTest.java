@@ -38,7 +38,7 @@ class GroupServiceImplTest {
     void findAll_shouldReturnListOfGroups_whenIsInvoke() {
         when(repository.findAll()).thenReturn(testItems.getGroups());
 
-        assertThat(service.findAll()).hasSize(3);
+        assertThat(service.getAll()).hasSize(3);
 
         verify(repository).findAll();
     }

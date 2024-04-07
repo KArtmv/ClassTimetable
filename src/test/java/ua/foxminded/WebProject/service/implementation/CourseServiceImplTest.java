@@ -38,7 +38,7 @@ class CourseServiceImplTest {
     void findAll_shouldReturnListOfCourses_whenIsInvoke() {
         when(repository.findAll()).thenReturn(testItems.getCourses());
 
-        assertThat(service.findAll()).hasSize(3);
+        assertThat(service.getAll()).hasSize(3);
 
         verify(repository).findAll();
     }

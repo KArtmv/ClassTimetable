@@ -12,7 +12,7 @@ public interface LessonService extends AbstractService<Lesson, Long> {
 
     List<Student> getParticipantsOfLesson(Lesson lesson);
 
-    List<Lesson> getAll();
-
     List<Lesson> getAllLessonsPerDay(LocalDate date);
+
+    boolean isEmpty();
 }

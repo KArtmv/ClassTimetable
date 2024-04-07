@@ -40,11 +40,6 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Teacher> findAll() {
-        return teacherRepository.findAll();
-    }
-
-    @Override
     public List<Lesson> getLessonForDay(Teacher teacher, LocalDate localDate) {
         return lessonRepository.getLessonsByTeacherAndDate(teacher, localDate);
     }
@@ -58,5 +53,10 @@ public class TeacherServiceImpl implements TeacherService {
     public Teacher getById(Long id) {
         return teacherRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Not found teacher by given id:" + id));
+    }
+
+    @Override
+    public List<Teacher> getAll() {
+        return teacherRepository.findAll();
     }
 }

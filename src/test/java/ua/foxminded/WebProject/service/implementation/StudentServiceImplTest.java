@@ -112,4 +112,13 @@ class StudentServiceImplTest {
 
         verify(lessonRepository).findByGroupAndDateBetween(testItems.getGroup(), testItems.getDateOfMonday(), testItems.getDateOfFriday());
     }
+
+    @Test
+    void getAll_shouldReturnListOfStudent_whenIsInvoke() {
+        when(repository.findAll()).thenReturn(testItems.getStudents());
+
+        assertThat(studentService.getAll()).hasSize(5);
+
+        verify(repository).findAll();
+    }
 }

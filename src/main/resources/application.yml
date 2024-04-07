@@ -7,7 +7,19 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:/sql/data.sql
   flyway:
     enabled: true
     baseline-on-migrate: true
     validate-on-migrate: true
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+
+amount:
+  maxLessons: 350

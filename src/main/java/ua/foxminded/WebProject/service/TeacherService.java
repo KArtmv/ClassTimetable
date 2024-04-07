@@ -12,8 +12,6 @@ public interface TeacherService extends AbstractService<Teacher, Long> {
 
     void removeTeacherById(Teacher teacher);
 
-    List<Teacher> findAll();
-
     List<Lesson> getLessonForDay(Teacher teacher, LocalDate localDate);
 
     List<Lesson> getLessonForWeek(Teacher teacher, LocalDate start, LocalDate end);
