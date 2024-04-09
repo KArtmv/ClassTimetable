@@ -1,14 +1,17 @@
 package ua.foxminded.WebProject.persistence.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
-@MappedSuperclass
 @NoArgsConstructor
 public class BasePerson extends BaseEntity {
 
@@ -17,6 +20,13 @@ public class BasePerson extends BaseEntity {
 
     @Column(name = "last_name", length = 20)
     private String lastName;
+
+    @Column(name = "email", unique = true)
+    @Email
+    private String email;
+
+    @Column(name = "password")
+    private String password;
 
     public BasePerson(Long id) {
         super(id);
