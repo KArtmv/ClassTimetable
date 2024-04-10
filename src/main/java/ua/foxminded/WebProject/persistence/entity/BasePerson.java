@@ -2,6 +2,7 @@ package ua.foxminded.WebProject.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,9 +24,11 @@ public class BasePerson extends BaseEntity {
 
     @Column(name = "email", unique = true)
     @Email
+    @NotNull
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password", length = 128)
+    @NotNull
     private String password;
 
     public BasePerson(Long id) {
