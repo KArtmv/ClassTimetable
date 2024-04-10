@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @DiscriminatorValue(value = "teacher")
-public class Teacher extends BasePerson {
+public class Teacher extends User {
 
     @OneToMany(mappedBy = "teacher", orphanRemoval = true)
     private Set<Lesson> lessons = new LinkedHashSet<>();

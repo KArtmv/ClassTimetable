@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @DiscriminatorValue(value = "admin")
-public class Admin extends BasePerson {
+public class Admin extends User {
 
 }

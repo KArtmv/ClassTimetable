@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BasePerson extends BaseEntity {
+public class User extends BaseEntity {
 
     @Column(name = "first_name", length = 20)
     private String firstName;
@@ -31,16 +31,16 @@ public class BasePerson extends BaseEntity {
     @NotNull
     private String password;
 
-    public BasePerson(Long id) {
+    public User(Long id) {
         super(id);
     }
 
-    public BasePerson(String firstName, String lastName) {
+    public User(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public BasePerson(Long id, String firstName, String lastName) {
+    public User(Long id, String firstName, String lastName) {
         super(id);
         this.firstName = firstName;
         this.lastName = lastName;
