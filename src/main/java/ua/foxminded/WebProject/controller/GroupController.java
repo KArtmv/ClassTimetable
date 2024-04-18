@@ -1,6 +1,7 @@
 package ua.foxminded.WebProject.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,7 @@ import ua.foxminded.WebProject.service.GroupService;
 @Controller
 @RequestMapping("/group")
 @AllArgsConstructor
+@Secured("admin")
 public class GroupController {
     private final GroupService groupService;
 
