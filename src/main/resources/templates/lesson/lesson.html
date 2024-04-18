@@ -11,9 +11,7 @@
 <main>
     <div class="container">
         <div th:insert="~{fragments/header :: header}"></div>
-        <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
+        <h2>Lessons</h2>
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -23,6 +21,7 @@
                         <th scope="col">Course</th>
                         <th scope="col">Teacher</th>
                         <th scope="col">Classroom</th>
+                        <th scope="col">Options</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -36,11 +35,13 @@
                             <a th:text=" ${lesson.getTeacher.lastName}"></a>
                         </td>
                         <td th:text="${lesson.getClassroom.classroomName}"></td>
+                        <td>
+                            <a class="btn btn-primary">Edit</a>
+                            <a class="btn btn-danger">Delete</a>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
     </div>
 </main>
 <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
