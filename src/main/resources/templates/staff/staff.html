@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+</head>
+<body>
+<main>
+    <div class="container">
+        <div th:insert="~{fragments/header :: header}"></div>
+        <div sec:authorize="hasRole('staff')">
+            <h2>Teachers</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">First name</th>
+                    <th scope="col">Last name</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="staff : ${staffs}">
+                    <th scope="row" th:text="${staff.id}"></th>
+                    <td th:text="${staff.firstName}"></td>
+                    <td th:text="${staff.lastName}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div sec:authorize="hasRole('admin')">
+            <h2>Teachers</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">First name</th>
+                    <th scope="col">Last name</th>
+                    <th scope="col">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="staff : ${staffs}">
+                    <th scope="row" th:text="${staff.id}"></th>
+                    <td th:text="${staff.firstName}"></td>
+                    <td th:text="${staff.lastName}"></td>
+                    <td>
+                        <a class="btn btn-primary">Edit</a>
+                        <a class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-success">Add New Staff</a>
+        </div>
+    </div>
+</main>
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
