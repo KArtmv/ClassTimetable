@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+</head>
+<body>
+<main>
+    <div class="container">
+        <div th:insert="~{fragments/header :: header}"></div>
+        <a th:href="@{/student}" class="btn btn-primary">Student</a>
+        <a th:href="@{/teacher}" class="btn btn-primary">Teacher</a>
+        <a th:href="@{/staff}" class="btn btn-primary">Staff</a>
+        <a th:href="@{/lesson}" class="btn btn-primary">Lesson</a>
+        <a th:href="@{/course}" class="btn btn-primary">Course</a>
+        <a th:href="@{/group}" class="btn btn-primary">Group</a>
+    </div>
+</main>
+<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
