@@ -31,6 +31,11 @@ public class User extends BaseEntity {
     @NotNull
     private String password;
 
+    @Transient
+    public String getRole(){
+        return getClass().getAnnotation(DiscriminatorValue.class).value();
+    }
+
     public User(Long id) {
         super(id);
     }
