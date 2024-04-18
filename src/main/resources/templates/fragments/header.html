@@ -18,7 +18,9 @@
                     <a class="navbar-brand" th:href="@{/staff}">Class Timetable</a>
                 </div>
             </div>
-            <a class="navbar-brand" href="/">Class Timetable</a>
+            <div sec:authorize="!isAuthenticated()">
+                <a class="navbar-brand" href="/">Class Timetable</a>
+            </div>
             <ul class="nav navbar-nav justify-content-end">
                 <li class="nav-item">
                     <div sec:authorize="!isAuthenticated()">
