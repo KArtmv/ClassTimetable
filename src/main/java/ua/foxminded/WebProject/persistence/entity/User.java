@@ -32,7 +32,7 @@ public class User extends BaseEntity {
     private String password;
 
     @Transient
-    public String getRole(){
+    public String getRole() {
         return getClass().getAnnotation(DiscriminatorValue.class).value();
     }
 

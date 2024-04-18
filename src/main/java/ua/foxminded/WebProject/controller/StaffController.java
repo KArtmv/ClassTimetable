@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class StaffController {
 
     @GetMapping
-    public String staff(){
+    public String staff() {
         return "staff/staff";
     }
 }

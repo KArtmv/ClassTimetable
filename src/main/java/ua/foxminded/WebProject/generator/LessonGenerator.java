@@ -4,12 +4,11 @@ import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import ua.foxminded.WebProject.DTO.LessonDto;
-import ua.foxminded.WebProject.persistence.entity.Classroom;
-import ua.foxminded.WebProject.persistence.entity.Course;
-import ua.foxminded.WebProject.persistence.entity.Group;
-import ua.foxminded.WebProject.persistence.entity.Teacher;
+import ua.foxminded.WebProject.persistence.entity.*;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.*;
 
 import java.util.List;
@@ -20,6 +19,9 @@ import java.util.random.RandomGenerator;
 @Slf4j
 public class LessonGenerator {
 
+    private static final String email = "test@gmail.com";
+    private static final String emailStudent = "student@gmail.com";
+
     private Integer maxLessons;
     private GroupService groupService;
     private CourseService courseService;
@@ -27,12 +29,31 @@ public class LessonGenerator {
     private ClassroomService classroomService;
     private LessonService lessonService;
     private RandomGenerator randomGenerator;
+    private UserRepository userRepository;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostConstruct
     public void populateIfEmpty() {
         if (lessonService.isEmpty()) {
             populateLessonTable();
         }
+
+        if (userRepository.findUserByEmail(email).isEmpty()) {
+            saveAdmin();
+        }
+
+        if (userRepository.findUserByEmail(emailStudent).isEmpty()) {
+            saveStudent();
+        }
+    }
+
+    private void saveStudent() {
+        Student student = new Student();
+        student.setEmail(emailStudent);
+        student.setPassword(bCryptPasswordEncoder.encode("password"));
+        student.setFirstName("Student");
+        student.setLastName("Student");
+        userRepository.save(student);
     }
 
     private void populateLessonTable() {
@@ -56,5 +77,14 @@ public class LessonGenerator {
         } catch (DataIntegrityViolationException e) {
             log.error(e.getMessage());
         }
+    }
+
+    private void saveAdmin() {
+        Admin admin = new Admin();
+        admin.setEmail(email);
+        admin.setPassword(bCryptPasswordEncoder.encode("password"));
+        admin.setFirstName("Admin");
+        admin.setLastName("Admin");
+        userRepository.save(admin);
     }
 }

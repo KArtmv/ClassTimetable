@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-    <div th:fragment="header">
-        <nav class="navbar navbar-expand bg-light navbar-light mb-3 card">
-            <div class="container-fluid">
-                <div sec:authorize="isAuthenticated()">
-                    <div sec:authorize="hasRole('student')">
-                        <a class="navbar-brand" th:href="@{/student}">Class Timetable</a>
-                    </div>
-                    <div sec:authorize="hasRole('teacher')">
-                        <a class="navbar-brand" th:href="@{/teacher}">Class Timetable</a>
-                    </div>
-                    <div sec:authorize="hasRole('admin')">
-                        <a class="navbar-brand" th:href="@{/admin}">Class Timetable</a>
-                    </div>
-                    <div sec:authorize="hasRole('staff')">
-                        <a class="navbar-brand" th:href="@{/staff}">Class Timetable</a>
-                    </div>
+<div th:fragment="header">
+    <nav class="navbar navbar-expand bg-light navbar-light mb-3 card">
+        <div class="container-fluid">
+            <div sec:authorize="isAuthenticated()">
+                <div sec:authorize="hasRole('student')">
+                    <a class="navbar-brand" th:href="@{/student}">Class Timetable</a>
                 </div>
-                <a class="navbar-brand" href="/">Class Timetable</a>
-                <ul class="nav navbar-nav justify-content-end">
-                    <li class="nav-item">
-                        <div sec:authorize="!isAuthenticated()">
-                            <a class="nav-link" href="/login">Log in</a>
-                        </div>
-                        <div sec:authorize="isAuthenticated()">
-                            <a class="nav-link" href="/logout">Log out</a>
-                        </div>
-                    </li>
-                </ul>
+                <div sec:authorize="hasRole('teacher')">
+                    <a class="navbar-brand" th:href="@{/teacher}">Class Timetable</a>
+                </div>
+                <div sec:authorize="hasRole('admin')">
+                    <a class="navbar-brand" th:href="@{/admin}">Class Timetable</a>
+                </div>
+                <div sec:authorize="hasRole('staff')">
+                    <a class="navbar-brand" th:href="@{/staff}">Class Timetable</a>
+                </div>
             </div>
-        </nav>
-    </div>
+            <a class="navbar-brand" href="/">Class Timetable</a>
+            <ul class="nav navbar-nav justify-content-end">
+                <li class="nav-item">
+                    <div sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" href="/login">Log in</a>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/logout">Log out</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
 </html>

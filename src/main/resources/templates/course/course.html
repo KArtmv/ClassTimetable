@@ -12,27 +12,27 @@
     <div class="container">
         <div th:insert="~{fragments/header :: header}"></div>
         <h2>Courses</h2>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">Course name</th>
-                        <th scope="col">Course description</th>
-                        <th scope="col">Options</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="course : ${courses}">
-                        <th scope="row" th:text="${course.id}"></th>
-                        <td th:text="${course.courseName}"></td>
-                        <td th:text="${course.courseDescription}"></td>
-                        <td>
-                            <a class="btn btn-primary">Edit</a>
-                            <a class="btn btn-danger">Delete</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Course name</th>
+                <th scope="col">Course description</th>
+                <th scope="col">Options</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="course : ${courses}">
+                <th scope="row" th:text="${course.id}"></th>
+                <td th:text="${course.courseName}"></td>
+                <td th:text="${course.courseDescription}"></td>
+                <td>
+                    <a class="btn btn-primary">Edit</a>
+                    <a class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </main>
 <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>

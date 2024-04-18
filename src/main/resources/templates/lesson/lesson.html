@@ -12,36 +12,36 @@
     <div class="container">
         <div th:insert="~{fragments/header :: header}"></div>
         <h2>Lessons</h2>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Lesson num</th>
-                        <th scope="col">Group</th>
-                        <th scope="col">Course</th>
-                        <th scope="col">Teacher</th>
-                        <th scope="col">Classroom</th>
-                        <th scope="col">Options</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="lesson : ${lessons}">
-                        <th scope="row" class="col-2" th:text="${lesson.date}"></th>
-                        <td th:text="${lesson.lessonNum}"></td>
-                        <td th:text="${lesson.getGroup.groupName}"></td>
-                        <td th:text="${lesson.getCourse.courseName}"></td>
-                        <td>
-                            <a th:text="${lesson.getTeacher.firstName}"></a>
-                            <a th:text=" ${lesson.getTeacher.lastName}"></a>
-                        </td>
-                        <td th:text="${lesson.getClassroom.classroomName}"></td>
-                        <td>
-                            <a class="btn btn-primary">Edit</a>
-                            <a class="btn btn-danger">Delete</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Lesson num</th>
+                <th scope="col">Group</th>
+                <th scope="col">Course</th>
+                <th scope="col">Teacher</th>
+                <th scope="col">Classroom</th>
+                <th scope="col">Options</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="lesson : ${lessons}">
+                <th scope="row" class="col-2" th:text="${lesson.date}"></th>
+                <td th:text="${lesson.lessonNum}"></td>
+                <td th:text="${lesson.getGroup.groupName}"></td>
+                <td th:text="${lesson.getCourse.courseName}"></td>
+                <td>
+                    <a th:text="${lesson.getTeacher.firstName}"></a>
+                    <a th:text=" ${lesson.getTeacher.lastName}"></a>
+                </td>
+                <td th:text="${lesson.getClassroom.classroomName}"></td>
+                <td>
+                    <a class="btn btn-primary">Edit</a>
+                    <a class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </main>
 <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
