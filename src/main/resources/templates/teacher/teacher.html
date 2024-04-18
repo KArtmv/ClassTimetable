@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <title>Teacher</title>
@@ -11,26 +12,49 @@
 <main>
     <div class="container">
         <div th:insert="~{fragments/header :: header}"></div>
-        <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">First name</th>
-                        <th scope="col">Last name</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="teacher : ${teachers}">
-                        <th scope="row" th:text="${teacher.id}"></th>
-                        <td th:text="${teacher.firstName}"></td>
-                        <td th:text="${teacher.lastName}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div sec:authorize="hasRole('teacher')">
+            <h2>Teachers</h2>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">First name</th>
+                            <th scope="col">Last name</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="teacher : ${teachers}">
+                            <th scope="row" th:text="${teacher.id}"></th>
+                            <td th:text="${teacher.firstName}"></td>
+                            <td th:text="${teacher.lastName}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+        </div>
+        <div sec:authorize="hasRole('admin')">
+            <h2>Teachers</h2>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">First name</th>
+                            <th scope="col">Last name</th>
+                            <th scope="col">Options</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="teacher : ${teachers}">
+                            <th scope="row" th:text="${teacher.id}"></th>
+                            <td th:text="${teacher.firstName}"></td>
+                            <td th:text="${teacher.lastName}"></td>
+                            <td>
+                                <a class="btn btn-primary">Edit</a>
+                                <a class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+            <a class="btn btn-success">Add New Teacher</a>
         </div>
     </div>
 </main>
