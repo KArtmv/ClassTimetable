@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
@@ -11,22 +11,9 @@
 <main>
     <div class="container">
         <div th:insert="~{fragments/header :: header}"></div>
-        <div class="d-grid gap-2 mx-2">
-            <form th:action="@{/student}" method="get" enctype="multipart/form-data">
-                <button type="submit" class="btn btn-primary  col-2">Student</button>
-            </form>
-            <form th:action="@{/teacher}" method="get" enctype="multipart/form-data">
-                <button type="submit" class="btn btn-primary col-2">Teacher</button>
-            </form>
-            <form th:action="@{/lesson}" method="get" enctype="multipart/form-data">
-                <button type="submit" class="btn btn-primary col-2">Lesson</button>
-            </form>
-            <form th:action="@{/course}" method="get" enctype="multipart/form-data">
-                <button type="submit" class="btn btn-primary col-2">Course</button>
-            </form>
-            <form th:action="@{/group}" method="get" enctype="multipart/form-data">
-                <button type="submit" class="btn btn-primary col-2">Group</button>
-            </form>
+        <div class="container mt-5">
+            <h1>Welcome to Timetable</h1>
+            <p>Today is: <span th:text="${currentDate}"></span> </p>
         </div>
     </div>
 </main>
