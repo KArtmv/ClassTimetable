@@ -1,6 +1,7 @@
 package ua.foxminded.WebProject.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,7 +11,7 @@ import ua.foxminded.WebProject.service.CourseService;
 
 @Controller
 @RequestMapping("/course")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Secured("admin")
 public class CourseController {
 

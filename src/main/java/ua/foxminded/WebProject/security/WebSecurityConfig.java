@@ -1,6 +1,7 @@
 package ua.foxminded.WebProject.security;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,11 +19,11 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private CustomAuthenticationSuccessHandler successHandler;
-    private UserDetailsService userDetailsService;
+    private final CustomAuthenticationSuccessHandler successHandler;
+    private final UserDetailsService userDetailsService;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -33,7 +34,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/login", "/login-error").permitAll()
+                        .requestMatchers("/", "/login*").permitAll()
                         .requestMatchers("/admin").hasRole("admin")
                         .requestMatchers("/student").hasAnyRole("student", "admin")
                         .requestMatchers("/teacher").hasAnyRole("teacher", "admin")

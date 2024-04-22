@@ -2,6 +2,7 @@ package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.persistence.entity.Classroom;
@@ -11,7 +12,7 @@ import ua.foxminded.WebProject.service.ClassroomService;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ClassroomServiceImpl implements ClassroomService {
 

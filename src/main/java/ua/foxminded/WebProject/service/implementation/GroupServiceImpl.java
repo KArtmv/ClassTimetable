@@ -2,6 +2,7 @@ package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.persistence.entity.Group;
@@ -11,11 +12,11 @@ import ua.foxminded.WebProject.service.GroupService;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class GroupServiceImpl implements GroupService {
 
-    private GroupRepository repository;
+    private final GroupRepository repository;
 
     @Override
     public List<Group> getAll() {

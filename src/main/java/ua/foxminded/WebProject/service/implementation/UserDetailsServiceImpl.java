@@ -1,6 +1,7 @@
 package ua.foxminded.WebProject.service.implementation;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,10 +12,10 @@ import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.util.CustomUserDetails;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     @Override

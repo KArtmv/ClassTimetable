@@ -5,13 +5,14 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
 
 /**
  * DTO for {@link ua.foxminded.WebProject.persistence.entity.Teacher}
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class TeacherDto implements Serializable {
     @Size(min = 2, max = 15, message = "First name must be between {min} and {max} characters")
