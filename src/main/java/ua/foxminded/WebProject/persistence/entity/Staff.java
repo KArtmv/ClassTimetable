@@ -8,4 +8,8 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue(value = "staff")
 @NoArgsConstructor
 public class Staff extends User {
+
+    public Staff(Long id, String firstName, String lastName) {
+        super(id, firstName, lastName);
+    }
 }
