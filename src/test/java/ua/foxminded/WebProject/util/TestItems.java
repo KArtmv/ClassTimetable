@@ -8,10 +8,7 @@ import ua.foxminded.WebProject.persistence.entity.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Getter
 public class TestItems {
@@ -34,7 +31,7 @@ public class TestItems {
     private final String teacherFirstName = "Jessica";
     private final String teacherLastName = "Brown";
     private final Teacher teacher = new Teacher(getTeacherId(), getTeacherFirstName(), getTeacherLastName());
-    public Teacher teacherIdFirst = new Teacher(testData.getTeacherId(), testData.getTeacherFirstName(), testData.getTeacherLastName());
+    private final Teacher teacherIdFirst = new Teacher(testData.getTeacherId(), testData.getTeacherFirstName(), testData.getTeacherLastName());
     private final TeacherDto teacherDto = new TeacherDto(testData.getTeacherFirstName(), testData.getTeacherLastName());
 
     private final Lesson lesson = new Lesson(testData.getLessonId(), testData.getDate(), testData.getLessenNum(), getCourseWithIdSeven(), getGroup(), getClassroom(), getTeacher());
@@ -43,6 +40,10 @@ public class TestItems {
     private final Student student = new Student(testData.getStudentId(), testData.getStudentFirstName(), testData.getStudentLastName(), getGroup());
     private final Student studentIdFive = new Student(5L, "Amelia", "Martinez", getGroup());
     private final StudentDto studentDto = new StudentDto(testData.getStudentFirstName(), testData.getStudentLastName(), new Group(testData.getGroupId()));
+
+    private final Admin admin = new Admin(testData.getAdminFirstName(), testData.getAdminLastName());
+
+    private final Staff staff = new Staff(testData.getStaffLastName(), testData.getStaffLastName());
 
     private final LocalDate dateOfMonday = testData.getDate().with(DayOfWeek.MONDAY);
     private final LocalDate dateOfFriday = testData.getDate().with(DayOfWeek.FRIDAY);
@@ -70,7 +71,11 @@ public class TestItems {
             new Group(2L, "HV-14"),
             new Group(3L, "QM-09"));
 
-    private final List<Staff> staffs = Collections.singletonList(new Staff(1L, "John", "Dou"));
+    public List<Staff> getStaffs(){
+        Staff staff1 = getStaff();
+        staff1.setId(1L);
+        return Collections.singletonList(staff1);
+    }
 
 
     public Lesson getParticipants() {
@@ -90,6 +95,15 @@ public class TestItems {
             new Teacher(8L, "Olivia", "Anderson")
     );
 
+    public List<User> getUsers(){
+        List<User> users = new ArrayList<>();
+        users.add(getStaffWithEmail());
+        users.add(getAdminWithEmail());
+        users.add(getStudentWithEmail());
+        users.add(getTeacherWithEmail());
+        return users;
+    }
+
     private final List<Lesson> lessonsPerDay = lessons.getLessons().stream().filter(l -> l.getDate().isEqual(testData.getDate())).toList();
 
     private final List<Lesson> allLessons = lessons.getLessons().stream().toList();
@@ -108,4 +122,36 @@ public class TestItems {
             .filter(l -> l.getTeacher().getId().equals(getTeacher().getId())).toList();
     private final List<Lesson> teacherLessonsPerDay = getTeacherLessonsPerWeek().stream()
             .filter(l -> l.getDate().isEqual(testData.getDate())).toList();
+
+    private Student getStudentWithEmail() {
+        Student student1 = new Student();
+        student1.setFirstName(testData.getStudentFirstName());
+        student1.setLastName(testData.getStudentLastName());
+        student1.setEmail(testData.getStudentEmail());
+        return student1;
+    }
+
+    private Admin getAdminWithEmail() {
+        Admin admin1 = new Admin();
+        admin1.setFirstName(testData.getAdminFirstName());
+        admin1.setLastName(testData.getAdminLastName());
+        admin1.setEmail(testData.getAdminEmail());
+        return admin1;
+    }
+
+    private Staff getStaffWithEmail() {
+        Staff staff1 = new Staff();
+        staff1.setFirstName(testData.getStudentFirstName());
+        staff1.setLastName(testData.getStudentLastName());
+        staff1.setEmail(testData.getStudentEmail());
+        return staff1;
+    }
+
+    private Teacher getTeacherWithEmail() {
+        Teacher teacher1 = new Teacher();
+        teacher1.setFirstName(testData.getTeacherFirstName());
+        teacher1.setLastName(testData.getTeacherLastName());
+        teacher1.setEmail(testData.getTeacherEmail());
+        return teacher1;
+    }
 }
