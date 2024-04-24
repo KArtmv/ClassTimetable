@@ -61,7 +61,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public boolean isEmpty() {
+    public boolean isTableEmpty() {
         return repository.count() == 0;
     }
 
