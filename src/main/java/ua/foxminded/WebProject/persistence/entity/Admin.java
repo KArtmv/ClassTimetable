@@ -9,4 +9,11 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue(value = "admin")
 public class Admin extends User {
 
+    public Admin(String firstName, String lastName) {
+        super(firstName, lastName);
+    }
+
+    public Admin(Long id, String firstName, String lastName) {
+        super(id, firstName, lastName);
+    }
 }
