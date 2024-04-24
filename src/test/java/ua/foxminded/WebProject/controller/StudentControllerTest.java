@@ -1,10 +1,15 @@
 package ua.foxminded.WebProject.controller;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
+import ua.foxminded.WebProject.security.WebSecurityConfig;
 import ua.foxminded.WebProject.service.StudentService;
 import ua.foxminded.WebProject.util.TestItems;
 
@@ -13,7 +18,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ua.foxminded.WebProject.util.CustomSecurityMockMvcRequestPostProcessors.testUser;
 
+@Import(WebSecurityConfig.class)
 @WebMvcTest(StudentController.class)
 class StudentControllerTest {
 
@@ -24,11 +32,15 @@ class StudentControllerTest {
 
     @MockBean
     private StudentService service;
+    @MockBean
+    private UserRepository repository;
 
-    @Test
-    void studentPage() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"admin", "student", "staff"})
+    void studentPage_shouldReturnStudentPage_whenLoginUserWithAbleAccess(String role) throws Exception {
         when(service.getAll()).thenReturn(testItems.getStudents());
-        this.mockMvc.perform(get("/student")).andDo(print())
+
+        this.mockMvc.perform(get("/student").with(testUser(role))).andDo(print())
                 .andExpectAll(
                         content().string(containsString("Liam")),
                         content().string(containsString("Jones")),
@@ -45,5 +57,11 @@ class StudentControllerTest {
                         content().string(containsString("Amelia")),
                         content().string(containsString("Martinez")),
                         content().string(containsString("YS-27")));
+    }
+
+    @Test
+    void studentPage_shouldReturnForbiddenStatus_whenLoginUserWithAbleAccess() throws Exception {
+        this.mockMvc.perform(get("/student").with(testUser("teacher")))
+                .andExpect(status().isForbidden());
     }
 }

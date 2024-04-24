@@ -1,20 +1,27 @@
 package ua.foxminded.WebProject.controller;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
+import ua.foxminded.WebProject.security.WebSecurityConfig;
 import ua.foxminded.WebProject.service.CourseService;
 import ua.foxminded.WebProject.util.TestItems;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ua.foxminded.WebProject.util.CustomSecurityMockMvcRequestPostProcessors.testUser;
 
-@WebMvcTest(controllers = CourseController.class)
+@Import(WebSecurityConfig.class)
+@WebMvcTest(CourseController.class)
 class CourseControllerTest {
 
     private final TestItems testItems = new TestItems();
@@ -24,12 +31,15 @@ class CourseControllerTest {
 
     @MockBean
     private CourseService courseService;
+    @MockBean
+    private UserRepository userRepository;
 
-    @Test
-    void coursePage() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"admin", "staff"})
+    void coursePage_shouldReturnCoursePage_whenLoginUserWithAbleAccess(String role) throws Exception {
         when(courseService.getAll()).thenReturn(testItems.getCourses());
 
-        mockMvc.perform(get("/course")).andDo(print())
+        mockMvc.perform(get("/course").with(testUser(role))).andDo(print())
                 .andExpectAll(
                         status().isOk(),
                         model().attributeExists("courses"),
@@ -41,5 +51,12 @@ class CourseControllerTest {
                         content().string(containsString("Explore the history of ancient civilizations")),
                         content().string(containsString("Creative Writing Workshop")),
                         content().string(containsString("Develop your writing skills in a creative environment")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"student", "teacher"})
+    void coursePage_shouldReturnForbiddenStatus_whenLoginUserWithoutAbleAccess(String role) throws Exception {
+        mockMvc.perform(get("/course").with(testUser(role)))
+                .andExpect(status().isForbidden());
     }
 }
