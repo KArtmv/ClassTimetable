@@ -1,17 +1,24 @@
 package ua.foxminded.WebProject.controller;
 
-import org.springframework.security.access.annotation.Secured;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ua.foxminded.WebProject.persistence.repository.StaffRepository;
 
 @Controller
 @RequestMapping("/staff")
-@Secured({"staff", "admin"})
+@PreAuthorize("hasAnyRole('staff', 'admin')")
+@RequiredArgsConstructor
 public class StaffController {
 
+    private final StaffRepository staffRepository;
+
     @GetMapping
-    public String staff() {
+    public String staffPage(Model model) {
+        model.addAttribute("staffs", staffRepository.findAll());
         return "staff/staff";
     }
 }
