@@ -12,7 +12,7 @@
 <main>
     <div class="container">
         <div th:insert="~{fragments/header :: header}"></div>
-        <div sec:authorize="hasRole('student')">
+        <div sec:authorize="hasAnyRole('student', 'staff')">
             <h2>Students</h2>
             <table class="table table-striped">
                 <thead>
