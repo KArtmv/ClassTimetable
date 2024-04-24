@@ -12,7 +12,7 @@
 <div class="container-sm mt-5 col-3 card">
     <h2 class="mt-2">Log in</h2>
     <div th:if="${loginError}" class="error container p-2 bg-danger text-white text-center">
-        Invalid email or password
+        **Login attempt unsuccessful.** Please double-check your username/email and password.
     </div>
     <form action="login" method='POST'>
         <div class="mb-3">
