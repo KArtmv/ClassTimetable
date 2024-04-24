@@ -21,12 +21,12 @@ class StudentRepositoryTest {
 
     private final TestData testData = new TestData();
     @Autowired
-    private StudentRepository repository;
+    private StudentRepository studentRepository;
 
     @Test
     @Sql(value = {"/sql/student/student.sql", "/sql/group/group.sql"})
     void findById_shouldReturnStudentInstance_whenIsFound() {
-        Optional<Student> optionalResult = repository.findById(testData.getStudentId());
+        Optional<Student> optionalResult = studentRepository.findById(testData.getStudentId());
         assertAll(() -> {
             assertTrue(optionalResult.isPresent());
             Student result = optionalResult.get();
@@ -39,13 +39,13 @@ class StudentRepositoryTest {
 
     @Test
     void findById_shouldReturnEmptyOptional_whenStudentIsNotFound() {
-        assertFalse(repository.findById(testData.getStudentId()).isPresent());
+        assertFalse(studentRepository.findById(testData.getStudentId()).isPresent());
     }
 
     @Test
     @Sql("/sql/group/group.sql")
     void saveStudent_shouldReturnStudentInstanceWithId_whenSavedSuccessfully() {
-        assertThat(repository.save(testData.getStudent()).getId()).isNotNull();
+        assertThat(studentRepository.save(testData.getStudent()).getId()).isNotNull();
     }
 
     @Test
@@ -53,10 +53,16 @@ class StudentRepositoryTest {
     void deleteStudent_shouldDoNothing_whenStudentDeleted() {
         Student student = new Student(testData.getStudentId());
         assertAll(() -> {
-            assertThat(repository.findAll()).hasSize(1);
-            repository.delete(student);
-            assertThat(repository.findAll()).isEmpty();
+            assertThat(studentRepository.findAll()).hasSize(1);
+            studentRepository.delete(student);
+            assertThat(studentRepository.findAll()).isEmpty();
         });
+    }
+
+    @Test
+    @Sql(scripts = {"/sql/student/students.sql", "/sql/group/groups.sql"})
+    void findAll_shouldReturnAllStudents_whenAllStudentsAreFound() {
+        assertThat(studentRepository.findAll()).hasSize(3);
     }
 }
 
