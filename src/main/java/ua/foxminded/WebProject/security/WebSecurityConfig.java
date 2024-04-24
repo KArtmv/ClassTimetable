@@ -1,29 +1,51 @@
 package ua.foxminded.WebProject.security;
 
-import lombok.AllArgsConstructor;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
+
+import java.io.IOException;
+import java.util.Collections;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
-public class WebSecurityConfig {
+public class WebSecurityConfig implements UserDetailsService, AuthenticationSuccessHandler {
 
-    private final CustomAuthenticationSuccessHandler successHandler;
-    private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findUserByEmail(username)
+                .map(user -> new User(
+                        user.getEmail(),
+                        user.getPassword(),
+                        Collections.<GrantedAuthority>singletonList(
+                                new SimpleGrantedAuthority("ROLE_" + user.getRole()))))
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -34,34 +56,37 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/login*").permitAll()
+                        .requestMatchers("/", "/login*").anonymous()
                         .requestMatchers("/admin").hasRole("admin")
-                        .requestMatchers("/student").hasAnyRole("student", "admin")
-                        .requestMatchers("/teacher").hasAnyRole("teacher", "admin")
+                        .requestMatchers("/student").hasAnyRole("student", "admin", "staff")
+                        .requestMatchers("/teacher").hasAnyRole("teacher", "admin", "staff")
                         .requestMatchers("/course", "/group", "/lesson", "/staff").hasAnyRole("admin", "staff")
                         .anyRequest().authenticated())
                 .formLogin(login -> login.loginPage("/login")
-                        .successHandler(successHandler)
+                        .successHandler(this)
                         .failureHandler(new SimpleUrlAuthenticationFailureHandler("/login-error")))
                 .httpBasic(withDefaults())
                 .logout(logout -> logout.permitAll().logoutSuccessUrl("/"));
-
-        httpSecurity.authenticationProvider(authenticationProvider());
 
         return httpSecurity.build();
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
-
-    @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+        String role = authentication.getAuthorities().toString();
+        role = role.substring(6, role.length() - 1);
+
+        switch (role) {
+            case "admin" -> response.sendRedirect("/admin");
+            case "teacher" -> response.sendRedirect("/teacher");
+            case "student" -> response.sendRedirect("/student");
+            case "staff" -> response.sendRedirect("/staff");
+            default -> response.sendRedirect("/");
+        }
     }
 }
