@@ -3,7 +3,7 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
-    <title>Teacher</title>
+    <title>Staff</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
     <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
@@ -13,7 +13,7 @@
     <div class="container">
         <div th:insert="~{fragments/header :: header}"></div>
         <div sec:authorize="hasRole('staff')">
-            <h2>Teachers</h2>
+            <h2>Staffs</h2>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -32,7 +32,7 @@
             </table>
         </div>
         <div sec:authorize="hasRole('admin')">
-            <h2>Teachers</h2>
+            <h2>Staffs</h2>
             <table class="table table-striped">
                 <thead>
                 <tr>
