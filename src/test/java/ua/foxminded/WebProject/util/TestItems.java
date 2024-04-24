@@ -9,6 +9,7 @@ import ua.foxminded.WebProject.persistence.entity.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -68,6 +69,8 @@ public class TestItems {
             getGroup(),
             new Group(2L, "HV-14"),
             new Group(3L, "QM-09"));
+
+    private final List<Staff> staffs = Collections.singletonList(new Staff(1L, "John", "Dou"));
 
 
     public Lesson getParticipants() {
