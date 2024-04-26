@@ -43,10 +43,9 @@ class LessonGeneratorTest {
     }
 
     @Test
-    void populateIfEmpty_shouldGenerateLessonDtoInstance_whenTableIsEmpty() {
+    void populateIfEmpty_shouldGenerateLessonDtoInstance_whenIsInvoke() {
         ReflectionTestUtils.setField(lessonGenerator, "maxLessons", 1);
 
-        when(lessonService.isEmpty()).thenReturn(true);
         when(courseService.getAll()).thenReturn(testItems.getCourses());
         when(groupService.getAll()).thenReturn(testItems.getGroups());
         when(teacherService.getAll()).thenReturn(testItems.getTeachers());
@@ -55,9 +54,8 @@ class LessonGeneratorTest {
         when(lessonService.saveLesson(any(LessonDto.class))).thenReturn(testItems.getLesson());
         when(randomGenerator.nextInt()).thenReturn(7).thenReturn(1).thenReturn(3).thenReturn(6);
 
-        lessonGenerator.populateIfEmpty();
+        lessonGenerator.fillLessonTable();
 
-        verify(lessonService).isEmpty();
         verify(courseService).getAll();
         verify(groupService).getAll();
         verify(teacherService).getAll();
@@ -66,19 +64,9 @@ class LessonGeneratorTest {
     }
 
     @Test
-    void populateIfEmpty_shouldDoNothing_whenTableIsNotEmpty() {
-        when(lessonService.isEmpty()).thenReturn(false);
-
-        lessonGenerator.populateIfEmpty();
-
-        verify(lessonService).isEmpty();
-    }
-
-    @Test
-    void populateIfEmpty_shouldThrowException_whenDuplicatConstrants() {
+    void isLessonTableEmpty_shouldThrowException_whenDuplicatConstrants() {
         ReflectionTestUtils.setField(lessonGenerator, "maxLessons", 1);
 
-        when(lessonService.isEmpty()).thenReturn(true);
         when(courseService.getAll()).thenReturn(testItems.getCourses());
         when(groupService.getAll()).thenReturn(testItems.getGroups());
         when(teacherService.getAll()).thenReturn(testItems.getTeachers());
@@ -86,9 +74,8 @@ class LessonGeneratorTest {
         when(lessonService.getAll()).thenReturn(Collections.emptyList()).thenReturn(Collections.singletonList(testItems.getLesson()));
         when(lessonService.saveLesson(any(LessonDto.class))).thenThrow(DataIntegrityViolationException.class);
 
-        lessonGenerator.populateIfEmpty();
+        lessonGenerator.fillLessonTable();
 
-        verify(lessonService).isEmpty();
         verify(courseService).getAll();
         verify(groupService).getAll();
         verify(teacherService).getAll();
