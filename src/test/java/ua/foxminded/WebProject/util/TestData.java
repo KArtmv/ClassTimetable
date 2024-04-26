@@ -60,5 +60,4 @@ public class TestData {
 
     private final LocalDate dateTeacherStart = getDate().with(DayOfWeek.WEDNESDAY);
     private final LocalDate dateTeacherEnd = getDate().with(DayOfWeek.FRIDAY);
-
 }

@@ -104,6 +104,21 @@ public class TestItems {
         return users;
     }
 
+    public Student getFullStudent(){
+        Student student1 = getStudent();
+        student1.setEmail(testData.getStudentEmail());
+        student1.setPassword("password");
+        student1.setGroup(getGroup());
+        return student1;
+    }
+
+    public Teacher getFullTeacher(){
+        Teacher teacher1 = getTeacher();
+        teacher1.setEmail(testData.getTeacherEmail());
+        teacher1.setPassword("password");
+        return teacher1;
+    }
+
     private final List<Lesson> lessonsPerDay = lessons.getLessons().stream().filter(l -> l.getDate().isEqual(testData.getDate())).toList();
 
     private final List<Lesson> allLessons = lessons.getLessons().stream().toList();

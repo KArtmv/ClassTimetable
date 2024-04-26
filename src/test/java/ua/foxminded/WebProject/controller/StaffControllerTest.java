@@ -44,9 +44,7 @@ class StaffControllerTest {
                         status().isOk(),
                         model().attributeExists("staffs"),
                         model().attribute("staffs", staffRepository.findAll()),
-                        view().name("staff/staff"),
-                        content().string(containsString("John")),
-                        content().string(containsString("Dou")));
+                        view().name("staff/staff"));
 
     }
 

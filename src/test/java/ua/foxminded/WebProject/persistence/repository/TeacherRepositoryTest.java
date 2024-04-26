@@ -27,7 +27,7 @@ class TeacherRepositoryTest {
 
     @Test
     void save_shouldReturnTeacherInstanceWithId_whenIsSavedSuccessfully() {
-        Teacher result = repository.save(testData.getTeacher());
+        Teacher result = repository.save(testItems.getFullTeacher());
         assertThat(result.getId()).isNotNull();
     }
 
