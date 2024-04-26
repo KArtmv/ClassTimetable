@@ -71,7 +71,7 @@ public class TestItems {
             new Group(2L, "HV-14"),
             new Group(3L, "QM-09"));
 
-    public List<Staff> getStaffs(){
+    public List<Staff> getStaffs() {
         Staff staff1 = getStaff();
         staff1.setId(1L);
         return Collections.singletonList(staff1);
@@ -95,7 +95,7 @@ public class TestItems {
             new Teacher(8L, "Olivia", "Anderson")
     );
 
-    public List<User> getUsers(){
+    public List<User> getUsers() {
         List<User> users = new ArrayList<>();
         users.add(getStaffWithEmail());
         users.add(getAdminWithEmail());
@@ -104,7 +104,7 @@ public class TestItems {
         return users;
     }
 
-    public Student getFullStudent(){
+    public Student getFullStudent() {
         Student student1 = getStudent();
         student1.setEmail(testData.getStudentEmail());
         student1.setPassword("password");
@@ -112,7 +112,7 @@ public class TestItems {
         return student1;
     }
 
-    public Teacher getFullTeacher(){
+    public Teacher getFullTeacher() {
         Teacher teacher1 = getTeacher();
         teacher1.setEmail(testData.getTeacherEmail());
         teacher1.setPassword("password");

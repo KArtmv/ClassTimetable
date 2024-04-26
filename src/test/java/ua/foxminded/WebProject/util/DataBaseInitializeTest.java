@@ -6,12 +6,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import ua.foxminded.WebProject.generator.LessonGenerator;
 import ua.foxminded.WebProject.service.LessonService;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class DataBaseInitializeTest {

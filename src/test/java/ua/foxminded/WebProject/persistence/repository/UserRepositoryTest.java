@@ -31,10 +31,10 @@ class UserRepositoryTest {
         Optional<User> result = userRepository.findUserByEmail(testData.getAdminEmail());
 
         assertAll(() -> {
-                assertTrue(result.isPresent());
-                User user = result.get();
-                assertEquals(user.getFirstName(), testData.getAdminFirstName());
-                assertEquals(user.getLastName(), testData.getAdminLastName());
+            assertTrue(result.isPresent());
+            User user = result.get();
+            assertEquals(user.getFirstName(), testData.getAdminFirstName());
+            assertEquals(user.getLastName(), testData.getAdminLastName());
         });
     }
 

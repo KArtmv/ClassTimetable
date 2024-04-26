@@ -2,13 +2,13 @@ package ua.foxminded.WebProject.generator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import ua.foxminded.WebProject.DTO.LessonDto;
-import ua.foxminded.WebProject.persistence.entity.*;
+import ua.foxminded.WebProject.persistence.entity.Classroom;
+import ua.foxminded.WebProject.persistence.entity.Course;
+import ua.foxminded.WebProject.persistence.entity.Group;
+import ua.foxminded.WebProject.persistence.entity.Teacher;
 import ua.foxminded.WebProject.service.*;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class LessonGenerator {
         }
     }
 
-    private LessonDto generateLesson(){
+    private LessonDto generateLesson() {
         List<Group> groups = groupService.getAll();
         List<Course> courses = courseService.getAll();
         List<Teacher> teachers = teacherService.getAll();

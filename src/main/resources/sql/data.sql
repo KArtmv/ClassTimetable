@@ -43,7 +43,7 @@ from (VALUES ('teacher', 'John', 'Smith', 'JohnSmith@gmail.com'),
              ('teacher', 'Jessica', 'Brown', 'JessicaBrown@gmail.com'),
              ('teacher', 'William', 'Moore', 'WilliamMoore@gmail.com'),
              ('teacher', 'Olivia', 'Anderson', 'OliviaAnderson@gmail.com')) sourse_data
-where not exists(select null from users where role='teacher')
+where not exists(select null from users where role = 'teacher')
 on conflict (id) DO NOTHING;
 
 INSERT INTO classroom
@@ -264,13 +264,13 @@ from (values ('student', 'Liam', 'Jones', 'LiamJones@gmail.com', 2),
              ('student', 'Caden', 'Miller', 'CadenMiller@gmail.com', 5),
              ('student', 'Mia', 'Thomas', 'MiaThomas@gmail.com', 8),
              ('student', 'Student', 'Student', 'StudentStudent@gmail.com', 1)) sourse_data
-where not exists(select null from users where role='student')
+where not exists(select null from users where role = 'student')
 on conflict (id) DO NOTHING;
 
 INSERT INTO users (role, first_name, last_name, email)
 select *
 from (VALUES ('staff', 'Lucas', 'Smith', 'LucasSmithSt@gmail.com'),
              ('staff', 'Emily', 'Taylor', 'EmilyTaylor@gmail.com'),
-             ('staff', 'Olivia', 'Davis', 'OliviaJDavis@gmail.com') ) sourse_data
-where not exists(select null from users where role='staff')
+             ('staff', 'Olivia', 'Davis', 'OliviaJDavis@gmail.com')) sourse_data
+where not exists(select null from users where role = 'staff')
 on conflict (id) DO NOTHING;

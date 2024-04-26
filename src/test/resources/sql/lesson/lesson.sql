@@ -8,7 +8,7 @@ INSERT INTO classroom (id, classroom_name)
 VALUES (3, 'Room 103');
 
 INSERT INTO users (id, role, first_name, last_name)
-VALUES (6,'teacher', 'Jessica', 'Brown');
+VALUES (6, 'teacher', 'Jessica', 'Brown');
 
 INSERT INTO lesson(id, date, lesson_num, course_id, group_id, classroom_id, teacher_id)
 VALUES (2, '2024-03-11', 1, 7, 1, 3, 6);

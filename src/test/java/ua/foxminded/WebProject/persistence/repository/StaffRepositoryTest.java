@@ -22,7 +22,7 @@ class StaffRepositoryTest {
 
     @Test
     @Sql("/sql/staff/staffs.sql")
-    void findAll_shouldReturnListOfAllStaffs_whenIsInvoke(){
+    void findAll_shouldReturnListOfAllStaffs_whenIsInvoke() {
         List<Staff> staffs = staffRepository.findAll();
 
         assertThat(staffs).hasSize(3);
