@@ -16,26 +16,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {SqlScriptExecutor.class}))
+@DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {InitialDataLoader.class}))
 @ActiveProfiles("test")
 @FlywayTest
-class SqlScriptExecutorTest {
+class InitialDataLoaderTest {
 
     @Autowired
-    private SqlScriptExecutor scriptExecutor;
+    private InitialDataLoader scriptExecutor;
 
     @Test
-    void execute_ShouldReturnTrue_WhenScriptExecutesSuccessfully() {
-        assertTrue(scriptExecutor.execute());
+    void populate_ShouldReturnTrue_WhenScriptExecutesSuccessfully() {
+        assertTrue(scriptExecutor.populate());
     }
 
     @Test
-    void execute_ShouldReturnFalse_WhenScriptExecutesFailed() throws SQLException {
+    void populate_ShouldReturnFalse_WhenScriptExecutesFailed() throws SQLException {
         DataSource mockDataSource = mock(DataSource.class);
-        scriptExecutor = mock(SqlScriptExecutor.class);
+        scriptExecutor = mock(InitialDataLoader.class);
 
         when(mockDataSource.getConnection()).thenThrow(SQLException.class);
 
-        assertFalse(scriptExecutor.execute());
+        assertFalse(scriptExecutor.populate());
     }
 }

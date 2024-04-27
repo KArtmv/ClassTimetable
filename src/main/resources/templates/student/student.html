@@ -6,12 +6,11 @@
     <title>Student</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
-    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
 </head>
 <body>
 <main>
     <div class="container">
-        <div th:insert="~{fragments/header :: header}"></div>
         <div sec:authorize="hasAnyRole('student', 'staff')">
             <h2>Students</h2>
             <table class="table table-striped">
@@ -62,6 +61,5 @@
         </div>
     </div>
 </main>
-<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

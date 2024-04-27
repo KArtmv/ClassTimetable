@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-<div th:fragment="header">
+<th:block th:fragment="header">
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+
     <nav class="navbar navbar-expand bg-light navbar-light mb-3 card">
         <div class="container-fluid">
             <div sec:authorize="isAuthenticated()">
@@ -33,5 +35,5 @@
             </ul>
         </div>
     </nav>
-</div>
+</th:block>
 </html>
