@@ -11,6 +11,7 @@ import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
+import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,14 +19,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.foxminded.WebProject.util.CustomSecurityMockMvcRequestPostProcessors.testUser;
 
-@Import(WebSecurityConfig.class)
+@Import({WebSecurityConfig.class, CustomAuthenticationSuccessHandler.class})
 @WebMvcTest(controllers = LoginController.class)
 class LoginControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @MockBean
-    private UserRepository userRepository;
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff", "teacher", "student"})

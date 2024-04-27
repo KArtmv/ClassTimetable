@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
 import ua.foxminded.WebProject.service.GroupService;
+import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 import ua.foxminded.WebProject.util.TestItems;
 
 import static org.hamcrest.Matchers.containsString;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.foxminded.WebProject.util.CustomSecurityMockMvcRequestPostProcessors.testUser;
 
-@Import(WebSecurityConfig.class)
+@Import({WebSecurityConfig.class, CustomAuthenticationSuccessHandler.class})
 @WebMvcTest(GroupController.class)
 class GroupControllerTest {
 
@@ -30,8 +31,6 @@ class GroupControllerTest {
 
     @MockBean
     private GroupService groupService;
-    @MockBean
-    private UserRepository userRepository;
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})

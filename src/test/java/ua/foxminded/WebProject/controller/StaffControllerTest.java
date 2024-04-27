@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.WebProject.persistence.repository.StaffRepository;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
+import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 import ua.foxminded.WebProject.util.TestItems;
 
 import static org.mockito.Mockito.when;
@@ -18,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ua.foxminded.WebProject.util.CustomSecurityMockMvcRequestPostProcessors.testUser;
 
-@Import(WebSecurityConfig.class)
+@Import({WebSecurityConfig.class, CustomAuthenticationSuccessHandler.class})
 @WebMvcTest(controllers = StaffController.class)
 class StaffControllerTest {
 
@@ -28,8 +29,6 @@ class StaffControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private StaffRepository staffRepository;
-    @MockBean
-    private UserRepository userRepository;
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})

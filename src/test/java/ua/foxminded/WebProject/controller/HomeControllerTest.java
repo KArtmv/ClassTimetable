@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
+import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 import ua.foxminded.WebProject.util.MyLocalDate;
 import ua.foxminded.WebProject.util.TestData;
 
@@ -17,7 +18,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Import(WebSecurityConfig.class)
+@Import({WebSecurityConfig.class, CustomAuthenticationSuccessHandler.class})
 @WebMvcTest(HomeController.class)
 class HomeControllerTest {
 
@@ -27,8 +28,6 @@ class HomeControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private MyLocalDate localDate;
-    @MockBean
-    private UserRepository userRepository;
 
     @Test
     void home() throws Exception {

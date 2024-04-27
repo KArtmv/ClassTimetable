@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
 import ua.foxminded.WebProject.service.StudentService;
+import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 import ua.foxminded.WebProject.util.TestItems;
 
 import static org.hamcrest.Matchers.containsString;
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ua.foxminded.WebProject.util.CustomSecurityMockMvcRequestPostProcessors.testUser;
 
-@Import(WebSecurityConfig.class)
+@Import({WebSecurityConfig.class, CustomAuthenticationSuccessHandler.class})
 @WebMvcTest(StudentController.class)
 class StudentControllerTest {
 
@@ -32,8 +33,6 @@ class StudentControllerTest {
 
     @MockBean
     private StudentService service;
-    @MockBean
-    private UserRepository repository;
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "student", "staff"})
