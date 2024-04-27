@@ -15,14 +15,15 @@ import ua.foxminded.WebProject.service.LessonService;
 @Slf4j
 public class DataBaseInitialize implements ApplicationRunner {
 
-    private final SqlScriptExecutor scriptExecutor;
+    private final InitialDataLoader dataLoader;
     private final LessonGenerator lessonGenerator;
     private final LessonService lessonService;
 
     @Override
     public void run(ApplicationArguments args) {
         try {
-            if (lessonService.isTableEmpty() && scriptExecutor.execute()) {
+            if (lessonService.isTableEmpty()) {
+                dataLoader.populate();
                 lessonGenerator.fillLessonTable();
             }
         } catch (Exception e) {
