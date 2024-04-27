@@ -20,7 +20,7 @@ public class InitialDataLoader {
     @Transactional
     public void populate() {
         Resource resource = new ClassPathResource(SCRIPT_FILE);
-        ResourceDatabasePopulator fillDatabase = new ResourceDatabasePopulator(resource);
-        fillDatabase.execute(dataSource);
+        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator(resource);
+        databasePopulator.execute(dataSource);
     }
 }
