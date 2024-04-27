@@ -43,7 +43,7 @@ class LessonGeneratorTest {
     }
 
     @Test
-    void populateIfEmpty_shouldGenerateLessonDtoInstance_whenIsInvoke() {
+    void fillLessonTable_shouldGenerateLessonDtoInstance_whenIsInvoke() {
         ReflectionTestUtils.setField(lessonGenerator, "maxLessons", 1);
 
         when(courseService.getAll()).thenReturn(testItems.getCourses());
@@ -64,7 +64,7 @@ class LessonGeneratorTest {
     }
 
     @Test
-    void isLessonTableEmpty_shouldThrowException_whenDuplicatConstrants() {
+    void fillLessonTable_shouldThrowException_whenDuplicateConstraints() {
         ReflectionTestUtils.setField(lessonGenerator, "maxLessons", 1);
 
         when(courseService.getAll()).thenReturn(testItems.getCourses());
