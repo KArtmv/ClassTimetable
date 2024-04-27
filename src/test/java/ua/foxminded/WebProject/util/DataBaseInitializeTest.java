@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
 class DataBaseInitializeTest {
 
     @Mock
-    private SqlScriptExecutor scriptExecutor;
+    private InitialDataLoader initialDataLoader;
 
     @Mock
     private LessonGenerator lessonGenerator;
@@ -36,12 +36,11 @@ class DataBaseInitializeTest {
     @Test
     void run_InitializeDatabaseSuccessfully() {
         when(lessonService.isTableEmpty()).thenReturn(true);
-        when(scriptExecutor.execute()).thenReturn(true);
 
         dataBaseInitialize.run(applicationArguments);
 
         verify(lessonService).isTableEmpty();
-        verify(scriptExecutor).execute();
+        verify(initialDataLoader).populate();
         verify(lessonGenerator).fillLessonTable();
     }
 
@@ -52,32 +51,17 @@ class DataBaseInitializeTest {
         dataBaseInitialize.run(applicationArguments);
 
         verify(lessonService).isTableEmpty();
-        verify(scriptExecutor, never()).execute();
+        verify(initialDataLoader, never()).populate();
         verify(lessonGenerator, never()).fillLessonTable();
     }
 
     @Test
     void run_ScriptExecutionFails() {
         when(lessonService.isTableEmpty()).thenReturn(true);
-        when(scriptExecutor.execute()).thenReturn(false);
 
         dataBaseInitialize.run(applicationArguments);
 
         verify(lessonService).isTableEmpty();
-        verify(scriptExecutor).execute();
-        verify(lessonGenerator, never()).fillLessonTable();
-    }
-
-
-    @Test
-    void run_ScriptExecutionFails_whenThrowsException() {
-        when(lessonService.isTableEmpty()).thenReturn(true);
-        when(scriptExecutor.execute()).thenThrow(RuntimeException.class);
-
-        dataBaseInitialize.run(applicationArguments);
-
-        verify(lessonService).isTableEmpty();
-        verify(scriptExecutor).execute();
-        verify(lessonGenerator, never()).fillLessonTable();
+        verify(initialDataLoader).populate();
     }
 }
