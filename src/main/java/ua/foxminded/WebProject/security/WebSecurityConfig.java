@@ -32,20 +32,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-public class WebSecurityConfig implements UserDetailsService, AuthenticationSuccessHandler {
+public class WebSecurityConfig {
 
-    private final UserRepository userRepository;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findUserByEmail(username)
-                .map(user -> new User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        Collections.<GrantedAuthority>singletonList(
-                                new SimpleGrantedAuthority("ROLE_" + user.getRole()))))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
-    }
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -63,7 +52,7 @@ public class WebSecurityConfig implements UserDetailsService, AuthenticationSucc
                         .requestMatchers("/course", "/group", "/lesson", "/staff").hasAnyRole("admin", "staff")
                         .anyRequest().authenticated())
                 .formLogin(login -> login.loginPage("/login")
-                        .successHandler(this)
+                        .successHandler(authenticationSuccessHandler)
                         .failureHandler(new SimpleUrlAuthenticationFailureHandler("/login-error")))
                 .httpBasic(withDefaults())
                 .logout(logout -> logout.permitAll().logoutSuccessUrl("/"));
@@ -74,19 +63,5 @@ public class WebSecurityConfig implements UserDetailsService, AuthenticationSucc
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        String role = authentication.getAuthorities().toString();
-        role = role.substring(6, role.length() - 1);
-
-        switch (role) {
-            case "admin" -> response.sendRedirect("/admin");
-            case "teacher" -> response.sendRedirect("/teacher");
-            case "student" -> response.sendRedirect("/student");
-            case "staff" -> response.sendRedirect("/staff");
-            default -> response.sendRedirect("/");
-        }
     }
 }
