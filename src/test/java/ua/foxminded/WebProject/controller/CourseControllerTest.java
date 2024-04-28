@@ -7,18 +7,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
 import ua.foxminded.WebProject.service.CourseService;
 import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
-import ua.foxminded.WebProject.util.TestItems;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ua.foxminded.WebProject.util.CustomSecurityMockMvcRequestPostProcessors.testUser;
+import static ua.foxminded.WebProject.testDataInstance.CustomSecurityMockMvcRequestPostProcessors.testUser;
 
 @Import({WebSecurityConfig.class, CustomAuthenticationSuccessHandler.class})
 @WebMvcTest(CourseController.class)

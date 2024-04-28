@@ -16,8 +16,8 @@ import ua.foxminded.WebProject.service.CourseService;
 import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.service.TeacherService;
 import ua.foxminded.WebProject.util.MyLocalDate;
-import ua.foxminded.WebProject.util.TestData;
-import ua.foxminded.WebProject.util.TestItems;
+import ua.foxminded.WebProject.testDataInstance.TestData;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import java.time.LocalDate;
 import java.util.Collections;

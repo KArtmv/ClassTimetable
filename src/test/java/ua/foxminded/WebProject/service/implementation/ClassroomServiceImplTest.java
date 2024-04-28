@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import ua.foxminded.WebProject.persistence.entity.Classroom;
 import ua.foxminded.WebProject.persistence.repository.ClassroomRepository;
-import ua.foxminded.WebProject.util.TestItems;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import java.util.Optional;
 

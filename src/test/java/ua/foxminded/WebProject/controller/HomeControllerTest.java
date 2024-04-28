@@ -6,11 +6,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
 import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 import ua.foxminded.WebProject.util.MyLocalDate;
-import ua.foxminded.WebProject.util.TestData;
+import ua.foxminded.WebProject.testDataInstance.TestData;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;

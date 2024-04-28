@@ -1,4 +1,4 @@
-package ua.foxminded.WebProject.util;
+package ua.foxminded.WebProject.testDataInstance;
 
 import org.junit.jupiter.params.provider.Arguments;
 

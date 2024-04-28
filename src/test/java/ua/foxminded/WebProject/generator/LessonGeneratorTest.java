@@ -9,7 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.util.ReflectionTestUtils;
 import ua.foxminded.WebProject.DTO.LessonDto;
 import ua.foxminded.WebProject.service.*;
-import ua.foxminded.WebProject.util.TestItems;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import java.util.Collections;
 import java.util.random.RandomGenerator;

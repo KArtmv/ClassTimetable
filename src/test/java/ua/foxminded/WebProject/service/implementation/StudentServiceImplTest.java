@@ -11,8 +11,8 @@ import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.StudentRepository;
 import ua.foxminded.WebProject.service.GroupService;
-import ua.foxminded.WebProject.util.TestData;
-import ua.foxminded.WebProject.util.TestItems;
+import ua.foxminded.WebProject.testDataInstance.TestData;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import java.time.LocalDate;
 import java.util.Optional;
