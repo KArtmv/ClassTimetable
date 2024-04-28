@@ -4,38 +4,52 @@ import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-
-import javax.sql.DataSource;
-import java.sql.SQLException;
+import org.springframework.transaction.annotation.Transactional;
+import ua.foxminded.WebProject.persistence.repository.*;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-@DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {InitialDataLoader.class}))
+@DataJpaTest
+@Import(InitialDataLoader.class)
 @ActiveProfiles("test")
 @FlywayTest
 class InitialDataLoaderTest {
 
     @Autowired
-    private InitialDataLoader scriptExecutor;
+    private StudentRepository studentRepository;
+    @Autowired
+    private CourseRepository courseRepository;
+    @Autowired
+    private TeacherRepository teacherRepository;
+    @Autowired
+    private GroupRepository groupRepository;
+    @Autowired
+    private StaffRepository staffRepository;
+    @Autowired
+    private ClassroomRepository classroomRepository;
+    @Autowired
+    private InitialDataLoader dataLoader;
 
     @Test
+    @Transactional
     void populate_ShouldReturnTrue_WhenScriptExecutesSuccessfully() {
-        assertTrue(scriptExecutor.populate());
-    }
+        assertTrue(studentRepository.findAll().isEmpty());
+        assertTrue(teacherRepository.findAll().isEmpty());
+        assertTrue(courseRepository.findAll().isEmpty());
+        assertTrue(groupRepository.findAll().isEmpty());
+        assertTrue(staffRepository.findAll().isEmpty());
+        assertTrue(classroomRepository.findAll().isEmpty());
 
-    @Test
-    void populate_ShouldReturnFalse_WhenScriptExecutesFailed() throws SQLException {
-        DataSource mockDataSource = mock(DataSource.class);
-        scriptExecutor = mock(InitialDataLoader.class);
+        dataLoader.populate();
 
-        when(mockDataSource.getConnection()).thenThrow(SQLException.class);
-
-        assertFalse(scriptExecutor.populate());
+        assertFalse(studentRepository.findAll().isEmpty());
+        assertFalse(teacherRepository.findAll().isEmpty());
+        assertFalse(courseRepository.findAll().isEmpty());
+        assertFalse(groupRepository.findAll().isEmpty());
+        assertFalse(staffRepository.findAll().isEmpty());
+        assertFalse(classroomRepository.findAll().isEmpty());
     }
 }
