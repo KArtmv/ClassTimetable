@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
 import ua.foxminded.WebProject.service.CourseService;
-import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
+import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
