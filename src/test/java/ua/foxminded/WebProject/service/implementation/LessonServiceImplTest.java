@@ -16,8 +16,8 @@ import ua.foxminded.WebProject.service.CourseService;
 import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.service.TeacherService;
 import ua.foxminded.WebProject.util.MyLocalDate;
-import ua.foxminded.WebProject.util.TestData;
-import ua.foxminded.WebProject.util.TestItems;
+import ua.foxminded.WebProject.testDataInstance.TestData;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -55,7 +55,7 @@ class LessonServiceImplTest {
     }
 
     @ParameterizedTest
-    @MethodSource("ua.foxminded.WebProject.util.DataOfParametrizedTest#getLessons")
+    @MethodSource("ua.foxminded.WebProject.testDataInstance.DataOfParametrizedTest#getLessons")
     void saveLesson_shouldReturnLessonInstanceWithId_whenIsSavedSuccessfully(List<Lesson> lessonsPerWeek, List<Lesson> lessonsPerDay) {
         when(groupService.getById(anyLong())).thenReturn(testItems.getGroup());
         when(courseService.getById(anyLong())).thenReturn(testItems.getCourseWithIdSeven());

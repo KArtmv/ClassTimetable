@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlMergeMode;
 import ua.foxminded.WebProject.persistence.entity.Student;
-import ua.foxminded.WebProject.util.TestData;
+import ua.foxminded.WebProject.testDataInstance.TestData;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import java.util.Optional;
 
@@ -17,16 +19,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @ActiveProfiles("test")
 @FlywayTest
+@Sql("/sql/group/group.sql")
 class StudentRepositoryTest {
 
     private final TestData testData = new TestData();
+    private final TestItems testItems = new TestItems();
     @Autowired
-    private StudentRepository repository;
+    private StudentRepository studentRepository;
 
     @Test
-    @Sql(value = {"/sql/student/student.sql", "/sql/group/group.sql"})
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    @Sql(value = {"/sql/student/student.sql"})
     void findById_shouldReturnStudentInstance_whenIsFound() {
-        Optional<Student> optionalResult = repository.findById(testData.getStudentId());
+        Optional<Student> optionalResult = studentRepository.findById(testData.getStudentId());
         assertAll(() -> {
             assertTrue(optionalResult.isPresent());
             Student result = optionalResult.get();
@@ -39,24 +44,30 @@ class StudentRepositoryTest {
 
     @Test
     void findById_shouldReturnEmptyOptional_whenStudentIsNotFound() {
-        assertFalse(repository.findById(testData.getStudentId()).isPresent());
+        assertFalse(studentRepository.findById(testData.getStudentId()).isPresent());
     }
 
     @Test
-    @Sql("/sql/group/group.sql")
     void saveStudent_shouldReturnStudentInstanceWithId_whenSavedSuccessfully() {
-        assertThat(repository.save(testData.getStudent()).getId()).isNotNull();
+        assertThat(studentRepository.save(testItems.getFullStudent()).getId()).isNotNull();
     }
 
     @Test
-    @Sql(scripts = {"/sql/student/student.sql", "/sql/group/group.sql"})
+    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
+    @Sql(scripts = {"/sql/student/student.sql"})
     void deleteStudent_shouldDoNothing_whenStudentDeleted() {
         Student student = new Student(testData.getStudentId());
         assertAll(() -> {
-            assertThat(repository.findAll()).hasSize(1);
-            repository.delete(student);
-            assertThat(repository.findAll()).isEmpty();
+            assertThat(studentRepository.findAll()).hasSize(1);
+            studentRepository.delete(student);
+            assertThat(studentRepository.findAll()).isEmpty();
         });
+    }
+
+    @Test
+    @Sql(scripts = {"/sql/group/groups.sql", "/sql/student/students.sql"})
+    void findAll_shouldReturnAllStudents_whenAllStudentsAreFound() {
+        assertThat(studentRepository.findAll()).hasSize(3);
     }
 }
 

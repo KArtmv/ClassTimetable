@@ -1,6 +1,7 @@
 package ua.foxminded.WebProject.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +10,8 @@ import ua.foxminded.WebProject.service.StudentService;
 
 @Controller
 @RequestMapping("/student")
-@AllArgsConstructor
+@RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('admin', 'student', 'staff')")
 public class StudentController {
 
     private final StudentService studentService;

@@ -1,7 +1,7 @@
 package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +18,13 @@ import java.util.List;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StudentServiceImpl implements StudentService {
 
-    private GroupService groupService;
-    private StudentRepository studentRepository;
-    private LessonRepository lessonRepository;
+    private final GroupService groupService;
+    private final StudentRepository studentRepository;
+    private final LessonRepository lessonRepository;
 
     @Override
     public Student getById(Long id) {

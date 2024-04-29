@@ -1,7 +1,7 @@
 package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.CourseDto;
@@ -12,11 +12,11 @@ import ua.foxminded.WebProject.service.CourseService;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CourseServiceImpl implements CourseService {
 
-    private CourseRepository repository;
+    private final CourseRepository repository;
 
     @Override
     public List<Course> getAll() {

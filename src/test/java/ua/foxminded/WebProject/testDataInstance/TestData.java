@@ -1,4 +1,4 @@
-package ua.foxminded.WebProject.util;
+package ua.foxminded.WebProject.testDataInstance;
 
 import lombok.Getter;
 import ua.foxminded.WebProject.DTO.CourseDto;
@@ -12,6 +12,7 @@ public class TestData {
     private final Long studentId = 1L;
     private final String studentFirstName = "Lucas";
     private final String studentLastName = "Thompson";
+    private final String studentEmail = "student@gmail.com";
     private final Student student = new Student(studentFirstName, studentLastName, getGroup());
 
     private final Long groupId = 1L;
@@ -39,7 +40,18 @@ public class TestData {
     private final Long teacherId = 1L;
     private final String teacherFirstName = "John";
     private final String teacherLastName = "Smith";
+    private final String teacherEmail = "teacher@gmail.com";
     private final Teacher teacher = new Teacher(teacherFirstName, teacherLastName);
+
+    private final String adminFirstName = "John";
+    private final String adminLastName = "Thomson";
+    private final String adminEmail = "admin@gmail.com";
+
+    private final String staffFirstName = "Lucas";
+    private final String staffLastName = "Smith";
+    private final String staffEmail = "staff@gmail.com";
+
+    private final String email = "test@gmail.com";
 
     private final LocalDate date = LocalDate.of(2024, 3, 11);
 
@@ -48,5 +60,4 @@ public class TestData {
 
     private final LocalDate dateTeacherStart = getDate().with(DayOfWeek.WEDNESDAY);
     private final LocalDate dateTeacherEnd = getDate().with(DayOfWeek.FRIDAY);
-
 }

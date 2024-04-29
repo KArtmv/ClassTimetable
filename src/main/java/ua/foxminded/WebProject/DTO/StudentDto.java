@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Student;
 
@@ -14,7 +14,7 @@ import java.io.Serializable;
 /**
  * DTO for {@link Student}
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class StudentDto implements Serializable {
     @Size(message = "@First name must be between {min} and {max} characters", min = 2, max = 15)

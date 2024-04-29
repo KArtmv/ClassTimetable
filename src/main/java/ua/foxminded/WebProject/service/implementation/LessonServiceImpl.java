@@ -1,7 +1,7 @@
 package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class LessonServiceImpl implements LessonService {
 
@@ -60,7 +60,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public boolean isEmpty() {
+    public boolean isTableEmpty() {
         return repository.count() == 0;
     }
 

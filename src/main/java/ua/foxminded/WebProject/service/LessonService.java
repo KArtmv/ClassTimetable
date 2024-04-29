@@ -14,5 +14,5 @@ public interface LessonService extends AbstractService<Lesson, Long> {
 
     List<Lesson> getAllLessonsPerDay(LocalDate date);
 
-    boolean isEmpty();
+    boolean isTableEmpty();
 }

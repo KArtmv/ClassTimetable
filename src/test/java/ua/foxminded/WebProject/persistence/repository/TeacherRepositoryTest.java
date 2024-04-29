@@ -7,8 +7,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
-import ua.foxminded.WebProject.util.TestData;
-import ua.foxminded.WebProject.util.TestItems;
+import ua.foxminded.WebProject.testDataInstance.TestData;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import java.util.Optional;
 
@@ -27,7 +27,7 @@ class TeacherRepositoryTest {
 
     @Test
     void save_shouldReturnTeacherInstanceWithId_whenIsSavedSuccessfully() {
-        Teacher result = repository.save(testData.getTeacher());
+        Teacher result = repository.save(testItems.getFullTeacher());
         assertThat(result.getId()).isNotNull();
     }
 

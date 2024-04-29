@@ -1,41 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
     <title>Student</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
-    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
 </head>
 <body>
 <main>
     <div class="container">
-        <div th:insert="~{fragments/header :: header}"></div>
-        <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">First name</th>
-                        <th scope="col">Last name</th>
-                        <th scope="col">Group</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="student : ${students}">
-                        <th scope="row" th:text="${student.id}"></th>
-                        <td th:text="${student.firstName}"></td>
-                        <td th:text="${student.lastName}"></td>
-                        <td th:text="${student.getGroup.groupName}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div sec:authorize="hasAnyRole('student', 'staff')">
+            <h2>Students</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">First name</th>
+                    <th scope="col">Last name</th>
+                    <th scope="col">Group</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student : ${students}">
+                    <th scope="row" th:text="${student.id}"></th>
+                    <td th:text="${student.firstName}"></td>
+                    <td th:text="${student.lastName}"></td>
+                    <td th:text="${student.getGroup.groupName}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div sec:authorize="hasRole('admin')">
+            <h2>Students</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">First name</th>
+                    <th scope="col">Last name</th>
+                    <th scope="col">Group</th>
+                    <th scope="col">Option</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student : ${students}">
+                    <th scope="row" th:text="${student.id}"></th>
+                    <td th:text="${student.firstName}"></td>
+                    <td th:text="${student.lastName}"></td>
+                    <td th:text="${student.getGroup.groupName}"></td>
+                    <td>
+                        <a class="btn btn-primary btn-sm">Edit</a>
+                        <a class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-success">Add New Student</a>
         </div>
     </div>
 </main>
-<script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

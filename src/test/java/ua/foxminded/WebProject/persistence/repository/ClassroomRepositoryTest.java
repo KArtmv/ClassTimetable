@@ -7,7 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.WebProject.persistence.entity.Classroom;
-import ua.foxminded.WebProject.util.TestData;
+import ua.foxminded.WebProject.testDataInstance.TestData;
 
 import java.util.Optional;
 
