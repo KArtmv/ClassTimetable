@@ -29,7 +29,7 @@ public class CourseController {
 
     @GetMapping("/addCourse")
     public String addCourseForm(Model model, Course course) {
-        model.addAttribute("courseDto", course);
+        model.addAttribute("course", course);
         return "course/features/addCourse";
     }
 
