@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
 import ua.foxminded.WebProject.service.CourseService;
-import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
+import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -133,7 +133,7 @@ class CourseControllerTest {
         mockMvc.perform(post("/course/update")
                         .queryParam("courseName", testItems.getCourseName())
                         .queryParam("courseDescription", testItems.getCourseDescription())
-                .with(testUser(role))).andDo(print())
+                        .with(testUser(role))).andDo(print())
                 .andExpectAll(status().is3xxRedirection(),
                         view().name("redirect:/course"));
     }
@@ -145,7 +145,7 @@ class CourseControllerTest {
                         .queryParam("id", testItems.getCourseId().toString())
                         .queryParam("courseName", testItems.getCourseName())
                         .queryParam("courseDescription", "")
-                .with(testUser(role))).andDo(print())
+                        .with(testUser(role))).andDo(print())
                 .andExpectAll(status().isOk(),
                         view().name("course/features/editCourse"),
                         content().string(containsString("Course description is required.")),
@@ -159,7 +159,7 @@ class CourseControllerTest {
                         .queryParam("id", testItems.getCourseId().toString())
                         .queryParam("courseName", "")
                         .queryParam("courseDescription", testItems.getCourseDescription())
-                .with(testUser(role))).andDo(print())
+                        .with(testUser(role))).andDo(print())
                 .andExpectAll(status().isOk(),
                         view().name("course/features/editCourse"),
                         content().string(containsString("Course name is required.")),

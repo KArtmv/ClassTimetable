@@ -7,16 +7,16 @@
     <nav class="navbar navbar-expand bg-light navbar-light mb-3 card">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Class Timetable</a>
-                <ul class="nav navbar-nav justify-content-end">
-                    <li class="nav-item">
-                        <div sec:authorize="!isAuthenticated()">
-                            <a class="nav-link" href="/login">Log in</a>
-                        </div>
-                        <div sec:authorize="isAuthenticated()">
-                            <a class="nav-link" href="/logout">Log out</a>
-                        </div>
-                    </li>
-                </ul>
+            <ul class="nav navbar-nav justify-content-end">
+                <li class="nav-item">
+                    <div sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" href="/login">Log in</a>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <a class="nav-link" href="/logout">Log out</a>
+                    </div>
+                </li>
+            </ul>
         </div>
     </nav>
 </th:block>

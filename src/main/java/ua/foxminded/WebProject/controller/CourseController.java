@@ -48,14 +48,14 @@ public class CourseController {
         return "course/features/editCourse";
     }
 
-        @PostMapping("/update")
-        public String updateCourse(@Valid Course course, BindingResult result) {
-            if (result.hasErrors()) {
-                return "course/features/editCourse";
-            }
-            courseService.update(course);
-            return "redirect:/course";
+    @PostMapping("/update")
+    public String updateCourse(@Valid Course course, BindingResult result) {
+        if (result.hasErrors()) {
+            return "course/features/editCourse";
         }
+        courseService.update(course);
+        return "redirect:/course";
+    }
 
     @GetMapping("/delete/{id}")
     @PreAuthorize("hasRole('admin')")
