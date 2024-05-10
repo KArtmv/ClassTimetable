@@ -1,35 +1,35 @@
-INSERT INTO course
+INSERT INTO course (course_name, course_description)
 select *
-from (values (1, 'Principles of Economics', 'Learn about the fundamentals of economics'),
-             (2, 'World History: Ancient Civilizations', 'Explore the history of ancient civilizations'),
-             (3, 'Creative Writing Workshop', 'Develop your writing skills in a creative environment'),
-             (4, 'Introduction to Psychology', 'Learn the basics of psychology'),
-             (5, 'Business Ethics and Social Responsibility',
+from (values ('Principles of Economics', 'Learn about the fundamentals of economics'),
+             ('World History: Ancient Civilizations', 'Explore the history of ancient civilizations'),
+             ('Creative Writing Workshop', 'Develop your writing skills in a creative environment'),
+             ('Introduction to Psychology', 'Learn the basics of psychology'),
+             ('Business Ethics and Social Responsibility',
               'Explore ethical issues in business and the role of social responsibility'),
-             (6, 'Human Anatomy and Physiology', 'Study the human body and its functions'),
-             (7, 'Principles of Marketing', 'Learn the basics of marketing'),
-             (8, 'Environmental Science and Sustainability',
+             ('Human Anatomy and Physiology', 'Study the human body and its functions'),
+             ('Principles of Marketing', 'Learn the basics of marketing'),
+             ('Environmental Science and Sustainability',
               'Study the science of the environment and explore issues of sustainability'),
-             (9, 'Fundamentals of Graphic Design', 'Learn the basics of graphic design'),
-             (10, 'Introduction to Computer Science',
+             ('Fundamentals of Graphic Design', 'Learn the basics of graphic design'),
+             ('Introduction to Computer Science',
               'An introduction to computer science principles and programming')) sourse_data
 where not exists(select null from course)
 on conflict (id) DO NOTHING;
 
 
-INSERT INTO groups
+INSERT INTO groups (group_name)
 select *
-from (values (1, 'YS-27'),
-             (2, 'HV-14'),
-             (3, 'QM-09'),
-             (4, 'ZF-83'),
-             (5, 'RG-52'),
-             (6, 'PL-41'),
-             (7, 'KX-76'),
-             (8, 'ND-98'),
-             (9, 'TC-63'),
-             (10, 'WU-48'),
-             (11, 'Students without group')) sourse_data
+from (values ('YS-27'),
+             ('HV-14'),
+             ('QM-09'),
+             ('ZF-83'),
+             ('RG-52'),
+             ('PL-41'),
+             ('KX-76'),
+             ('ND-98'),
+             ('TC-63'),
+             ('WU-48'),
+             ('Students without group')) sourse_data
 where not exists(select null from groups)
 on conflict (id) DO NOTHING;
 
@@ -46,18 +46,18 @@ from (VALUES ('teacher', 'John', 'Smith', 'JohnSmith@gmail.com'),
 where not exists(select null from users where role = 'teacher')
 on conflict (id) DO NOTHING;
 
-INSERT INTO classroom
+INSERT INTO classroom (classroom_name)
 select *
-from (VALUES (1, 'Room 101'),
-             (2, 'Room 102'),
-             (3, 'Room 103'),
-             (4, 'Room 104'),
-             (5, 'Room 105'),
-             (6, 'Room 201'),
-             (7, 'Room 202'),
-             (8, 'Room 203'),
-             (9, 'Room 204'),
-             (10, 'Room 205')) sourse_data
+from (VALUES ('Room 101'),
+             ('Room 102'),
+             ('Room 103'),
+             ('Room 104'),
+             ('Room 105'),
+             ('Room 201'),
+             ('Room 202'),
+             ('Room 203'),
+             ('Room 204'),
+             ('Room 205')) sourse_data
 where not exists(select null from classroom)
 on conflict (id) DO NOTHING;
 

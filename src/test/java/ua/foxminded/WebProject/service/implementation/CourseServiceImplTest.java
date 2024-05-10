@@ -47,7 +47,7 @@ class CourseServiceImplTest {
     void saveCourse_shouldReturnCourseInstanceWithId_whenIsSavedSuccessfully() {
         when(repository.save(any(Course.class))).thenReturn(testItems.getCourse());
 
-        Course result = service.saveCourse(testData.getCourseDto());
+        Course result = service.saveCourse(testData.getCourse());
 
         assertAll(() -> {
             assertThat(result).isNotNull();

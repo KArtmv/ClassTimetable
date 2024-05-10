@@ -1,6 +1,8 @@
 package ua.foxminded.WebProject.controller;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -16,6 +18,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ua.foxminded.WebProject.testDataInstance.CustomSecurityMockMvcRequestPostProcessors.testUser;
 
 @Import({WebSecurityConfig.class, CustomAuthenticationSuccessHandler.class})
 @WebMvcTest(HomeController.class)
@@ -28,8 +31,19 @@ class HomeControllerTest {
     @MockBean
     private MyLocalDate localDate;
 
+    @ParameterizedTest
+    @ValueSource(strings = {"student", "admin", "staff", "teacher"})
+    void home_shouldReturnAppropriatePage_whenUserIsAuthenticated(String role) throws Exception {
+        when(localDate.getCurrentDate()).thenReturn(testData.getDate());
+
+        mockMvc.perform(get("/").with(testUser(role)))
+                .andExpectAll(
+                        status().is3xxRedirection(),
+                        redirectedUrl("/" + role));
+    }
+
     @Test
-    void home() throws Exception {
+    void home_shouldReturnAppropriatePage_whenUserIsNotAuthenticated() throws Exception {
         when(localDate.getCurrentDate()).thenReturn(testData.getDate());
 
         mockMvc.perform(get("/").with(anonymous()))
