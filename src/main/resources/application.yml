@@ -19,6 +19,11 @@ spring:
     enabled: true
     prefix: classpath:/templates/
     suffix: .html
+server:
+  error:
+    whitelabel:
+      enabled: false
+    path: '/error'
 
 amount:
   maxLessons: 350
