@@ -14,7 +14,7 @@
     <div th:if="${loginError}" class="error container p-2 bg-danger text-white text-center">
         **Login attempt unsuccessful.** Please double-check your username/email and password.
     </div>
-    <form action="login" method='POST'>
+    <form th:action="@{/login}" method='POST'>
         <div class="mb-3">
             <label for="email">Email:</label>
             <input type="email" class="form-control" id="email" placeholder="Enter email" name="username">
