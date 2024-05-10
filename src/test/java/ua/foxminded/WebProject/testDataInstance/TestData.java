@@ -21,7 +21,7 @@ public class TestData {
     private final Long courseId = 1L;
     private final String courseName = "Principles of Economics";
     private final String courseDescription = "Learn about the fundamentals of economics";
-    private final Course course = new Course(courseDescription, courseName);
+    private final Course course = new Course(courseName, courseDescription);
 
     private final Long classroomId = 1L;
     private final String classroomName = "Room 101";
