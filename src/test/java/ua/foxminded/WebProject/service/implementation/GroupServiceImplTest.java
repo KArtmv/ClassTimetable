@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.dao.DataIntegrityViolationException;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.repository.GroupRepository;
 import ua.foxminded.WebProject.testDataInstance.TestData;
@@ -47,11 +48,38 @@ class GroupServiceImplTest {
     void saveGroup_shouldReturnGroupInstanceWithId_whenIsSavedSuccessfully() {
         when(repository.save(any(Group.class))).thenReturn(testItems.getGroup());
 
-        Group result = service.saveGroup(testData.getGroup());
+        assertThat(service.saveGroup(testData.getGroupDto()).getId()).isNotNull();
 
-        assertThat(result.getId()).isNotNull();
+        verify(repository).save(any(Group.class));
+        verify(repository).findAll();
+    }
 
-        verify(repository).save(testData.getGroup());
+    @Test
+    void saveGroup_shouldThrowsDataIntegrityViolationException_whenSavingDuplicate() {
+        when(repository.save(any(Group.class))).thenThrow(DataIntegrityViolationException.class);
+
+        assertThat(service.saveGroup(testData.getGroupDto()).getId()).isNull();
+
+        verify(repository).save(any(Group.class));
+        verify(repository).findAll();
+    }
+
+    @Test
+    void saveGroup_shouldReturnEmptyGroupInstance_whenSavingDuplicate() {
+        when(repository.findAll()).thenReturn(testItems.getGroups());
+
+        assertThat(service.saveGroup(testData.getGroupDto()).getId()).isNull();
+
+        verify(repository).findAll();
+    }
+
+    @Test
+    void remove_shouldRemoveGroupInstance_whenIsRemovedSuccessfully() {
+        when(repository.findById(anyLong())).thenReturn(Optional.of(testItems.getGroup()));
+
+        service.remove(testItems.getGroup());
+
+        verify(repository).findById(testData.getCourseId());
     }
 
     @Test

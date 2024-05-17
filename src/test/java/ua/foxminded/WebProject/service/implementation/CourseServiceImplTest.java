@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.persistence.entity.Course;
 import ua.foxminded.WebProject.persistence.repository.CourseRepository;
 import ua.foxminded.WebProject.testDataInstance.TestData;
@@ -76,5 +77,31 @@ class CourseServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> service.getById(testData.getCourseId()));
 
         verify(repository).findById(testData.getCourseId());
+    }
+
+    @Test
+    void update_shouldReturnUpdatingCourseInstance_whenIsUpdatedSuccessfully() {
+        when(repository.findById(anyLong())).thenReturn(Optional.of(testItems.getCourse()));
+        when(repository.save(any(Course.class))).thenReturn(testItems.getSecondCourse());
+
+        assertAll(() -> {
+                Course result = service.update(testItems.getSecondCourse());
+                assertThat(result.getId()).isEqualTo(testData.getCourseId());
+                assertThat(result.getCourseName()).isEqualTo(testData.getSecondCourseName());
+                assertThat(result.getCourseDescription()).isEqualTo(testData.getSecondCourseDescription());
+        });
+
+        verify(repository).findById(testData.getCourseId());
+        verify(repository).save(any(Course.class));
+    }
+
+    @Test
+    void remove_shouldDoNothing_whenIsRemovedSuccessfully() {
+        when(repository.findById(anyLong())).thenReturn(Optional.of(testItems.getCourse()));
+
+        service.remove(testItems.getCourse());
+
+        verify(repository).findById(testData.getCourseId());
+        verify(repository).delete(testItems.getCourse());
     }
 }
