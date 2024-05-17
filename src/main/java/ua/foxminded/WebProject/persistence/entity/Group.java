@@ -15,7 +15,6 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 @Entity
 @Table(name = "groups")
 public class Group extends BaseEntity {
@@ -24,11 +23,9 @@ public class Group extends BaseEntity {
     private String groupName;
 
     @OneToMany(mappedBy = "group")
-    @ToString.Exclude
     private Set<Student> students = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "group")
-    @ToString.Exclude
     private Set<Lesson> lessons = new LinkedHashSet<>();
 
     public Group(Long id) {
