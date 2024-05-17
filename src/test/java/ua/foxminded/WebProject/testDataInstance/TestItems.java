@@ -24,6 +24,7 @@ public class TestItems {
     private final String courseDescription = "Learn the basics of marketing";
     private final Course courseWithIdSeven = new Course(getCourseId(), getCourseName(), getCourseDescription());
     private final Course course = new Course(testData.getCourseId(), testData.getCourseName(), testData.getCourseDescription());
+    private final Course secondCourse = new Course(testData.getCourseId(), testData.getSecondCourseName(), testData.getSecondCourseDescription());
 
     private final Group group = new Group(testData.getGroupId(), testData.getGroupName());
 
