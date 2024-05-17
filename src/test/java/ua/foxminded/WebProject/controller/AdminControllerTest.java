@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
 import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,7 +28,7 @@ class AdminControllerTest {
         mockMvc.perform(get("/admin").with(testUser("admin")))
                 .andDo(print()).andExpectAll(
                         status().isOk(),
-                view().name("admin/admin"));
+                        view().name("admin/admin"));
     }
 
     @ParameterizedTest

@@ -18,8 +18,6 @@ import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
 import ua.foxminded.WebProject.util.GroupNameGenerator;
 import ua.foxminded.WebProject.util.MyBeans;
 
-import java.util.random.RandomGenerator;
-
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -76,9 +74,9 @@ class GroupControllerTest {
         mockMvc.perform(get("/group/addGroup").with(testUser(role)))
                 .andDo(print()).andExpectAll(
                         status().isOk(),
-                model().attributeExists("groupDto"),
-                model().attributeExists("duplicate"),
-                view().name("group/features/addGroup"));
+                        model().attributeExists("groupDto"),
+                        model().attributeExists("duplicate"),
+                        view().name("group/features/addGroup"));
     }
 
     @ParameterizedTest
@@ -151,10 +149,10 @@ class GroupControllerTest {
     @Test
     void remove() throws Exception {
         mockMvc.perform(post("/group/remove")
-                .queryParam("group", testData.getGroupId().toString())
-                .with(testUser("admin")))
-            .andDo(print()).andExpectAll(
-                    status().is3xxRedirection(),
-                    view().name("redirect:/group"));
+                        .queryParam("group", testData.getGroupId().toString())
+                        .with(testUser("admin")))
+                .andDo(print()).andExpectAll(
+                        status().is3xxRedirection(),
+                        view().name("redirect:/group"));
     }
 }

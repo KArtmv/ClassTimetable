@@ -11,7 +11,8 @@
 
 <div class="container-sm mt-5 col-3 card">
     <h2 class="mt-2">Log in</h2>
-    <div th:if="${loginError}" class="error container p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center">
+    <div th:if="${loginError}"
+         class="error container p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center">
         **Login attempt unsuccessful.** Please double-check your username/email and password.
     </div>
     <form th:action="@{/login}" method='POST'>

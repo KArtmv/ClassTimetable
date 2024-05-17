@@ -1,13 +1,9 @@
 package ua.foxminded.WebProject.controller;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.WebProject.DTO.GroupDto;
 import ua.foxminded.WebProject.persistence.entity.Group;
@@ -37,7 +33,7 @@ public class GroupController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute GroupDto groupDto, Model model) {
-        if (groupService.saveGroup(groupDto).getId() == null){
+        if (groupService.saveGroup(groupDto).getId() == null) {
             model.addAttribute("duplicate", true);
             return "group/features/addGroup";
         }
@@ -53,7 +49,7 @@ public class GroupController {
 
     @PostMapping("/remove")
     @PreAuthorize("hasRole('admin')")
-    public String remove(Group group){
+    public String remove(Group group) {
         groupService.remove(group);
         return "redirect:/group";
     }

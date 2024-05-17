@@ -11,13 +11,13 @@
 <main>
     <div class="container mb-3">
         <h1>Add New Group</h1>
-            <div th:if="${duplicate}">
-                <h3 class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center">
-                    Given group name: "[[${groupDto.groupName()}]]" already exists, try again.
-                </h3>
-                <a href="/group/addGroup" class="btn btn-warning">Take new group name</a>
-                <a href="/group" class="btn btn-danger">Cancel</a>
-            </div>
+        <div th:if="${duplicate}">
+            <h3 class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center">
+                Given group name: "[[${groupDto.groupName()}]]" already exists, try again.
+            </h3>
+            <a href="/group/addGroup" class="btn btn-warning">Take new group name</a>
+            <a href="/group" class="btn btn-danger">Cancel</a>
+        </div>
         <div th:if="${!duplicate}">
             <h2>Save group with this name:
                 <span th:text="${groupDto.groupName()}"></span>

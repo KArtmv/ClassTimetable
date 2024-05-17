@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.persistence.entity.Course;
 import ua.foxminded.WebProject.persistence.repository.CourseRepository;
 import ua.foxminded.WebProject.testDataInstance.TestData;
@@ -85,10 +84,10 @@ class CourseServiceImplTest {
         when(repository.save(any(Course.class))).thenReturn(testItems.getSecondCourse());
 
         assertAll(() -> {
-                Course result = service.update(testItems.getSecondCourse());
-                assertThat(result.getId()).isEqualTo(testData.getCourseId());
-                assertThat(result.getCourseName()).isEqualTo(testData.getSecondCourseName());
-                assertThat(result.getCourseDescription()).isEqualTo(testData.getSecondCourseDescription());
+            Course result = service.update(testItems.getSecondCourse());
+            assertThat(result.getId()).isEqualTo(testData.getCourseId());
+            assertThat(result.getCourseName()).isEqualTo(testData.getSecondCourseName());
+            assertThat(result.getCourseDescription()).isEqualTo(testData.getSecondCourseDescription());
         });
 
         verify(repository).findById(testData.getCourseId());
