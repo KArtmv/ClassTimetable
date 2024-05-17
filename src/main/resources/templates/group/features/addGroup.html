@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Group</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
+    <th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
+</head>
+<body>
+<main>
+    <div class="container mb-3">
+        <h1>Add New Group</h1>
+            <div th:if="${duplicate}">
+                <h3 class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center">
+                    Given group name: "[[${groupDto.groupName()}]]" already exists, try again.
+                </h3>
+                <a href="/group/addGroup" class="btn btn-warning">Take new group name</a>
+                <a href="/group" class="btn btn-danger">Cancel</a>
+            </div>
+        <div th:if="${!duplicate}">
+            <h2>Save group with this name:
+                <span th:text="${groupDto.groupName()}"></span>
+            </h2>
+            <form th:action="@{/group/save}" th:object="${groupDto}" method="post">
+                <div class="mb-3">
+                    <input type="hidden" th:field="*{groupName}">
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="/group" class="btn btn-danger">Cancel</a>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>
