@@ -3,6 +3,7 @@ package ua.foxminded.WebProject.util;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.util.Random;
 import java.util.random.RandomGenerator;
@@ -18,5 +19,10 @@ public class MyBeans {
     @Bean
     public Integer maxAmountLessons(@Value("${amount.maxLessons}") Integer maxLessons) {
         return maxLessons;
+    }
+
+    @Bean
+    public LocalValidatorFactoryBean validator() {
+        return new LocalValidatorFactoryBean();
     }
 }
