@@ -1,30 +1,39 @@
 package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.WebProject.DTO.StudentDto;
+import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Student;
+import ua.foxminded.WebProject.persistence.entity.User;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.StudentRepository;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.service.StudentService;
+import ua.foxminded.WebProject.form.UserRegistrationForm;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class StudentServiceImpl implements StudentService {
+public class StudentServiceImpl extends UserServiceImpl implements StudentService {
 
     private final GroupService groupService;
     private final StudentRepository studentRepository;
     private final LessonRepository lessonRepository;
+
+    public StudentServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, GroupService groupService, StudentRepository studentRepository, LessonRepository lessonRepository) {
+        super(userRepository, passwordEncoder);
+        this.groupService = groupService;
+        this.studentRepository = studentRepository;
+        this.lessonRepository = lessonRepository;
+    }
 
     @Override
     public Student getById(Long id) {
@@ -38,24 +47,34 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Transactional
-    public Student saveStudent(StudentDto studentDto) {
-        Student student = new Student();
-        try {
-            student.setFirstName(studentDto.getFirstName());
-            student.setLastName(studentDto.getLastName());
-            student.setGroup(groupService.getById(studentDto.getGroup().getId()));
-            return studentRepository.save(student);
-        } catch (EntityNotFoundException e) {
-            log.error("Saving new student is failed: {}", e.getMessage());
-            return student;
-        }
+    public UserDto getDetails(Long id) {
+        Student student = getById(id);
+        return UserDto.builder()
+                .id(student.getId())
+                .firstName(student.getFirstName())
+                .lastName(student.getLastName())
+                .email(student.getEmail())
+                .group(student.getGroup())
+                .build();
     }
 
     @Override
     @Transactional
-    public void removeStudentById(Student student) {
-        studentRepository.delete(getById(student.getId()));
+    public User saveUser(UserRegistrationForm registrationForm) {
+        Student student = new Student();
+        student.setFirstName(registrationForm.getFirstName());
+        student.setLastName(registrationForm.getLastName());
+        student.setEmail(registrationForm.getEmail());
+        student.setPassword(super.passwordEncoder.encode(registrationForm.getPassword()));
+        return studentRepository.save(student);
+    }
+
+    @Override
+    @Transactional
+    public Student updateStudentGroup(Long studentId, Long groupId) {
+        Student student = getById(studentId);
+        student.setGroup(groupService.getById(groupId));
+        return studentRepository.save(student);
     }
 
     @Override
