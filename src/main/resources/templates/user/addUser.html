@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New [[${user}]]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
+    <th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
+</head>
+<body>
+<main>
+    <div class="container mb-3">
+        <h1>Create New [[${user}]]</h1>
+        <form th:action="@{'/' + ${path} + '/save'}" th:object="${registrationForm}" method="post">
+            <div class="mb-3">
+                <label for="firstName">First name:</label>
+                <input type="text" class="form-control" th:field="*{firstName}" id="firstName" placeholder="Enter first name of student">
+                <div th:if="${#fields.hasErrors('firstName')}"
+                     class="p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                     th:errors="*{firstName}">First name error
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="lastName">Last name:</label>
+                <input type="text" class="form-control" th:field="*{lastName}" id="lastName" placeholder="Enter first name of student">
+                <div th:if="${#fields.hasErrors('lastName')}"
+                     class="error text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                     th:errors="*{lastName}">Last name error
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email">Email:</label>
+                <input type="text" class="form-control" th:field="*{email}" id="email" placeholder="Enter email of student">
+                <div th:if="${#fields.hasErrors('email')}"
+                     class="error p-1 text-danger-emphasis bg-danger-subtle border-danger-subtle rounded-3 text-center mt-1"
+                     th:errors="*{email}">Email error
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" th:field="*{password}" id="password" placeholder="Enter password">
+                <div th:if="${#fields.hasErrors('password')}"
+                     class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle text-center mt-1"
+                     th:errors="*{password}">Password error
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" class="form-control" th:field="*{confirmPassword}" id="confirmPassword" placeholder="Confirm password">
+                <div th:if="${#fields.hasErrors('confirmPassword')}"
+                     class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                     th:errors="*{confirmPassword}">Confirm Password error
+                </div>
+            </div>
+            <div th:if="${groups}" class="mb-3">
+                <label for="group">Group:</label>
+                <select class="form-control mb-3" id="group" name="groupId">
+                    <option value="0" selected>Choose group from list</option>
+                    <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.groupName}"
+                            th:selected="${group.id == selectedGroupId}"></option>
+                </select>
+                <div th:if="${emptyGroup}"
+                     class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center"
+                >Group is required.</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a th:href="@{'/' + ${path}}" class="btn btn-danger">Cancel</a>
+        </form>
+    </div>
+</main>
+</body>
+</html>
