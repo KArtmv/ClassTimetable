@@ -1,12 +1,27 @@
 package ua.foxminded.WebProject.controller;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import ua.foxminded.WebProject.DTO.UserEmailDto;
+import ua.foxminded.WebProject.DTO.UserNames;
+import ua.foxminded.WebProject.form.ChangePasswordForm;
+import ua.foxminded.WebProject.persistence.entity.Student;
+import ua.foxminded.WebProject.persistence.entity.User;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
+import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.service.StudentService;
+import ua.foxminded.WebProject.form.UserRegistrationForm;
+
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/student")
@@ -14,11 +29,163 @@ import ua.foxminded.WebProject.service.StudentService;
 @PreAuthorize("hasAnyRole('admin', 'student', 'staff')")
 public class StudentController {
 
+    private static final String USER = "student";
+
     private final StudentService studentService;
+    private final GroupService groupService;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping
     public String studentPage(Model model) {
         model.addAttribute("students", studentService.getAll());
         return "student/student";
+    }
+
+    @GetMapping("/addStudent")
+    @PreAuthorize("hasAnyRole('admin', 'staff')")
+    public String addStudent(Model model) {
+        model.addAttribute("registrationForm", new UserRegistrationForm());
+        model.addAttribute("user", StringUtils.capitalize(USER));
+        model.addAttribute("path", USER);
+        model.addAttribute("groups", groupService.getAll());
+        return "user/addUser";
+    }
+
+    @PostMapping("/save")
+    @PreAuthorize("hasAnyRole('admin', 'staff')")
+    @Transactional
+    public String saveStudent(@Valid @ModelAttribute("registrationForm") UserRegistrationForm user,
+                              BindingResult result,
+                              @RequestParam("groupId") Long groupId,
+                              Model model) {
+        if (result.hasErrors() || groupId == 0) {
+            model.addAttribute("selectedGroupId", groupId);
+            model.addAttribute("user", StringUtils.capitalize(USER));
+            model.addAttribute("path", USER);
+            model.addAttribute("groups", groupService.getAll());
+            if (groupId == 0) {
+                model.addAttribute("emptyGroup", true);
+            }
+            return "user/addUser";
+        }
+        User student = studentService.saveUser(user);
+        studentService.updateStudentGroup(student.getId(), groupId);
+
+        return "redirect:/student";
+    }
+
+    @GetMapping("/details/{id}")
+    @PreAuthorize("hasAnyRole('admin', 'staff')")
+    public String editStudent(@PathVariable Long id, Model model) {
+        model.addAttribute("user", StringUtils.capitalize(USER));
+        model.addAttribute("path", USER);
+        model.addAttribute("userDto", studentService.getDetails(id));
+        return "user/userDetails";
+    }
+
+    @GetMapping("/edit/names/{id}")
+    public String editStudentName(@PathVariable Long id, Model model) {
+        model.addAttribute("userNames", studentService.getUserNames(id));
+        model.addAttribute("path", USER);
+        return "user/editUserNames";
+    }
+
+    @PostMapping("/update/names")
+    public String updateStudentNames(@Valid UserNames userNames, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("path", USER);
+            return "user/editUserNames";
+        }
+        studentService.updateNames(userNames);
+        return "redirect:/student";
+    }
+
+    @GetMapping("/edit/email/{id}")
+    public String editStudentEmail(@PathVariable Long id, Model model) {
+        model.addAttribute("path", USER);
+        model.addAttribute("userEmailDto", studentService.getUserEmail(id));
+        return "user/editUserEmail";
+    }
+
+    @PostMapping("/update/email")
+    public String updateEmail(@Valid UserEmailDto userEmail, BindingResult result, Model model) {
+        if (userEmail.email().equals(studentService.getById(userEmail.id()).getEmail())){
+            result.rejectValue("email", "", "Given email is current user email.");
+        }
+        if (result.hasErrors()){
+            model.addAttribute("path", USER);
+            return "user/editUserEmail";
+        }
+        studentService.updateEmail(userEmail);
+        return "redirect:/student";
+    }
+
+    @GetMapping("/edit/group/{id}")
+    @PreAuthorize("hasAnyRole('admin', 'staff')")
+    public String editStudentGroup(@PathVariable Long id, Model model) {
+        Student student = studentService.getById(id);
+        model.addAttribute("studentId", student.getId());
+        model.addAttribute("groups", groupService.getAll());
+        model.addAttribute("selectedGroupId", student.getGroup().getId());
+        return "student/feature/editGroup";
+    }
+
+    @PostMapping("/update/group")
+    @PreAuthorize("hasAnyRole('admin', 'staff')")
+    public String updateStudentGroup(@RequestParam("studentId") long studentId, @RequestParam("groupId") long groupId) {
+        studentService.updateStudentGroup(studentId, groupId);
+        return "redirect:/student";
+    }
+
+    @GetMapping("/edit/password")
+    @PreAuthorize("hasRole('student')")
+    public String editStudentPassword(Model model) {
+        model.addAttribute("path", USER);
+        model.addAttribute("changePasswordForm", new ChangePasswordForm());
+        return "user/editPassword";
+    }
+
+    @PostMapping("/update/password")
+    @PreAuthorize("hasRole('student')")
+    public String updateStudentPassword(@Valid ChangePasswordForm changePasswordForm, BindingResult result, Model model, Principal principal) {
+        User user = userRepository.findUserByEmail(principal.getName()).orElseThrow(EntityNotFoundException::new);
+
+        if (!passwordEncoder.matches(changePasswordForm.getOldPassword(), user.getPassword())) {
+            result.rejectValue("oldPassword", "", "Old password is incorrect.");
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("path", USER);
+            return "user/editPassword";
+        }
+        changePasswordForm.setId(user.getId());
+        studentService.updatePassword(changePasswordForm);
+        return "redirect:/student/details?success=true";
+    }
+
+    @GetMapping("/details")
+    @PreAuthorize("hasRole('student')")
+    public String detailsStudent(Model model, Principal principal) {
+        User user = userRepository.findUserByEmail(principal.getName()).orElseThrow(EntityNotFoundException::new);
+        model.addAttribute("user", StringUtils.capitalize(USER));
+        model.addAttribute("path", USER);
+        model.addAttribute("userDto", studentService.getDetails(user.getId()));
+        return "user/userDetails";
+    }
+
+    @GetMapping("/remove/{id}")
+    @PreAuthorize("hasRole('admin')")
+    public String deleteForm(@PathVariable Long id, Model model) {
+        model.addAttribute("path", USER);
+        model.addAttribute("userNames", studentService.getUserNames(id));
+        return "user/deleteUser";
+    }
+
+    @PostMapping("/delete")
+    @PreAuthorize("hasRole('admin')")
+    public String delete(@RequestParam("userId") long userid) {
+        studentService.deleteUser(userid);
+        return "redirect:/student";
     }
 }
