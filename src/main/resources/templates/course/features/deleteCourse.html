@@ -19,8 +19,8 @@
         </h4>
         <form th:action="@{/course/remove}" th:object="${course}" method="post">
             <input type="hidden" th:field="*{id}"/>
-            <button type="submit" class="btn btn-primary">Delete</button>
-            <a href="/course" class="btn btn-danger">Cancel</a>
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="/course" class="btn btn-primary">Cancel</a>
         </form>
     </div>
 </main>
