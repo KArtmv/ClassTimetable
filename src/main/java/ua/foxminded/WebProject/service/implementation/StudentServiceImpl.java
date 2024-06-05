@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Student;
+import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import ua.foxminded.WebProject.persistence.entity.User;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.StudentRepository;
@@ -47,15 +47,8 @@ public class StudentServiceImpl extends UserServiceImpl implements StudentServic
     }
 
     @Override
-    public UserDto getDetails(Long id) {
-        Student student = getById(id);
-        return UserDto.builder()
-                .id(student.getId())
-                .firstName(student.getFirstName())
-                .lastName(student.getLastName())
-                .email(student.getEmail())
-                .group(student.getGroup())
-                .build();
+    public StudentGroupDto getStudentGroup(Long id) {
+        return studentRepository.getStudentGroup(id);
     }
 
     @Override
@@ -71,9 +64,9 @@ public class StudentServiceImpl extends UserServiceImpl implements StudentServic
 
     @Override
     @Transactional
-    public Student updateStudentGroup(Long studentId, Long groupId) {
-        Student student = getById(studentId);
-        student.setGroup(groupService.getById(groupId));
+    public Student updateStudentGroup(StudentGroupDto studentGroupDto) {
+        Student student = getById(studentGroupDto.id());
+        student.setGroup(groupService.getById(studentGroupDto.groupId()));
         return studentRepository.save(student);
     }
 
