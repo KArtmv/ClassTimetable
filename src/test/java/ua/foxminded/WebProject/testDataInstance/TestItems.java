@@ -1,9 +1,9 @@
 package ua.foxminded.WebProject.testDataInstance;
 
 import lombok.Getter;
-import ua.foxminded.WebProject.DTO.LessonDto;
-import ua.foxminded.WebProject.DTO.StudentDto;
-import ua.foxminded.WebProject.DTO.TeacherDto;
+import ua.foxminded.WebProject.DTO.*;
+import ua.foxminded.WebProject.form.ChangePasswordForm;
+import ua.foxminded.WebProject.form.UserRegistrationForm;
 import ua.foxminded.WebProject.persistence.entity.*;
 
 import java.time.DayOfWeek;
@@ -12,6 +12,9 @@ import java.util.*;
 
 @Getter
 public class TestItems {
+
+    private final String password = "password";
+
     private final TestData testData = new TestData();
     private final Lessons lessons = new Lessons();
 
@@ -27,6 +30,7 @@ public class TestItems {
     private final Course secondCourse = new Course(testData.getCourseId(), testData.getSecondCourseName(), testData.getSecondCourseDescription());
 
     private final Group group = new Group(testData.getGroupId(), testData.getGroupName());
+    private final Group group2 = new Group(2L, "HV-14");
 
     private final Long teacherId = 6L;
     private final String teacherFirstName = "Jessica";
@@ -41,13 +45,69 @@ public class TestItems {
     private final Student student = new Student(testData.getStudentId(), testData.getStudentFirstName(), testData.getStudentLastName(), getGroup());
     private final Student studentIdFive = new Student(5L, "Amelia", "Martinez", getGroup());
     private final StudentDto studentDto = new StudentDto(testData.getStudentFirstName(), testData.getStudentLastName(), new Group(testData.getGroupId()));
+    public Student studentWithGroup2(){
+        Student student2 = getStudent();
+        student2.setGroup(getGroup2());
+        return student2;
+    }
+
+    public Student studentWithEmail(){
+        Student student1 = getStudent();
+        student1.setEmail(testData.getStudentEmail());
+        return student1;
+    }
+
+    public User getUserWithUpdatedNames(){
+        User user1 = getStudent();
+        user1.setFirstName(testData.getAdminFirstName());
+        user1.setLastName(testData.getAdminLastName());
+        return user1;
+    }
+
+    private final UserNames userNames = new UserNames(testData.getStudentId(), testData.getAdminFirstName(), testData.getAdminLastName());
+
+    private final UserEmailDto emailDto = new UserEmailDto(testData.getStudentId(), testData.getStudentEmail());
 
     private final Admin admin = new Admin(testData.getAdminFirstName(), testData.getAdminLastName());
 
     private final Staff staff = new Staff(testData.getStaffLastName(), testData.getStaffLastName());
 
+    private final User user = new Student(testData.getStudentId(), testData.getStudentFirstName(), testData.getStudentLastName(), null);
+    private final UserDto userDto = new UserDto(testData.getStudentId(), testData.getStudentFirstName(), testData.getStudentLastName(), testData.getStudentEmail());
+
+    public User studentWithPassword(){
+        Student student2 = getStudent();
+        student2.setPassword(getEncodedPassword());
+        return student2;
+    }
+
+    public ChangePasswordForm getChangePasswordForm(){
+        ChangePasswordForm form = new ChangePasswordForm();
+        form.setId(testData.getStudentId());
+        form.setOldPassword(getEncodedPassword2());
+        form.setPassword(getPassword());
+        form.setConfirmPassword(getPassword());
+        return form;
+    }
+
+    private final String encodedPassword = "thisIsEncodedPassword";
+    private final String encodedPassword2 = "thisIsEncodedPassword2";
+
+    private final StudentGroupDto studentGroupDto = new StudentGroupDto(testData.getStudentId(), testData.getGroupId(), testData.getGroupName());
+    private final StudentGroupDto studentGroupDto2 = new StudentGroupDto(testData.getStudentId(), getGroup2().getId(), getGroup2().getGroupName());
+
     private final LocalDate dateOfMonday = testData.getDate().with(DayOfWeek.MONDAY);
+
     private final LocalDate dateOfFriday = testData.getDate().with(DayOfWeek.FRIDAY);
+
+    public UserRegistrationForm userRegistrationForm(){
+        UserRegistrationForm userRegistrationForm = new UserRegistrationForm();
+        userRegistrationForm.setFirstName(testData.getStudentFirstName());
+        userRegistrationForm.setLastName(testData.getStudentLastName());
+        userRegistrationForm.setEmail(testData.getStudentEmail());
+        userRegistrationForm.setPassword(getPassword());
+        return userRegistrationForm;
+    }
 
     private final List<Student> students = Arrays.asList(
             new Student(1L, "Liam", "Jones", getGroup()),
@@ -69,7 +129,7 @@ public class TestItems {
 
     private final List<Group> groups = Arrays.asList(
             getGroup(),
-            new Group(2L, "HV-14"),
+            getGroup2(),
             new Group(3L, "QM-09"));
 
     public List<Staff> getStaffs() {
