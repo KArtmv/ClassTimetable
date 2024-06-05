@@ -38,11 +38,11 @@
                 </div>
             </div>
         </div>
-        <div th:if="${userDto.group}" class="container card mb-3">
+        <div th:if="${studentGroupDto}" class="container card mb-3">
             <h3 class="mt-2">Group:
-                <small class="text-body-secondary" th:text="${userDto.group.groupName}"/>
+                <small class="text-body-secondary" th:text="${studentGroupDto.groupName}"/>
             </h3>
-            <a sec:authorize="hasAnyRole('admin', 'staff')" th:href="@{'/' + ${path} + '/edit/group/' + ${userDto.id}}"
+            <a sec:authorize="hasAnyRole('admin', 'staff')" th:href="@{'/' + ${path} + '/edit/group/' + ${studentGroupDto.id}}"
                    class="btn btn-success col-2 mb-3">Edit</a>
         </div>
         <a href="/" class="btn btn-danger">Go to home page</a>
