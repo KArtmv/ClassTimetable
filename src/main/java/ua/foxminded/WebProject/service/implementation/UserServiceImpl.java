@@ -42,12 +42,7 @@ public abstract class UserServiceImpl {
     }
 
     public UserDto getDetails(Long id) {
-        User user = getUser(id);
-        return UserDto.builder()
-                .id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail()).build();
+        return userRepository.getUserDataById(id);
     }
 
     @Transactional
