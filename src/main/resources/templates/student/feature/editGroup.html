@@ -11,17 +11,17 @@
 <main>
     <div class="container">
         <h2>Edit student group</h2>
-        <form th:action="@{/student/update/group}" method="post">
-            <input type="hidden" th:value="*{studentId}" name="studentId"/>
+        <form th:action="@{/student/update/group}" th:object="${studentGroupDto}" method="post">
+            <input type="hidden" th:field="*{id}"/>
             <div class="mb-3">
                 <label for="group">Group:</label>
                 <select class="form-control mb-3" id="group" name="groupId">
                     <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.groupName}"
-                            th:selected="${group.id == selectedGroupId}"></option>
+                            th:selected="${group.id == studentGroupDto.groupId()}"></option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Save</button>
-            <a th:href="@{'/student/details/' + ${studentId}}" class="btn btn-danger">Cancel</a>
+            <a th:href="@{'/student/details/' + ${studentGroupDto.id}}" class="btn btn-danger">Cancel</a>
         </form>
     </div>
 </main>
