@@ -11,10 +11,11 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ua.foxminded.WebProject.DTO.StudentGroupDto;
+import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.DTO.UserEmailDto;
 import ua.foxminded.WebProject.DTO.UserNames;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
-import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.entity.User;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.GroupService;
@@ -70,7 +71,7 @@ public class StudentController {
             return "user/addUser";
         }
         User student = studentService.saveUser(user);
-        studentService.updateStudentGroup(student.getId(), groupId);
+        studentService.updateStudentGroup(new StudentGroupDto(student.getId(), groupId, null));
 
         return "redirect:/student";
     }
@@ -78,9 +79,12 @@ public class StudentController {
     @GetMapping("/details/{id}")
     @PreAuthorize("hasAnyRole('admin', 'staff')")
     public String editStudent(@PathVariable Long id, Model model) {
+        UserDto userDto = studentService.getDetails(id);
         model.addAttribute("user", StringUtils.capitalize(USER));
         model.addAttribute("path", USER);
-        model.addAttribute("userDto", studentService.getDetails(id));
+        model.addAttribute("userDto", userDto);
+        model.addAttribute("studentGroupDto", studentService.getStudentGroup(userDto.id()));
+
         return "user/userDetails";
     }
 
@@ -124,17 +128,15 @@ public class StudentController {
     @GetMapping("/edit/group/{id}")
     @PreAuthorize("hasAnyRole('admin', 'staff')")
     public String editStudentGroup(@PathVariable Long id, Model model) {
-        Student student = studentService.getById(id);
-        model.addAttribute("studentId", student.getId());
+        model.addAttribute("studentGroupDto", studentService.getStudentGroup(id));
         model.addAttribute("groups", groupService.getAll());
-        model.addAttribute("selectedGroupId", student.getGroup().getId());
         return "student/feature/editGroup";
     }
 
     @PostMapping("/update/group")
     @PreAuthorize("hasAnyRole('admin', 'staff')")
-    public String updateStudentGroup(@RequestParam("studentId") long studentId, @RequestParam("groupId") long groupId) {
-        studentService.updateStudentGroup(studentId, groupId);
+    public String updateStudentGroup(StudentGroupDto studentGroupDto) {
+        studentService.updateStudentGroup(studentGroupDto);
         return "redirect:/student";
     }
 
