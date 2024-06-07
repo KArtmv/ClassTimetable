@@ -9,55 +9,67 @@ import ua.foxminded.WebProject.DTO.UserEmailDto;
 import ua.foxminded.WebProject.DTO.UserNames;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.persistence.entity.User;
-import ua.foxminded.WebProject.persistence.repository.UserRepository;
+import ua.foxminded.WebProject.persistence.repository.AbstractUserRepository;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public abstract class UserServiceImpl {
+public abstract class UserServiceImpl<T extends User> {
 
-    protected final UserRepository userRepository;
+    protected final AbstractUserRepository<T, Long> repository;
     protected final BCryptPasswordEncoder passwordEncoder;
 
     public UserNames getUserNames(Long id) {
-        return userRepository.getUserNamesById(id);
+        return repository.getUserNamesById(id);
     }
 
     @Transactional
-    public User updateNames(UserNames userNameDto) {
-        User user = getUser(userNameDto.id());
+    public T updateNames(UserNames userNameDto) {
+        T user = getById(userNameDto.id());
         user.setFirstName(userNameDto.firstName());
         user.setLastName(userNameDto.lastName());
-        return userRepository.save(user);
+        return repository.save(user);
     }
 
     public UserEmailDto getUserEmail(Long id) {
-        return userRepository.getUserEmailById(id);
+        return repository.getUserEmailById(id);
     }
 
     @Transactional
-    public User updateEmail(UserEmailDto emailDto) {
-        User user = getUser(emailDto.id());
+    public T updateEmail(UserEmailDto emailDto) {
+        T user = getById(emailDto.id());
         user.setEmail(emailDto.email());
-        return userRepository.save(user);
+        return repository.save(user);
     }
 
     public UserDto getDetails(Long id) {
-        return userRepository.getUserDataById(id);
+        return repository.getUserDataById(id);
     }
 
     @Transactional
-    public User updatePassword(ChangePasswordForm changePasswordForm) {
-        User user = getUser(changePasswordForm.getId());
+    public T updatePassword(ChangePasswordForm changePasswordForm) {
+        T user = getById(changePasswordForm.getId());
         user.setPassword(passwordEncoder.encode(changePasswordForm.getPassword()));
-        return userRepository.save(user);
+        return repository.save(user);
     }
 
     @Transactional
     public void deleteUser(Long id) {
-        userRepository.delete(getUser(id));
+        repository.delete(getById(id));
     }
 
-    private User getUser(Long id) {
-        return userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+    @Transactional
+    public T saveUser(T user) {
+        return repository.save(user);
+    }
+
+    public T getById(Long id){
+        return repository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+    public List<T> getAll(){
+        return repository.findAll();
     }
 }
