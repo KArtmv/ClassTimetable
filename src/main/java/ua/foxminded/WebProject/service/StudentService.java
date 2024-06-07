@@ -7,7 +7,7 @@ import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface StudentService extends UserService, AbstractService<Student, Long> {
+public interface StudentService extends UserService<Student>, AbstractService<Student, Long> {
     List<Lesson> getLessonsForDay(Student student, LocalDate localDate);
 
     List<Lesson> getLessonsForWeek(Student student, LocalDate start, LocalDate end);
