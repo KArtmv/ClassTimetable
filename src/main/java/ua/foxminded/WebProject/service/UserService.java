@@ -7,18 +7,18 @@ import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.persistence.entity.User;
 import ua.foxminded.WebProject.form.UserRegistrationForm;
 
-public interface UserService {
+public interface UserService<T extends User> {
     UserNames getUserNames(Long id);
-    User updateNames(UserNames userNameDto);
+    T updateNames(UserNames userNameDto);
 
     UserEmailDto getUserEmail(Long id);
-    User updateEmail(UserEmailDto emailDto);
+    T updateEmail(UserEmailDto emailDto);
 
     UserDto getDetails(Long id);
 
-    User updatePassword(ChangePasswordForm changePasswordForm);
+    T updatePassword(ChangePasswordForm changePasswordForm);
 
-    User saveUser(UserRegistrationForm registrationForm);
+    T saveUser(T user);
 
     void deleteUser(Long id);
 }
