@@ -16,11 +16,12 @@ import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.DTO.UserEmailDto;
 import ua.foxminded.WebProject.DTO.UserNames;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
+import ua.foxminded.WebProject.form.UserRegistrationForm;
+import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.entity.User;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.service.StudentService;
-import ua.foxminded.WebProject.form.UserRegistrationForm;
 
 import java.security.Principal;
 
@@ -70,8 +71,9 @@ public class StudentController {
             }
             return "user/addUser";
         }
-        User student = studentService.saveUser(user);
-        studentService.updateStudentGroup(new StudentGroupDto(student.getId(), groupId, null));
+
+        Student student = studentService.saveUser(user);
+        student.setGroup(groupService.getById(groupId));
 
         return "redirect:/student";
     }
