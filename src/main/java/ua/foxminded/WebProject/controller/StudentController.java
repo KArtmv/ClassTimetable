@@ -116,7 +116,7 @@ public class StudentController {
 
     @PostMapping("/update/email")
     public String updateEmail(@Valid UserEmailDto userEmail, BindingResult result, Model model) {
-        if (userEmail.email().equals(studentService.getById(userEmail.id()).getEmail())){
+        if (userEmail.email().equals(studentService.getUserEmail(userEmail.id()).email())){
             result.rejectValue("email", "", "Given email is current user email.");
         }
         if (result.hasErrors()){
@@ -188,8 +188,8 @@ public class StudentController {
 
     @PostMapping("/delete")
     @PreAuthorize("hasRole('admin')")
-    public String delete(@RequestParam("userId") long userid) {
-        studentService.deleteUser(userid);
+    public String delete(@RequestParam("userId") Long userId) {
+        studentService.deleteUser(userId);
         return "redirect:/student";
     }
 }
