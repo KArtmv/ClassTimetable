@@ -18,7 +18,7 @@ public interface UserService<T extends User> {
 
     T updatePassword(ChangePasswordForm changePasswordForm);
 
-    T saveUser(T user);
+    T saveUser(UserRegistrationForm user);
 
     void deleteUser(Long id);
 }
