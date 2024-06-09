@@ -25,7 +25,7 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
     private final StudentRepository studentRepository;
 
     public StudentServiceImpl(BCryptPasswordEncoder passwordEncoder, GroupService groupService, LessonRepository lessonRepository, StudentRepository studentRepository) {
-        super(studentRepository, passwordEncoder);
+        super(studentRepository, passwordEncoder, Student.class);
         this.groupService = groupService;
         this.lessonRepository = lessonRepository;
         this.studentRepository = studentRepository;
