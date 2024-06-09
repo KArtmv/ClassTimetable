@@ -11,10 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Student;
-import ua.foxminded.WebProject.persistence.entity.User;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.StudentRepository;
-import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
@@ -31,14 +29,13 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceImplTest {
+
     private final TestData testData = new TestData();
     private final TestItems testItems = new TestItems();
     @Mock
     private GroupService groupService;
     @Mock
-    private UserRepository userRepository;
-    @Mock
-    private StudentRepository studentRepository;
+    private StudentRepository userRepository;
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
     @Mock
@@ -48,7 +45,7 @@ class StudentServiceImplTest {
 
     @Test
     void getStudentGroup_shouldReturnStudentGroup_whenIsFound() {
-        when(studentRepository.getStudentGroup(anyLong())).thenReturn(testItems.getStudentGroupDto());
+        when(userRepository.getStudentGroup(anyLong())).thenReturn(testItems.getStudentGroupDto());
 
         StudentGroupDto result = studentService.getStudentGroup(testData.getStudentId());
         assertAll(() -> {
@@ -58,15 +55,15 @@ class StudentServiceImplTest {
             assertThat(result.groupName()).isEqualTo(testData.getGroupName());
         });
 
-        verify(studentRepository).getStudentGroup(testData.getStudentId());
+        verify(userRepository).getStudentGroup(testData.getStudentId());
     }
 
     @Test
     @Transactional
     void updateStudentGroup_shouldUpdateStudentGroup_whenIsFound() {
-        when(studentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(testItems.getStudent()));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(testItems.getStudent()));
         when(groupService.getById(anyLong())).thenReturn(testItems.getGroup2());
-        when(studentRepository.save(any())).thenReturn(testItems.studentWithGroup2());
+        when(userRepository.save(any())).thenReturn(testItems.studentWithGroup2());
 
         Student result = studentService.updateStudentGroup(testItems.getStudentGroupDto2());
         assertAll(() -> {
@@ -75,37 +72,35 @@ class StudentServiceImplTest {
             assertThat(result.getGroup()).isEqualTo(testItems.getGroup2());
         });
 
-        verify(studentRepository).findById(testData.getStudentId());
+        verify(userRepository).findById(testData.getStudentId());
         verify(groupService).getById(testItems.getGroup2().getId());
     }
 
     @Test
     void getById_shouldReturnStudentInstance_whenIsFound() {
-        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getStudent()));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getStudent()));
 
         assertThat(studentService.getById(testData.getStudentId())).isNotNull();
 
-        verify(studentRepository).findById(testData.getStudentId());
+        verify(userRepository).findById(testData.getStudentId());
     }
 
     @Test
     void getById_shouldThrowEntityNotFoundException_whenIdIsNotFound() {
-        when(studentRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> studentService.getById(testData.getStudentId()));
 
-        verify(studentRepository).findById(testData.getStudentId());
+        verify(userRepository).findById(testData.getStudentId());
     }
 
     @Test
     void saveUser_shouldReturnStudentInstanceWithId_whenIsSavedSuccessfully() {
-        when(passwordEncoder.encode(anyString())).thenReturn(testItems.getEncodedPassword());
-        when(studentRepository.save(any(Student.class))).thenReturn((Student) testItems.getUser());
+        when(userRepository.save(any(Student.class))).thenReturn((Student) testItems.getUser());
 
         assertThat(studentService.saveUser(testItems.userRegistrationForm()).getId()).isNotNull();
 
-        verify(passwordEncoder).encode(testItems.userRegistrationForm().getPassword());
-        verify(studentRepository).save(any(Student.class));
+        verify(userRepository).save(any(Student.class));
     }
 
     @Test
@@ -128,11 +123,11 @@ class StudentServiceImplTest {
 
     @Test
     void getAll_shouldReturnListOfStudent_whenIsInvoke() {
-        when(studentRepository.findAll()).thenReturn(testItems.getStudents());
+        when(userRepository.findAll()).thenReturn(testItems.getStudents());
 
         assertThat(studentService.getAll()).hasSize(5);
 
-        verify(studentRepository).findAll();
+        verify(userRepository).findAll();
     }
 
 
@@ -148,12 +143,12 @@ class StudentServiceImplTest {
     @Test
     void updateNames() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(testItems.getStudent()));
-        when(userRepository.save(any(User.class))).thenReturn(testItems.getUserWithUpdatedNames());
+        when(userRepository.save(any(Student.class))).thenReturn((Student) testItems.getUserWithUpdatedNames());
 
         studentService.updateNames(testItems.getUserNames());
 
         verify(userRepository).findById(testData.getStudentId());
-        verify(userRepository).save(any(User.class));
+        verify(userRepository).save(any(Student.class));
     }
 
     @Test
@@ -189,16 +184,16 @@ class StudentServiceImplTest {
     void updatePassword() {
         when(userRepository.findById(testData.getStudentId())).thenReturn(Optional.ofNullable(testItems.getStudent()));
         when(passwordEncoder.encode(anyString())).thenReturn(testItems.getEncodedPassword());
-        when(userRepository.save(any(User.class))).thenReturn(testItems.studentWithPassword());
+        when(userRepository.save(any(Student.class))).thenReturn((Student) testItems.studentWithPassword());
 
         studentService.updatePassword(testItems.getChangePasswordForm());
 
         verify(userRepository).findById(testData.getStudentId());
         verify(passwordEncoder).encode(testItems.getPassword());
-        verify(userRepository).save(any(User.class));
+        verify(userRepository).save(any(Student.class));
     }
 
-    @Test
+    @Test()
     void deleteUser_shouldThrowEntityNotFoundException_whenStudentIsNotFound() {
         when(userRepository.findById(anyLong())).thenThrow(EntityNotFoundException.class);
 
