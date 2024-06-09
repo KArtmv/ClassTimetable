@@ -2,15 +2,18 @@ package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.DTO.UserEmailDto;
 import ua.foxminded.WebProject.DTO.UserNames;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
+import ua.foxminded.WebProject.form.UserRegistrationForm;
 import ua.foxminded.WebProject.persistence.entity.User;
 import ua.foxminded.WebProject.persistence.repository.AbstractUserRepository;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -19,6 +22,7 @@ public abstract class UserServiceImpl<T extends User> {
 
     protected final AbstractUserRepository<T, Long> repository;
     protected final BCryptPasswordEncoder passwordEncoder;
+    private final Class<T> clazz;
 
     public UserNames getUserNames(Long id) {
         return repository.getUserNamesById(id);
@@ -61,8 +65,17 @@ public abstract class UserServiceImpl<T extends User> {
 
 
     @Transactional
-    public T saveUser(T user) {
-        return repository.save(user);
+    public T saveUser(UserRegistrationForm form) {
+        try {
+            T user = getNewInstance();
+            user.setFirstName(form.getFirstName());
+            user.setLastName(form.getLastName());
+            user.setEmail(form.getEmail());
+            user.setPassword(passwordEncoder.encode(form.getPassword()));
+            return repository.save(user);
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to create a new instance of user", e);
+        }
     }
 
     public T getById(Long id){
@@ -71,5 +84,9 @@ public abstract class UserServiceImpl<T extends User> {
 
     public List<T> getAll(){
         return repository.findAll();
+    }
+
+    private T getNewInstance() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        return clazz.getDeclaredConstructor().newInstance();
     }
 }
