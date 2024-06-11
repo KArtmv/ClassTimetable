@@ -80,7 +80,7 @@ public class StudentController {
 
     @GetMapping("/details/{id}")
     @PreAuthorize("hasAnyRole('admin', 'staff')")
-    public String editStudent(@PathVariable Long id, Model model) {
+    public String viewStudentDetails(@PathVariable Long id, Model model) {
         UserDto userDto = studentService.getDetails(id);
         model.addAttribute("user", StringUtils.capitalize(USER));
         model.addAttribute("path", USER);
@@ -119,10 +119,12 @@ public class StudentController {
         if (userEmail.email().equals(studentService.getUserEmail(userEmail.id()).email())){
             result.rejectValue("email", "", "Given email is current user email.");
         }
+
         if (result.hasErrors()){
             model.addAttribute("path", USER);
             return "user/editUserEmail";
         }
+
         studentService.updateEmail(userEmail);
         return "redirect:/student";
     }
@@ -170,7 +172,7 @@ public class StudentController {
 
     @GetMapping("/details")
     @PreAuthorize("hasRole('student')")
-    public String detailsStudent(Model model, Principal principal) {
+    public String viewMyDetails(Model model, Principal principal) {
         User user = userRepository.findUserByEmail(principal.getName()).orElseThrow(EntityNotFoundException::new);
         model.addAttribute("user", StringUtils.capitalize(USER));
         model.addAttribute("path", USER);
