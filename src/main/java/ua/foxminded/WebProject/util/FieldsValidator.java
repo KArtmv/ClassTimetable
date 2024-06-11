@@ -33,30 +33,10 @@ public class FieldsValidator implements ConstraintValidator<FieldsCompare, Objec
             constraintValidatorContext.buildConstraintViolationWithTemplate(constraintValidatorContext.getDefaultConstraintMessageTemplate())
                     .addPropertyNode(firstFieldName).addConstraintViolation();
 
-            return firstValue.equals(secondValue);
+            return firstValue != null && firstValue.equals(secondValue);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             return false;
         }
 
     }
 }
-
-//    @Override
-//    public boolean isValid(RegistrationForm registrationForm, ConstraintValidatorContext constraintValidatorContext) {
-//        constraintValidatorContext.disableDefaultConstraintViolation();
-//        constraintValidatorContext.buildConstraintViolationWithTemplate(constraintValidatorContext.getDefaultConstraintMessageTemplate())
-//                .addPropertyNode("password").addConstraintViolation();
-//        return registrationForm.getPassword().equals(registrationForm.getConfirmPassword());
-//    }
-//}
-
-//public class PasswordValidator implements ConstraintValidator<PasswordCompare, RegistrationForm> {
-//
-//    @Override
-//    public boolean isValid(RegistrationForm registrationForm, ConstraintValidatorContext constraintValidatorContext) {
-//        constraintValidatorContext.disableDefaultConstraintViolation();
-//        constraintValidatorContext.buildConstraintViolationWithTemplate(constraintValidatorContext.getDefaultConstraintMessageTemplate())
-//                .addPropertyNode("password").addConstraintViolation();
-//        return registrationForm.getPassword().equals(registrationForm.getConfirmPassword());
-//    }
-//}
