@@ -2,7 +2,6 @@ package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.UserDto;
@@ -11,7 +10,7 @@ import ua.foxminded.WebProject.DTO.UserNames;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.form.UserRegistrationForm;
 import ua.foxminded.WebProject.persistence.entity.User;
-import ua.foxminded.WebProject.persistence.repository.AbstractUserRepository;
+import ua.foxminded.WebProject.persistence.repository.UserCrudRepository;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public abstract class UserServiceImpl<T extends User> {
 
-    protected final AbstractUserRepository<T, Long> repository;
+    protected final UserCrudRepository<T, Long> repository;
     protected final BCryptPasswordEncoder passwordEncoder;
     private final Class<T> clazz;
 

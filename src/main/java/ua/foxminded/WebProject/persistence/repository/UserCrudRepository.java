@@ -11,7 +11,7 @@ import ua.foxminded.WebProject.persistence.entity.User;
 import java.io.Serializable;
 
 @NoRepositoryBean
-public interface AbstractUserRepository<T extends User, ID extends Serializable> extends JpaRepository<T, ID> {
+public interface UserCrudRepository<T extends User, ID extends Serializable> extends JpaRepository<T, ID> {
 
     @Query("select new ua.foxminded.WebProject.DTO.UserNames(u.id, u.firstName, u.lastName) from #{#entityName} u where u.id = ?1")
     UserNames getUserNamesById(ID id);
