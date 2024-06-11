@@ -91,6 +91,6 @@ public abstract class AbstractUserService<T extends User> {
     }
 
     private String toCapitalize(String str) {
-        return StringUtils.capitalize(str.trim());
+        return StringUtils.capitalize(str.toLowerCase().trim());
     }
 }
