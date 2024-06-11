@@ -8,7 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
@@ -48,7 +47,7 @@ public class StudentController {
     @PreAuthorize("hasAnyRole('admin', 'staff')")
     public String addStudent(Model model) {
         model.addAttribute("registrationForm", new UserRegistrationForm());
-        model.addAttribute("user", StringUtils.capitalize(USER));
+        model.addAttribute("user", USER);
         model.addAttribute("path", USER);
         model.addAttribute("groups", groupService.getAll());
         return "user/addUser";
@@ -63,7 +62,7 @@ public class StudentController {
                               Model model) {
         if (result.hasErrors() || groupId == 0) {
             model.addAttribute("selectedGroupId", groupId);
-            model.addAttribute("user", StringUtils.capitalize(USER));
+            model.addAttribute("user", USER);
             model.addAttribute("path", USER);
             model.addAttribute("groups", groupService.getAll());
             if (groupId == 0) {
@@ -82,7 +81,7 @@ public class StudentController {
     @PreAuthorize("hasAnyRole('admin', 'staff')")
     public String viewStudentDetails(@PathVariable Long id, Model model) {
         UserDto userDto = studentService.getDetails(id);
-        model.addAttribute("user", StringUtils.capitalize(USER));
+        model.addAttribute("user", USER);
         model.addAttribute("path", USER);
         model.addAttribute("userDto", userDto);
         model.addAttribute("studentGroupDto", studentService.getStudentGroup(userDto.id()));
@@ -174,7 +173,7 @@ public class StudentController {
     @PreAuthorize("hasRole('student')")
     public String viewMyDetails(Model model, Principal principal) {
         User user = userRepository.findUserByEmail(principal.getName()).orElseThrow(EntityNotFoundException::new);
-        model.addAttribute("user", StringUtils.capitalize(USER));
+        model.addAttribute("user", USER);
         model.addAttribute("path", USER);
         model.addAttribute("userDto", studentService.getDetails(user.getId()));
         return "user/userDetails";
