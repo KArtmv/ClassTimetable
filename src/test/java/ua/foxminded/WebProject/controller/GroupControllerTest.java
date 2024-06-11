@@ -113,17 +113,12 @@ class GroupControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"admin", "staff"})
+    @ValueSource(strings = {"student", "teacher"})
     void save_shouldReturnForbidden_whenLoggedUserLacksAccess(String role) throws Exception {
-        when(groupService.saveGroup(any(GroupDto.class))).thenReturn(new Group());
-        when(groupNameGenerator.generateGroupName()).thenReturn(testData.getGroupName());
-
-        mockMvc.perform(post("/group/save")
-                        .queryParam("groupName", testData.getGroupName())
-                        .with(testUser(role)))
-                .andDo(print()).andExpectAll(status().isOk(),
-                        view().name("group/features/addGroup"),
-                        content().string(containsString("Given group name: \"YS-27\" already exists, try again.")));
+        mockMvc.perform(post("/group/save").with(testUser(role)))
+                .andDo(print())
+                .andExpectAll(
+                        status().is4xxClientError());
     }
 
     @Test
