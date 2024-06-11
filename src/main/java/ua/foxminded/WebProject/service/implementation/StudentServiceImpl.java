@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
-public class StudentServiceImpl extends UserServiceImpl<Student> implements StudentService {
+public class StudentServiceImpl extends AbstractUserService<Student> implements StudentService {
 
     private final GroupService groupService;
     private final LessonRepository lessonRepository;

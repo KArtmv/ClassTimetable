@@ -17,7 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public abstract class UserServiceImpl<T extends User> {
+public abstract class AbstractUserService<T extends User> {
 
     protected final UserCrudRepository<T, Long> repository;
     protected final BCryptPasswordEncoder passwordEncoder;
