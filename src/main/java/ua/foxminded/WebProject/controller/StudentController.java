@@ -65,9 +65,7 @@ public class StudentController {
             model.addAttribute("user", USER);
             model.addAttribute("path", USER);
             model.addAttribute("groups", groupService.getAll());
-            if (groupId == 0) {
-                model.addAttribute("emptyGroup", true);
-            }
+            model.addAttribute("emptyGroup", groupId == 0);
             return "user/addUser";
         }
 
