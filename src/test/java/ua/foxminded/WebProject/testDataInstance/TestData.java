@@ -55,6 +55,13 @@ public class TestData {
 
     private final String email = "test@gmail.com";
 
+    private final Long userId = 4L;
+    private final String userFirstName = getAdminFirstName();
+    private final String userLastName = getStaffLastName();
+    private final String userEmail = "user@gmail.com";
+
+    private final String oldPassword = "testPassword";
+
     private final LocalDate date = LocalDate.of(2024, 3, 11);
 
     private final LocalDate dateStudentStart = getDate().with(DayOfWeek.TUESDAY);

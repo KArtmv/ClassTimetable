@@ -75,6 +75,16 @@ public class TestItems {
     private final User user = new Student(testData.getStudentId(), testData.getStudentFirstName(), testData.getStudentLastName(), null);
     private final UserDto userDto = new UserDto(testData.getStudentId(), testData.getStudentFirstName(), testData.getStudentLastName(), testData.getStudentEmail());
 
+    public User getCompliteUser() {
+        User user1 = new User();
+        user1.setId(testData.getUserId());
+        user1.setFirstName(testData.getUserFirstName());
+        user1.setLastName(testData.getUserLastName());
+        user1.setEmail(testData.getUserEmail());
+        user1.setPassword(getEncodedPassword());
+        return user1;
+    }
+
     public User studentWithPassword(){
         Student student2 = getStudent();
         student2.setPassword(getEncodedPassword());
@@ -89,6 +99,9 @@ public class TestItems {
         form.setConfirmPassword(getPassword());
         return form;
     }
+
+    private final UserDto studentDetails = new UserDto(testData.getUserId(), testData.getUserFirstName(), testData.getUserLastName(), testData.getUserEmail());
+
 
     private final String encodedPassword = "thisIsEncodedPassword";
     private final String encodedPassword2 = "thisIsEncodedPassword2";
