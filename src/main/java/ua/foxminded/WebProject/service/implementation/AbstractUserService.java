@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.DTO.UserEmailDto;
 import ua.foxminded.WebProject.DTO.UserNames;
@@ -30,8 +31,8 @@ public abstract class AbstractUserService<T extends User> {
     @Transactional
     public T updateNames(UserNames userNameDto) {
         T user = getById(userNameDto.id());
-        user.setFirstName(userNameDto.firstName());
-        user.setLastName(userNameDto.lastName());
+        user.setFirstName(toCapitalize(userNameDto.firstName()));
+        user.setLastName(toCapitalize(userNameDto.lastName()));
         return repository.save(user);
     }
 
@@ -42,7 +43,7 @@ public abstract class AbstractUserService<T extends User> {
     @Transactional
     public T updateEmail(UserEmailDto emailDto) {
         T user = getById(emailDto.id());
-        user.setEmail(emailDto.email());
+        user.setEmail(emailDto.email().toLowerCase());
         return repository.save(user);
     }
 
@@ -67,9 +68,9 @@ public abstract class AbstractUserService<T extends User> {
     public T saveUser(UserRegistrationForm form) {
         try {
             T user = getNewInstance();
-            user.setFirstName(form.getFirstName());
-            user.setLastName(form.getLastName());
-            user.setEmail(form.getEmail());
+            user.setFirstName(toCapitalize(form.getFirstName()));
+            user.setLastName(toCapitalize(form.getLastName()));
+            user.setEmail(form.getEmail().toLowerCase());
             user.setPassword(passwordEncoder.encode(form.getPassword()));
             return repository.save(user);
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
@@ -87,5 +88,9 @@ public abstract class AbstractUserService<T extends User> {
 
     private T getNewInstance() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         return clazz.getDeclaredConstructor().newInstance();
+    }
+
+    private String toCapitalize(String str) {
+        return StringUtils.capitalize(str);
     }
 }
