@@ -21,6 +21,7 @@ public @interface FieldsCompare {
     Class<? extends Payload>[] payload() default {};
 
     String first();
+
     String second();
 
     @Target(ElementType.TYPE)

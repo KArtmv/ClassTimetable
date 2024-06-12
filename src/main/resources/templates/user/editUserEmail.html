@@ -15,7 +15,8 @@
             <input type="hidden" th:field="*{id}"/>
             <div class="mb-3">
                 <label for="email">Email:</label>
-                <input type="text" class="form-control" th:field="*{email}" id="email" placeholder="Enter email address">
+                <input type="text" class="form-control" th:field="*{email}" id="email"
+                       placeholder="Enter email address">
                 <div th:if="${#fields.hasErrors('email')}"
                      class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
                      th:errors="*{email}">Email is mandatory.

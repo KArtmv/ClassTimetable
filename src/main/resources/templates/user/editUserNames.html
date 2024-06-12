@@ -15,7 +15,8 @@
             <input type="hidden" th:field="*{id}"/>
             <div class="mb-3">
                 <label for="firstName">First name:</label>
-                <input type="text" class="form-control" th:field="*{firstName}" id="firstName" placeholder="Enter first name">
+                <input type="text" class="form-control" th:field="*{firstName}" id="firstName"
+                       placeholder="Enter first name">
                 <div th:if="${#fields.hasErrors('firstName')}"
                      class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
                      th:errors="*{firstName}">First name is mandatory.
@@ -23,7 +24,8 @@
             </div>
             <div class="mb-3">
                 <label for="lastName">Last name:</label>
-                <input type="text" class="form-control" th:field="*{lastName}" id="lastName" placeholder="Enter last name">
+                <input type="text" class="form-control" th:field="*{lastName}" id="lastName"
+                       placeholder="Enter last name">
                 <div th:if="${#fields.hasErrors('lastName')}"
                      class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
                      th:errors="*{lastName}">Last name is mandatory.

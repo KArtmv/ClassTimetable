@@ -113,11 +113,11 @@ public class StudentController {
 
     @PostMapping("/update/email")
     public String updateEmail(@Valid UserEmailDto userEmail, BindingResult result, Model model) {
-        if (userEmail.email().equals(studentService.getUserEmail(userEmail.id()).email())){
+        if (userEmail.email().equals(studentService.getUserEmail(userEmail.id()).email())) {
             result.rejectValue("email", "", "Given email is current user email.");
         }
 
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             model.addAttribute("path", USER);
             return "user/editUserEmail";
         }

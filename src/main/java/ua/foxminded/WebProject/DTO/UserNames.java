@@ -12,11 +12,11 @@ import java.io.Serializable;
  */
 public record UserNames(Long id,
                         @NotBlank(message = "First name is required.")
-                           @Size(min = 2, max = 15, message = "First name must be between 2 and 15 characters.")
-                                @AlphabeticChars
-                           String firstName,
+                        @Size(min = 2, max = 15, message = "First name must be between 2 and 15 characters.")
+                        @AlphabeticChars
+                        String firstName,
                         @NotBlank(message = "Last name is required.")
-                           @Size(min = 2, max = 20, message = "Last name must be between 2 and 20 characters.")
-                                @AlphabeticChars
-                           String lastName) implements Serializable {
+                        @Size(min = 2, max = 20, message = "Last name must be between 2 and 20 characters.")
+                        @AlphabeticChars
+                        String lastName) implements Serializable {
 }

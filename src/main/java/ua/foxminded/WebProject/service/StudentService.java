@@ -1,8 +1,8 @@
 package ua.foxminded.WebProject.service;
 
+import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Student;
-import ua.foxminded.WebProject.DTO.StudentGroupDto;
 
 import java.time.LocalDate;
 import java.util.List;

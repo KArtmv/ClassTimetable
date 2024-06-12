@@ -2,7 +2,6 @@ package ua.foxminded.WebProject.DTO;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import ua.foxminded.WebProject.annotations.UniqueEmail;
 
 import java.io.Serializable;

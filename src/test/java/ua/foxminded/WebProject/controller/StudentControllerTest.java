@@ -251,7 +251,7 @@ class StudentControllerTest {
                         content().string(containsString(testData.getStudentId().toString())),
                         content().string(containsString(testData.getAdminFirstName())),
                         content().string(containsString(testData.getAdminLastName()))
-                        );
+                );
     }
 
     @Test
@@ -564,7 +564,7 @@ class StudentControllerTest {
     @Test
     void delete() throws Exception {
         mockMvc.perform(post("/student/delete").param("userId", testData.getStudentId().toString())
-                .with(testUser("admin"))).andDo(print())
+                        .with(testUser("admin"))).andDo(print())
                 .andExpectAll(
                         status().is3xxRedirection(),
                         redirectedUrl("/student"));

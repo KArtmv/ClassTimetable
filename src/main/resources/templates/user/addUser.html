@@ -14,7 +14,8 @@
         <form th:action="@{'/' + ${path} + '/save'}" th:object="${registrationForm}" method="post">
             <div class="mb-3">
                 <label for="firstName">First name:</label>
-                <input type="text" class="form-control" th:field="*{firstName}" id="firstName" placeholder="Enter first name of student">
+                <input type="text" class="form-control" th:field="*{firstName}" id="firstName"
+                       placeholder="Enter first name of student">
                 <div th:if="${#fields.hasErrors('firstName')}"
                      class="p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
                      th:errors="*{firstName}">First name error
@@ -22,7 +23,8 @@
             </div>
             <div class="mb-3">
                 <label for="lastName">Last name:</label>
-                <input type="text" class="form-control" th:field="*{lastName}" id="lastName" placeholder="Enter first name of student">
+                <input type="text" class="form-control" th:field="*{lastName}" id="lastName"
+                       placeholder="Enter first name of student">
                 <div th:if="${#fields.hasErrors('lastName')}"
                      class="error text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
                      th:errors="*{lastName}">Last name error
@@ -30,7 +32,8 @@
             </div>
             <div class="mb-3">
                 <label for="email">Email:</label>
-                <input type="text" class="form-control" th:field="*{email}" id="email" placeholder="Enter email of student">
+                <input type="text" class="form-control" th:field="*{email}" id="email"
+                       placeholder="Enter email of student">
                 <div th:if="${#fields.hasErrors('email')}"
                      class="error p-1 text-danger-emphasis bg-danger-subtle border-danger-subtle rounded-3 text-center mt-1"
                      th:errors="*{email}">Email error
@@ -38,7 +41,8 @@
             </div>
             <div class="mb-3">
                 <label for="password">Password:</label>
-                <input type="password" class="form-control" th:field="*{password}" id="password" placeholder="Enter password">
+                <input type="password" class="form-control" th:field="*{password}" id="password"
+                       placeholder="Enter password">
                 <div th:if="${#fields.hasErrors('password')}"
                      class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle text-center mt-1"
                      th:errors="*{password}">Password error
@@ -46,7 +50,8 @@
             </div>
             <div class="mb-3">
                 <label for="confirmPassword">Confirm Password:</label>
-                <input type="password" class="form-control" th:field="*{confirmPassword}" id="confirmPassword" placeholder="Confirm password">
+                <input type="password" class="form-control" th:field="*{confirmPassword}" id="confirmPassword"
+                       placeholder="Confirm password">
                 <div th:if="${#fields.hasErrors('confirmPassword')}"
                      class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
                      th:errors="*{confirmPassword}">Confirm Password error
@@ -61,7 +66,8 @@
                 </select>
                 <div th:if="${emptyGroup}"
                      class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center"
-                >Group is required.</div>
+                >Group is required.
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Save</button>
             <a th:href="@{'/' + ${path}}" class="btn btn-danger">Cancel</a>

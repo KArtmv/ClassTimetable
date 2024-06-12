@@ -31,7 +31,8 @@
         </div>
         <div th:with="secAuth=${path}">
             <div sec:authorize="${hasRole(#vars.secAuth)}" class="container card mb-3">
-                <a th:href="@{'/' + ${path} + '/edit/password'}" class="btn btn-success col-2 mb-3 mt-3">Change password</a>
+                <a th:href="@{'/' + ${path} + '/edit/password'}" class="btn btn-success col-2 mb-3 mt-3">Change
+                    password</a>
                 <div th:if="${param.success}"
                      class="text-success-emphasis bg-success-subtle border-success-subtle rounded-3 text-center mt-1 mb-3">
                     Password has been changed successfully!
@@ -42,8 +43,9 @@
             <h3 class="mt-2">Group:
                 <small class="text-body-secondary" th:text="${studentGroupDto.groupName}"/>
             </h3>
-            <a sec:authorize="hasAnyRole('admin', 'staff')" th:href="@{'/' + ${path} + '/edit/group/' + ${studentGroupDto.id}}"
-                   class="btn btn-success col-2 mb-3">Edit</a>
+            <a sec:authorize="hasAnyRole('admin', 'staff')"
+               th:href="@{'/' + ${path} + '/edit/group/' + ${studentGroupDto.id}}"
+               class="btn btn-success col-2 mb-3">Edit</a>
         </div>
         <a href="/" class="btn btn-danger">Go to home page</a>
     </div>

@@ -73,16 +73,17 @@ public abstract class AbstractUserService<T extends User> {
             user.setEmail(form.getEmail().toLowerCase());
             user.setPassword(passwordEncoder.encode(form.getPassword()));
             return repository.save(user);
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) {
             throw new RuntimeException("Failed to create a new instance of user", e);
         }
     }
 
-    public T getById(Long id){
+    public T getById(Long id) {
         return repository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 
-    public List<T> getAll(){
+    public List<T> getAll() {
         return repository.findAll();
     }
 

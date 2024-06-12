@@ -203,7 +203,6 @@ class StudentServiceImplTest {
     }
 
 
-
     @Test
     void deleteUser_shouldRemoveStudent_whenIsFound() {
         when(studentRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getStudent()));

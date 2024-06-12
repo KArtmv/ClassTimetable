@@ -45,19 +45,20 @@ public class TestItems {
     private final Student student = new Student(testData.getStudentId(), testData.getStudentFirstName(), testData.getStudentLastName(), getGroup());
     private final Student studentIdFive = new Student(5L, "Amelia", "Martinez", getGroup());
     private final StudentDto studentDto = new StudentDto(testData.getStudentFirstName(), testData.getStudentLastName(), new Group(testData.getGroupId()));
-    public Student studentWithGroup2(){
+
+    public Student studentWithGroup2() {
         Student student2 = getStudent();
         student2.setGroup(getGroup2());
         return student2;
     }
 
-    public Student studentWithEmail(){
+    public Student studentWithEmail() {
         Student student1 = getStudent();
         student1.setEmail(testData.getStudentEmail());
         return student1;
     }
 
-    public User getUserWithUpdatedNames(){
+    public User getUserWithUpdatedNames() {
         User user1 = getStudent();
         user1.setFirstName(testData.getAdminFirstName());
         user1.setLastName(testData.getAdminLastName());
@@ -85,13 +86,13 @@ public class TestItems {
         return user1;
     }
 
-    public User studentWithPassword(){
+    public User studentWithPassword() {
         Student student2 = getStudent();
         student2.setPassword(getEncodedPassword());
         return student2;
     }
 
-    public ChangePasswordForm getChangePasswordForm(){
+    public ChangePasswordForm getChangePasswordForm() {
         ChangePasswordForm form = new ChangePasswordForm();
         form.setId(testData.getStudentId());
         form.setOldPassword(getEncodedPassword2());
@@ -113,7 +114,7 @@ public class TestItems {
 
     private final LocalDate dateOfFriday = testData.getDate().with(DayOfWeek.FRIDAY);
 
-    public UserRegistrationForm userRegistrationForm(){
+    public UserRegistrationForm userRegistrationForm() {
         UserRegistrationForm userRegistrationForm = new UserRegistrationForm();
         userRegistrationForm.setFirstName(testData.getStudentFirstName());
         userRegistrationForm.setLastName(testData.getStudentLastName());
