@@ -1,11 +1,10 @@
 package ua.foxminded.WebProject.service.implementation;
 
-import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.WebProject.DTO.StudentDto;
+import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
@@ -18,44 +17,31 @@ import java.util.List;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class StudentServiceImpl implements StudentService {
+public class StudentServiceImpl extends AbstractUserService<Student> implements StudentService {
 
     private final GroupService groupService;
-    private final StudentRepository studentRepository;
     private final LessonRepository lessonRepository;
+    private final StudentRepository studentRepository;
 
-    @Override
-    public Student getById(Long id) {
-        return studentRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Not found student by given id:" + id));
+    public StudentServiceImpl(BCryptPasswordEncoder passwordEncoder, GroupService groupService, LessonRepository lessonRepository, StudentRepository studentRepository) {
+        super(studentRepository, passwordEncoder, Student.class);
+        this.groupService = groupService;
+        this.lessonRepository = lessonRepository;
+        this.studentRepository = studentRepository;
     }
 
     @Override
-    public List<Student> getAll() {
-        return studentRepository.findAll();
-    }
-
-    @Override
-    @Transactional
-    public Student saveStudent(StudentDto studentDto) {
-        Student student = new Student();
-        try {
-            student.setFirstName(studentDto.getFirstName());
-            student.setLastName(studentDto.getLastName());
-            student.setGroup(groupService.getById(studentDto.getGroup().getId()));
-            return studentRepository.save(student);
-        } catch (EntityNotFoundException e) {
-            log.error("Saving new student is failed: {}", e.getMessage());
-            return student;
-        }
+    public StudentGroupDto getStudentGroup(Long id) {
+        return studentRepository.getStudentGroup(id);
     }
 
     @Override
     @Transactional
-    public void removeStudentById(Student student) {
-        studentRepository.delete(getById(student.getId()));
+    public Student updateStudentGroup(StudentGroupDto studentGroupDto) {
+        Student student = getById(studentGroupDto.id());
+        student.setGroup(groupService.getById(studentGroupDto.groupId()));
+        return studentRepository.save(student);
     }
 
     @Override

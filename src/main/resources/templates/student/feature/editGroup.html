@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Group Edit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
+    <th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
+</head>
+<body>
+<main>
+    <div class="container">
+        <h2>Edit student group</h2>
+        <form th:action="@{/student/update/group}" th:object="${studentGroupDto}" method="post">
+            <input type="hidden" th:field="*{id}"/>
+            <div class="mb-3">
+                <label for="group">Group:</label>
+                <select class="form-control mb-3" id="group" name="groupId">
+                    <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.groupName}"
+                            th:selected="${group.id == studentGroupDto.groupId()}"></option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a th:href="@{'/student/details/' + ${studentGroupDto.id}}" class="btn btn-danger">Cancel</a>
+        </form>
+    </div>
+</main>
+</body>
+</html>

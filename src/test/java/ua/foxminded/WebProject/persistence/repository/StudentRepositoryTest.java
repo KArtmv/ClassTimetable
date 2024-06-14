@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlMergeMode;
+import ua.foxminded.WebProject.DTO.StudentGroupDto;
+import ua.foxminded.WebProject.DTO.UserDto;
+import ua.foxminded.WebProject.DTO.UserEmailDto;
+import ua.foxminded.WebProject.DTO.UserNames;
 import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
@@ -19,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @ActiveProfiles("test")
 @FlywayTest
-@Sql("/sql/group/group.sql")
+@Sql(scripts = {"/sql/group/group.sql", "/sql/student/student.sql"})
 class StudentRepositoryTest {
 
     private final TestData testData = new TestData();
@@ -28,8 +31,6 @@ class StudentRepositoryTest {
     private StudentRepository studentRepository;
 
     @Test
-    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
-    @Sql(value = {"/sql/student/student.sql"})
     void findById_shouldReturnStudentInstance_whenIsFound() {
         Optional<Student> optionalResult = studentRepository.findById(testData.getStudentId());
         assertAll(() -> {
@@ -44,7 +45,7 @@ class StudentRepositoryTest {
 
     @Test
     void findById_shouldReturnEmptyOptional_whenStudentIsNotFound() {
-        assertFalse(studentRepository.findById(testData.getStudentId()).isPresent());
+        assertFalse(studentRepository.findById(testData.getUserId()).isPresent());
     }
 
     @Test
@@ -53,8 +54,6 @@ class StudentRepositoryTest {
     }
 
     @Test
-    @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
-    @Sql(scripts = {"/sql/student/student.sql"})
     void deleteStudent_shouldDoNothing_whenStudentDeleted() {
         Student student = new Student(testData.getStudentId());
         assertAll(() -> {
@@ -68,6 +67,50 @@ class StudentRepositoryTest {
     @Sql(scripts = {"/sql/group/groups.sql", "/sql/student/students.sql"})
     void findAll_shouldReturnAllStudents_whenAllStudentsAreFound() {
         assertThat(studentRepository.findAll()).hasSize(3);
+    }
+
+    @Test
+    void getUserNamesById_shouldReturnUserNames_whenUserIsFound() {
+        UserNames result = studentRepository.getUserNamesById(testData.getStudentId());
+
+        assertAll(() -> {
+            assertThat(result).isNotNull();
+            assertThat(result.firstName()).isEqualTo(testData.getStudentFirstName());
+            assertThat(result.lastName()).isEqualTo(testData.getStudentLastName());
+        });
+    }
+
+    @Test
+    void getUserEmailsById_shouldReturnUserEmail_whenUserIsFound() {
+        UserEmailDto result = studentRepository.getUserEmailById(testData.getStudentId());
+
+        assertAll(() -> {
+            assertThat(result).isNotNull();
+            assertThat(result.email()).isEqualTo(testData.getStudentEmail());
+        });
+    }
+
+    @Test
+    void getUserDataById_shouldReturnUserData_whenUserIsFound() {
+        UserDto result = studentRepository.getUserDataById(testData.getStudentId());
+
+        assertAll(() -> {
+            assertThat(result).isNotNull();
+            assertThat(result.firstName()).isEqualTo(testData.getStudentFirstName());
+            assertThat(result.lastName()).isEqualTo(testData.getStudentLastName());
+            assertThat(result.email()).isEqualTo(testData.getStudentEmail());
+        });
+    }
+
+    @Test
+    void getStudentGroup_shouldReturnStudentGroup_whenStudentIsFound() {
+        StudentGroupDto result = studentRepository.getStudentGroup(testData.getStudentId());
+
+        assertAll(() -> {
+            assertThat(result).isNotNull();
+            assertThat(result.groupId()).isEqualTo(testData.getGroupId());
+            assertThat(result.groupName()).isEqualTo(testData.getGroupName());
+        });
     }
 }
 

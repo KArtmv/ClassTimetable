@@ -8,6 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.WebProject.persistence.entity.Course;
 import ua.foxminded.WebProject.testDataInstance.TestData;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class CourseRepositoryTest {
 
     private final TestData testData = new TestData();
+    private final TestItems testItems = new TestItems();
 
     @Autowired
     private CourseRepository repository;
@@ -44,7 +46,17 @@ class CourseRepositoryTest {
     }
 
     @Test
-    void saveCourse_shouldReturnCourseInstanceWithId_whenIsSavedSuccessfully() {
+    @Sql("/sql/course/courses.sql")
+    void delete_shouldRemoveCourse_whenIsInvoke() {
+        assertAll(() -> {
+            assertThat(repository.findAll()).hasSize(5);
+            repository.delete(testItems.getCourse());
+            assertThat(repository.findAll()).hasSize(4);
+        });
+    }
+
+    @Test
+    void save_shouldReturnCourseInstanceWithId_whenIsSavedSuccessfully() {
         Course result = repository.save(testData.getCourse());
         assertAll(() -> {
             assertThat(result.getId()).isNotNull();

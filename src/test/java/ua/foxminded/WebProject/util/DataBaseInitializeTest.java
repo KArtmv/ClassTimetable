@@ -58,6 +58,7 @@ class DataBaseInitializeTest {
     @Test
     void run_ScriptExecutionFails() {
         when(lessonService.isTableEmpty()).thenReturn(true);
+        doThrow(RuntimeException.class).when(lessonGenerator).fillLessonTable();
 
         dataBaseInitialize.run(applicationArguments);
 

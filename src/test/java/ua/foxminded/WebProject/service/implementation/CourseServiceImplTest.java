@@ -77,4 +77,30 @@ class CourseServiceImplTest {
 
         verify(repository).findById(testData.getCourseId());
     }
+
+    @Test
+    void update_shouldReturnUpdatingCourseInstance_whenIsUpdatedSuccessfully() {
+        when(repository.findById(anyLong())).thenReturn(Optional.of(testItems.getCourse()));
+        when(repository.save(any(Course.class))).thenReturn(testItems.getSecondCourse());
+
+        assertAll(() -> {
+            Course result = service.update(testItems.getSecondCourse());
+            assertThat(result.getId()).isEqualTo(testData.getCourseId());
+            assertThat(result.getCourseName()).isEqualTo(testData.getSecondCourseName());
+            assertThat(result.getCourseDescription()).isEqualTo(testData.getSecondCourseDescription());
+        });
+
+        verify(repository).findById(testData.getCourseId());
+        verify(repository).save(any(Course.class));
+    }
+
+    @Test
+    void remove_shouldDoNothing_whenIsRemovedSuccessfully() {
+        when(repository.findById(anyLong())).thenReturn(Optional.of(testItems.getCourse()));
+
+        service.remove(testItems.getCourse());
+
+        verify(repository).findById(testData.getCourseId());
+        verify(repository).delete(testItems.getCourse());
+    }
 }

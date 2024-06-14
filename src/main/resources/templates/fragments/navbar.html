@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<th:block th:fragment="navbar">
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+    <nav class="navbar navbar-expand bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Class Timetable</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav" sec:authorize="isAuthenticated()">
+                <div class="navbar-nav">
+                    <a sec:authorize="hasRole('student')" class="nav-link" href="/student/details">My Details</a>
+                </div>
+            </div>
+            <a sec:authorize="!isAuthenticated()" class="nav-link" href="/login">Log in</a>
+            <a sec:authorize="isAuthenticated()" class="nav-link" href="/logout">Log out</a>
+        </div>
+    </nav>
+</th:block>
+</html>

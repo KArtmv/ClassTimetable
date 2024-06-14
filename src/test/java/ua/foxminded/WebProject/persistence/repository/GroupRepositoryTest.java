@@ -8,6 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.testDataInstance.TestData;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import java.util.Optional;
 
@@ -21,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class GroupRepositoryTest {
 
     private final TestData testData = new TestData();
+    private final TestItems testItems = new TestItems();
+
     @Autowired
     private GroupRepository repository;
 
@@ -45,5 +48,15 @@ class GroupRepositoryTest {
     void save_shouldReturnGroupInstanceWithId_whenIsSavedSuccessfully() {
         Group result = repository.save(testData.getGroup());
         assertThat(result.getId()).isNotNull();
+    }
+
+    @Test
+    @Sql("/sql/group/groups.sql")
+    void delete_shouldDoNothing_whenIsDeletedSuccessfully() {
+        assertAll(() -> {
+            assertThat(repository.findAll()).hasSize(4);
+            repository.delete(testItems.getGroup());
+            assertThat(repository.findAll()).hasSize(3);
+        });
     }
 }

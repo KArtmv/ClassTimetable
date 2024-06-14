@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>[[${user}]] Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
+    <th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
+</head>
+<body>
+<main>
+    <div class="container mb-3">
+        <h1>[[${user}]] Details</h1>
+        <div class="container card mb-3">
+            <div class="mt-2">
+                <h3>First name:
+                    <small class="text-body-secondary" th:text="${userDto.firstName}"/>
+                </h3>
+                <h3>Last name:
+                    <small class="text-body-secondary" th:text="${userDto.lastName}"/>
+                </h3>
+            </div>
+            <a th:href="@{'/' + ${path} + '/edit/names/' + ${userDto.id}}" class="btn btn-success col-2 mb-3">Edit</a>
+        </div>
+        <div class="container card mb-3">
+            <h3 class="mt-2">Email:
+                <small class="text-body-secondary" th:text="${userDto.email}"/>
+            </h3>
+            <a th:href="@{'/' + ${path} + '/edit/email/' + ${userDto.id}}" class="btn btn-success col-2 mb-3">Edit</a>
+        </div>
+        <div th:with="secAuth=${path}">
+            <div sec:authorize="${hasRole(#vars.secAuth)}" class="container card mb-3">
+                <a th:href="@{'/' + ${path} + '/edit/password'}" class="btn btn-success col-2 mb-3 mt-3">Change
+                    password</a>
+                <div th:if="${param.success}"
+                     class="text-success-emphasis bg-success-subtle border-success-subtle rounded-3 text-center mt-1 mb-3">
+                    Password has been changed successfully!
+                </div>
+            </div>
+        </div>
+        <div th:if="${studentGroupDto}" class="container card mb-3">
+            <h3 class="mt-2">Group:
+                <small class="text-body-secondary" th:text="${studentGroupDto.groupName}"/>
+            </h3>
+            <a sec:authorize="hasAnyRole('admin', 'staff')"
+               th:href="@{'/' + ${path} + '/edit/group/' + ${studentGroupDto.id}}"
+               class="btn btn-success col-2 mb-3">Edit</a>
+        </div>
+        <a href="/" class="btn btn-danger">Go to home page</a>
+    </div>
+</main>
+</body>
+</html>

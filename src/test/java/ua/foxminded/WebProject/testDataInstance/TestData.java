@@ -1,6 +1,7 @@
 package ua.foxminded.WebProject.testDataInstance;
 
 import lombok.Getter;
+import ua.foxminded.WebProject.DTO.GroupDto;
 import ua.foxminded.WebProject.persistence.entity.*;
 
 import java.time.DayOfWeek;
@@ -17,11 +18,14 @@ public class TestData {
     private final Long groupId = 1L;
     private final String groupName = "YS-27";
     private final Group group = new Group(groupName);
+    private final GroupDto groupDto = new GroupDto(groupName);
 
     private final Long courseId = 1L;
     private final String courseName = "Principles of Economics";
     private final String courseDescription = "Learn about the fundamentals of economics";
     private final Course course = new Course(courseName, courseDescription);
+    private final String secondCourseName = "World History: Ancient Civilizations";
+    private final String secondCourseDescription = "Explore the history of ancient civilizations";
 
     private final Long classroomId = 1L;
     private final String classroomName = "Room 101";
@@ -50,6 +54,13 @@ public class TestData {
     private final String staffEmail = "staff@gmail.com";
 
     private final String email = "test@gmail.com";
+
+    private final Long userId = 4L;
+    private final String userFirstName = getAdminFirstName();
+    private final String userLastName = getStaffLastName();
+    private final String userEmail = "user@gmail.com";
+
+    private final String oldPassword = "testPassword";
 
     private final LocalDate date = LocalDate.of(2024, 3, 11);
 

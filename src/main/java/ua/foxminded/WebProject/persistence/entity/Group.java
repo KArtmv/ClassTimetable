@@ -7,7 +7,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -15,7 +14,6 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
 @Entity
 @Table(name = "groups")
 public class Group extends BaseEntity {
@@ -24,11 +22,9 @@ public class Group extends BaseEntity {
     private String groupName;
 
     @OneToMany(mappedBy = "group")
-    @ToString.Exclude
     private Set<Student> students = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "group")
-    @ToString.Exclude
     private Set<Lesson> lessons = new LinkedHashSet<>();
 
     public Group(Long id) {
