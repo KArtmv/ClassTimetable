@@ -13,6 +13,9 @@
             <div class="collapse navbar-collapse" id="navbarNav" sec:authorize="isAuthenticated()">
                 <div class="navbar-nav">
                     <a sec:authorize="hasRole('student')" class="nav-link" href="/student/details">My Details</a>
+                    <a sec:authorize="hasRole('teacher')" class="nav-link" href="/teacher/details">My Details</a>
+                    <a sec:authorize="hasRole('admin')" class="nav-link" href="/admin/details">My Details</a>
+                    <a sec:authorize="hasRole('staff')" class="nav-link" href="/staff/details">My Details</a>
                 </div>
             </div>
             <a sec:authorize="!isAuthenticated()" class="nav-link" href="/login">Log in</a>
