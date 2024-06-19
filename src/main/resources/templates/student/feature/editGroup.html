@@ -11,7 +11,7 @@
 <main>
     <div class="container">
         <h2>Edit student group</h2>
-        <form th:action="@{/student/update/group}" th:object="${studentGroupDto}" method="post">
+        <form th:action="@{/student/update-group}" th:object="${studentGroupDto}" method="post">
             <input type="hidden" th:field="*{id}"/>
             <div class="mb-3">
                 <label for="group">Group:</label>
