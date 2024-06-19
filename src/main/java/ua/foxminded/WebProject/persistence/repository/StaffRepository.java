@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import ua.foxminded.WebProject.persistence.entity.Staff;
 
 @Repository
-public interface StaffRepository extends JpaRepository<Staff, Long> {
+public interface StaffRepository extends UserCrudRepository<Staff, Long> {
 }
