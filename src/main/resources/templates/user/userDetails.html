@@ -77,8 +77,7 @@
                 </form>
             </div>
         </div>
-        <div th:with="secAuth=${path}">
-            <div sec:authorize="${hasRole(#vars.secAuth)}" class="container card mb-3">
+            <div th:if="${isMyDetails}" class="container card mb-3">
                 <a class="btn btn-success col-2 mb-3 mt-3" data-bs-toggle="collapse" href="#collapsePasswordForm" role="button" aria-expanded="false" aria-controls="collapsePasswordForm">
                     Edit password
                 </a>
@@ -120,7 +119,6 @@
                     Password has been changed successfully!
                 </div>
             </div>
-        </div>
         <div th:if="${studentGroupDto}" class="container card mb-3">
             <h3 class="mt-2">Group:
                 <small class="text-body-secondary" th:text="${studentGroupDto.groupName}"/>
