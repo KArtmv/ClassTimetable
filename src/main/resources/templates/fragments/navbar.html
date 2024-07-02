@@ -11,12 +11,28 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav" sec:authorize="isAuthenticated()">
-                <div class="navbar-nav">
-                    <a sec:authorize="hasRole('student')" class="nav-link" href="/student/details">My Details</a>
-                    <a sec:authorize="hasRole('teacher')" class="nav-link" href="/teacher/details">My Details</a>
-                    <a sec:authorize="hasRole('admin')" class="nav-link" href="/admin/details">My Details</a>
-                    <a sec:authorize="hasRole('staff')" class="nav-link" href="/staff/details">My Details</a>
-                </div>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:href="@{'/' + ${#authentication.authorities[0].authority.replaceAll('[^a-z]++', '')} + '/details' }">
+                            My details
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown" sec:authorize="${hasAnyRole('admin', 'staff')}">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Option
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a th:href="@{/student}" class="dropdown-item">Student</a></li>
+                            <li><a th:href="@{/teacher}" class="dropdown-item">Teacher</a></li>
+                            <li><a sec:authorize="${hasRole('admin')}" th:href="@{/staff}"
+                                   class="dropdown-item">Staff</a></li>
+                            <li><a th:href="@{/lesson}" class="dropdown-item">Lesson</a></li>
+                            <li><a th:href="@{/course}" class="dropdown-item">Course</a></li>
+                            <li><a th:href="@{/group}" class="dropdown-item">Group</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
             <a sec:authorize="!isAuthenticated()" class="nav-link" href="/login">Log in</a>
             <a sec:authorize="isAuthenticated()" class="nav-link" href="/logout">Log out</a>
