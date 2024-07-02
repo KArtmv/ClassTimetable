@@ -13,16 +13,11 @@ import ua.foxminded.WebProject.service.UserService;
 
 @Controller
 @RequestMapping("/admin")
-@PreAuthorize("hasRole('admin')")
+@PreAuthorize("hasAnyRole('admin', 'staff')")
 public class AdminController extends AbstractUserCrudController<Admin> {
 
     public AdminController(AdminService adminService, BCryptPasswordEncoder passwordEncoder) {
         super(adminService, passwordEncoder, Admin.class);
-    }
-
-    @Override
-    public String userPage(Model model) {
-        return "admin/admin";
     }
 }
 
