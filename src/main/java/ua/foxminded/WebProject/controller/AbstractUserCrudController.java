@@ -47,7 +47,8 @@ public abstract class AbstractUserCrudController<T extends User> {
     @PreAuthorize("hasAnyRole('admin', 'staff')")
     public String saveUser(@Valid @ModelAttribute("registrationForm") UserRegistrationForm user,
                            BindingResult result,
-                           @RequestParam(required = false) Long groupId,                           Model model) {
+                           @RequestParam(required = false) Long groupId,
+                           Model model) {
         if (result.hasErrors()) {
             model.addAttribute("user", this.user);
             model.addAttribute("path", this.user);
@@ -64,6 +65,7 @@ public abstract class AbstractUserCrudController<T extends User> {
         model.addAttribute("path", this.user);
         model.addAttribute("userDto", userService.getDetails(loggedUser.getId()));
         model.addAttribute("changePasswordForm", new ChangePasswordForm());
+        model.addAttribute("isMyDetails", true);
         return "user/userDetails";
     }
 
@@ -87,7 +89,7 @@ public abstract class AbstractUserCrudController<T extends User> {
             return "user/userDetails";
         }
         userService.updateNames(userDto);
-        return "redirect:/student";
+        return "redirect:/" + this.user;
     }
 
     @PostMapping("/update-email")
@@ -119,7 +121,8 @@ public abstract class AbstractUserCrudController<T extends User> {
             model.addAttribute("path", this.user);
             model.addAttribute("passwordFormOpen", true);
             model.addAttribute("userDto", userService.getDetails(loggedUser.getId()));
-            model.addAttribute("changePasswordForm", new ChangePasswordForm());
+            model.addAttribute("changePasswordForm", changePasswordForm);
+            model.addAttribute("isMyDetails", true);
             return "user/userDetails";
         }
         changePasswordForm.setId(loggedUser.getId());
