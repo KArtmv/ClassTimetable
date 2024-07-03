@@ -12,6 +12,7 @@ import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,12 +48,13 @@ class StudentRepositoryTest {
     }
 
     @Test
-    void saveStudent_shouldReturnStudentInstanceWithId_whenSavedSuccessfully() {
-        assertThat(studentRepository.save(testItems.getFullyStudent()).getId()).isNotNull();
+    @Sql(scripts = {"/sql/group/group.sql"})
+    void save_shouldReturnStudentInstanceWithId_whenSavedSuccessfully() {
+        assertThat(studentRepository.save(testItems.getStudent()).getId()).isNotNull();
     }
 
     @Test
-    void deleteStudent_shouldDoNothing_whenStudentDeleted() {
+    void delete_shouldDoNothing_whenStudentDeleted() {
         Student student = new Student(testData.getStudentId());
         assertAll(() -> {
             assertThat(studentRepository.findAll()).hasSize(1);
@@ -70,6 +72,8 @@ class StudentRepositoryTest {
     @Test
     void getUserDataById_shouldReturnUserData_whenUserIsFound() {
         UserDto result = studentRepository.getUserDataById(testData.getStudentId());
+        List<Student> students = studentRepository.findAll();
+        students.forEach(s -> System.out.println(s.getId() + " " + s.getFirstName() + " " + s.getLastName() + " " + s.getEmail()));
 
         assertAll(() -> {
             assertThat(result).isNotNull();
