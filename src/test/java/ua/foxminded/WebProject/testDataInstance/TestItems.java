@@ -139,9 +139,8 @@ public class TestItems {
     private final List<Lesson> teacherLessonsPerDay = getTeacherLessonsPerWeek().stream()
             .filter(l -> l.getDate().isEqual(testData.getDate())).toList();
 
-    public Student getFullyStudent() {
+    public Student getStudent() {
         Student student1 = new Student();
-        student1.setId(testData.getStudentId());
         student1.setFirstName(testData.getStudentFirstName());
         student1.setLastName(testData.getStudentLastName());
         student1.setPassword(getEncodedPassword());
@@ -150,9 +149,14 @@ public class TestItems {
         return student1;
     }
 
-    public Admin getFullyAdmin() {
+    public Student getFullyStudent() {
+        Student student1 = getStudent();
+        student1.setId(testData.getStudentId());
+        return student1;
+    }
+
+    public Admin getAdmin() {
         Admin admin1 = new Admin();
-        admin1.setId(testData.getAdminId());
         admin1.setFirstName(testData.getAdminFirstName());
         admin1.setLastName(testData.getAdminLastName());
         admin1.setEmail(testData.getAdminEmail());
@@ -160,23 +164,38 @@ public class TestItems {
         return admin1;
     }
 
-    public Staff getFullyStaff() {
+    public Admin getFullyAdmin() {
+        Admin admin1 = getAdmin();
+        admin1.setId(testData.getAdminId());
+        return admin1;
+    }
+
+    public Staff getStaff() {
         Staff staff1 = new Staff();
-        staff1.setId(testData.getStaffId());
         staff1.setFirstName(testData.getStaffFirstName());
         staff1.setLastName(testData.getStaffLastName());
         staff1.setEmail(testData.getStaffEmail());
         staff1.setPassword(getEncodedPassword());
         return staff1;
     }
+    public Staff getFullyStaff() {
+        Staff staff1 = getStaff();
+        staff1.setId(testData.getStaffId());
+        return staff1;
+    }
 
-    public Teacher getFullyTeacher() {
+    public Teacher getTeacher() {
         Teacher teacher1 = new Teacher();
-        teacher1.setId(testData.getTeacherId());
         teacher1.setFirstName(testData.getTeacherFirstName());
         teacher1.setLastName(testData.getTeacherLastName());
         teacher1.setEmail(testData.getTeacherEmail());
         teacher1.setPassword(getEncodedPassword());
+        return teacher1;
+    }
+
+    public Teacher getFullyTeacher() {
+        Teacher teacher1 = getTeacher();
+        teacher1.setId(testData.getTeacherId());
         return teacher1;
     }
 }
