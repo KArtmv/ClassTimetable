@@ -19,7 +19,8 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -42,7 +43,7 @@ class StaffServiceImplTest {
     private StaffServiceImpl staffService;
 
     @Test
-    void updateNames_shouldReturnUpdatedInstance_whenNamesUpdatedSuccessfully(){
+    void updateNames_shouldReturnUpdatedInstance_whenNamesUpdatedSuccessfully() {
         when(staffRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyStaff()));
 
         staffService.updateNames(testItems.getUserDetails());
@@ -57,7 +58,7 @@ class StaffServiceImplTest {
     }
 
     @Test
-    void updateEmail_shouldReturnUpdatedInstance_whenEmailUpdatedSuccessfully(){
+    void updateEmail_shouldReturnUpdatedInstance_whenEmailUpdatedSuccessfully() {
         when(staffRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyStaff()));
 
         staffService.updateEmail(testItems.getUserDetails());
@@ -77,7 +78,7 @@ class StaffServiceImplTest {
     }
 
     @Test
-    void updatePassword_shouldReturnUpdatedInstance_whenPasswordUpdatedSuccessfully(){
+    void updatePassword_shouldReturnUpdatedInstance_whenPasswordUpdatedSuccessfully() {
         ChangePasswordForm passwordForm = testItems.getChangePasswordForm();
         passwordForm.setId(testData.getStaffId());
 
@@ -161,7 +162,7 @@ class StaffServiceImplTest {
     }
 
     @Test
-    void getUserByEmail_shouldReturnUserInstance_whenUserEmailFound(){
+    void getUserByEmail_shouldReturnUserInstance_whenUserEmailFound() {
         when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.ofNullable(testItems.getCompliteUser()));
 
         User result = staffService.getUserByEmail(testData.getUserEmail());

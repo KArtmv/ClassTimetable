@@ -21,7 +21,8 @@
                     <small class="text-body-secondary" th:text="${userDto.lastName}"/>
                 </h3>
             </div>
-            <a class="btn btn-success col-2 mb-3" data-bs-toggle="collapse" href="#collapseNameForm" role="button" aria-expanded="false" aria-controls="collapseNameForm">
+            <a class="btn btn-success col-2 mb-3" data-bs-toggle="collapse" href="#collapseNameForm" role="button"
+               aria-expanded="false" aria-controls="collapseNameForm">
                 Edit
             </a>
             <div class="collapse" id="collapseNameForm" th:classappend="${nameFormOpen} ? 'show' : ''">
@@ -55,7 +56,8 @@
             <h3 class="mt-2">Email:
                 <small class="text-body-secondary" th:text="${userDto.email}"/>
             </h3>
-            <a class="btn btn-success col-2 mb-3" data-bs-toggle="collapse" href="#collapseEmailForm" role="button" aria-expanded="false" aria-controls="collapseEmailForm">
+            <a class="btn btn-success col-2 mb-3" data-bs-toggle="collapse" href="#collapseEmailForm" role="button"
+               aria-expanded="false" aria-controls="collapseEmailForm">
                 Edit
             </a>
             <div class="collapse" id="collapseEmailForm" th:classappend="${emailFormOpen} ? 'show' : ''">
@@ -77,48 +79,50 @@
                 </form>
             </div>
         </div>
-            <div th:if="${isMyDetails}" class="container card mb-3">
-                <a class="btn btn-success col-2 mb-3 mt-3" data-bs-toggle="collapse" href="#collapsePasswordForm" role="button" aria-expanded="false" aria-controls="collapsePasswordForm">
-                    Edit password
-                </a>
-                <div class="collapse" id="collapsePasswordForm" th:classappend="${passwordFormOpen} ? 'show' : ''">
-                    <form class="mb-3" th:action="@{'/' + ${path} + '/update-password'}" th:object="${changePasswordForm}" method="post">
-                        <div class="mb-3">
-                            <label for="oldPassword">Old password</label>
-                            <input type="password" class="form-control" th:field="*{oldPassword}" id="oldPassword"
-                                   placeholder="Enter old password.">
-                            <div th:if="${#fields.hasErrors('oldPassword')}"
-                                 class="alert alert-danger" role="alert"
-                                 th:errors="*{oldPassword}">Enter old password
-                            </div>
+        <div th:if="${isMyDetails}" class="container card mb-3">
+            <a class="btn btn-success col-2 mb-3 mt-3" data-bs-toggle="collapse" href="#collapsePasswordForm"
+               role="button" aria-expanded="false" aria-controls="collapsePasswordForm">
+                Edit password
+            </a>
+            <div class="collapse" id="collapsePasswordForm" th:classappend="${passwordFormOpen} ? 'show' : ''">
+                <form class="mb-3" th:action="@{'/' + ${path} + '/update-password'}" th:object="${changePasswordForm}"
+                      method="post">
+                    <div class="mb-3">
+                        <label for="oldPassword">Old password</label>
+                        <input type="password" class="form-control" th:field="*{oldPassword}" id="oldPassword"
+                               placeholder="Enter old password.">
+                        <div th:if="${#fields.hasErrors('oldPassword')}"
+                             class="alert alert-danger" role="alert"
+                             th:errors="*{oldPassword}">Enter old password
                         </div>
-                        <div class="mb-3">
-                            <label for="password">Password:</label>
-                            <input type="password" class="form-control" th:field="*{password}" id="password"
-                                   placeholder="Enter password">
-                            <div th:if="${#fields.hasErrors('password')}"
-                                 class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
-                                 th:errors="*{password}">Password is mandatory.
-                            </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" th:field="*{password}" id="password"
+                               placeholder="Enter password">
+                        <div th:if="${#fields.hasErrors('password')}"
+                             class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                             th:errors="*{password}">Password is mandatory.
                         </div>
-                        <div class="mb-3">
-                            <label for="confirmPassword">Confirm password:</label>
-                            <input type="password" class="form-control" th:field="*{confirmPassword}" id="confirmPassword"
-                                   placeholder="Confirm password">
-                            <div th:if="${#fields.hasErrors('confirmPassword')}"
-                                 class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
-                                 th:errors="*{confirmPassword}">Confirm password is mandatory.
-                            </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword">Confirm password:</label>
+                        <input type="password" class="form-control" th:field="*{confirmPassword}" id="confirmPassword"
+                               placeholder="Confirm password">
+                        <div th:if="${#fields.hasErrors('confirmPassword')}"
+                             class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                             th:errors="*{confirmPassword}">Confirm password is mandatory.
                         </div>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <a href="/" class="btn btn-danger">Cancel</a>
-                    </form>
-                </div>
-                <div th:if="${param.success}"
-                     class="text-success-emphasis bg-success-subtle border-success-subtle rounded-3 text-center mt-1 mb-3">
-                    Password has been changed successfully!
-                </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="/" class="btn btn-danger">Cancel</a>
+                </form>
             </div>
+            <div th:if="${param.success}"
+                 class="text-success-emphasis bg-success-subtle border-success-subtle rounded-3 text-center mt-1 mb-3">
+                Password has been changed successfully!
+            </div>
+        </div>
         <div th:if="${studentGroupDto}" class="container card mb-3">
             <h3 class="mt-2">Group:
                 <small class="text-body-secondary" th:text="${studentGroupDto.groupName}"/>

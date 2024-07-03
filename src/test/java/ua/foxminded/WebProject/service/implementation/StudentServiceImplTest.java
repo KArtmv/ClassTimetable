@@ -9,7 +9,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
-import ua.foxminded.WebProject.persistence.entity.Admin;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.entity.User;
@@ -49,7 +48,7 @@ class StudentServiceImplTest {
     private StudentServiceImpl studentService;
 
     @Test
-    void updateNames(){
+    void updateNames() {
         when(studentRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyStudent()));
 
         studentService.updateNames(testItems.getUserDetails());
@@ -65,7 +64,7 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void updateEmail(){
+    void updateEmail() {
         when(studentRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyStudent()));
 
         studentService.updateEmail(testItems.getUserDetails());
@@ -76,7 +75,7 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void getUserByEmail(){
+    void getUserByEmail() {
         when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.ofNullable(testItems.getCompliteUser()));
 
         User result = studentService.getUserByEmail(testData.getUserEmail());

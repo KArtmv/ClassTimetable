@@ -1,14 +1,18 @@
 package ua.foxminded.WebProject.testDataInstance;
 
 import lombok.Getter;
-import ua.foxminded.WebProject.DTO.*;
+import ua.foxminded.WebProject.DTO.LessonDto;
+import ua.foxminded.WebProject.DTO.StudentGroupDto;
+import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.form.UserRegistrationForm;
 import ua.foxminded.WebProject.persistence.entity.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
 @Getter
 public class TestItems {
@@ -178,6 +182,7 @@ public class TestItems {
         staff1.setPassword(getEncodedPassword());
         return staff1;
     }
+
     public Staff getFullyStaff() {
         Staff staff1 = getStaff();
         staff1.setId(testData.getStaffId());

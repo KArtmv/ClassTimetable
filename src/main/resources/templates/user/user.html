@@ -37,7 +37,8 @@
         </table>
     </div>
     <div sec:authorize="hasAnyRole('admin', 'staff')">
-        <a th:href="@{'/' + ${path} + '/addUser'}" class="btn btn-primary position-fixed bottom-0 mb-4 end-0 me-4">Add new
+        <a th:href="@{'/' + ${path} + '/addUser'}" class="btn btn-primary position-fixed bottom-0 mb-4 end-0 me-4">Add
+            new
             [[${user}]]
         </a>
     </div>

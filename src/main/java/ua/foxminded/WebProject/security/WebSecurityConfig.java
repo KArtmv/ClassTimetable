@@ -35,7 +35,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/", "/login*").anonymous()
                         .requestMatchers("/student").hasAnyRole("student", "admin", "staff")
                         .requestMatchers("/teacher").hasAnyRole("teacher", "admin", "staff")
-                        .requestMatchers("/course", "/group", "/lesson","/admin",  "/staff").hasAnyRole("admin", "staff")
+                        .requestMatchers("/course", "/group", "/lesson", "/admin", "/staff").hasAnyRole("admin", "staff")
                         .requestMatchers("/admin/details", "/admin/update-password").hasRole("admin")
                         .requestMatchers("/staff/details", "/staff/update-password").hasRole("staff")
                         .requestMatchers("/teacher/details", "/teacher/update-password").hasRole("teacher")

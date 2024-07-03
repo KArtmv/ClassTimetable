@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
 import ua.foxminded.WebProject.persistence.entity.User;
@@ -17,7 +16,6 @@ import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -47,7 +45,7 @@ class TeacherServiceImplTest {
 
 
     @Test
-    void updateNames_shouldReturnUpdatedInstance_whenNamesUpdatedSuccessfully(){
+    void updateNames_shouldReturnUpdatedInstance_whenNamesUpdatedSuccessfully() {
         when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyTeacher()));
 
         teacherService.updateNames(testItems.getUserDetails());
@@ -62,7 +60,7 @@ class TeacherServiceImplTest {
     }
 
     @Test
-    void updateEmail_shouldReturnUpdatedInstance_whenEmailUpdatedSuccessfully(){
+    void updateEmail_shouldReturnUpdatedInstance_whenEmailUpdatedSuccessfully() {
         when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyTeacher()));
 
         teacherService.updateEmail(testItems.getUserDetails());
@@ -73,7 +71,7 @@ class TeacherServiceImplTest {
     }
 
     @Test
-    void getUserByEmail_shouldReturnUserInstance_whenUserEmailFound(){
+    void getUserByEmail_shouldReturnUserInstance_whenUserEmailFound() {
         when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.ofNullable(testItems.getCompliteUser()));
 
         User result = teacherService.getUserByEmail(testData.getUserEmail());
@@ -99,7 +97,7 @@ class TeacherServiceImplTest {
     }
 
     @Test
-    void updatePassword_shouldReturnUpdatedInstance_whenPasswordUpdatedSuccessfully(){
+    void updatePassword_shouldReturnUpdatedInstance_whenPasswordUpdatedSuccessfully() {
         ChangePasswordForm passwordForm = testItems.getChangePasswordForm();
         passwordForm.setId(testData.getTeacherId());
 

@@ -41,9 +41,9 @@ public class StudentController extends AbstractUserCrudController<Student> {
     @Override
     @Transactional
     public String saveUser(@Valid @ModelAttribute("registrationForm") UserRegistrationForm registrationForm,
-                              BindingResult result,
-                              @RequestParam("groupId") Long groupId,
-                              Model model) {
+                           BindingResult result,
+                           @RequestParam("groupId") Long groupId,
+                           Model model) {
         if (result.hasErrors() || groupId == 0) {
             model.addAttribute("selectedGroupId", groupId);
             model.addAttribute("user", user);

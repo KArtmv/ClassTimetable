@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.persistence.entity.Admin;
 import ua.foxminded.WebProject.persistence.repository.AdminRepository;
-import ua.foxminded.WebProject.persistence.repository.UserCrudRepository;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.AdminService;
 
