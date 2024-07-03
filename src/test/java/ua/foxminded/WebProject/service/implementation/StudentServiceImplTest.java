@@ -2,17 +2,20 @@ package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
+import ua.foxminded.WebProject.form.ChangePasswordForm;
+import ua.foxminded.WebProject.persistence.entity.Admin;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Student;
+import ua.foxminded.WebProject.persistence.entity.User;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.StudentRepository;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
@@ -27,21 +30,66 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = StudentServiceImpl.class)
 class StudentServiceImplTest {
 
     private final TestData testData = new TestData();
     private final TestItems testItems = new TestItems();
-    @Mock
+    @MockBean
     private GroupService groupService;
-    @Mock
+    @MockBean
     private StudentRepository studentRepository;
-    @Mock
+    @MockBean
     private BCryptPasswordEncoder passwordEncoder;
-    @Mock
+    @MockBean
     private LessonRepository lessonRepository;
-    @InjectMocks
+    @MockBean
+    private UserRepository userRepository;
+    @Autowired
     private StudentServiceImpl studentService;
+
+    @Test
+    void updateNames(){
+        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyStudent()));
+
+        studentService.updateNames(testItems.getUserDetails());
+
+        var argumentCaptor = ArgumentCaptor.forClass(Student.class);
+
+        verify(studentRepository).save(argumentCaptor.capture());
+        Student student = argumentCaptor.getValue();
+        assertAll(() -> {
+            assertThat(student.getFirstName()).isEqualTo(testData.getUserFirstName());
+            assertThat(student.getLastName()).isEqualTo(testData.getUserLastName());
+        });
+    }
+
+    @Test
+    void updateEmail(){
+        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyStudent()));
+
+        studentService.updateEmail(testItems.getUserDetails());
+
+        var argumentCaptor = ArgumentCaptor.forClass(Student.class);
+        verify(studentRepository).save(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue().getEmail()).isEqualTo(testData.getUserEmail());
+    }
+
+    @Test
+    void getUserByEmail(){
+        when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.ofNullable(testItems.getCompliteUser()));
+
+        User result = studentService.getUserByEmail(testData.getUserEmail());
+
+        assertAll(() -> {
+            assertThat(result).isNotNull();
+            assertThat(result).isInstanceOf(User.class);
+            assertThat(result.getId()).isEqualTo(testData.getUserId());
+            assertThat(result.getFirstName()).isEqualTo(testData.getUserFirstName());
+            assertThat(result.getLastName()).isEqualTo(testData.getUserLastName());
+            assertThat(result.getEmail()).isEqualTo(testData.getUserEmail());
+        });
+    }
 
     @Test
     void getStudentGroup_shouldReturnStudentGroup_whenIsFound() {
@@ -59,26 +107,23 @@ class StudentServiceImplTest {
     }
 
     @Test
-    @Transactional
     void updateStudentGroup_shouldUpdateStudentGroup_whenIsFound() {
-        when(studentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(testItems.getStudent()));
-        when(groupService.getById(anyLong())).thenReturn(testItems.getGroup2());
-        when(studentRepository.save(any())).thenReturn(testItems.studentWithGroup2());
+        when(studentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(testItems.getFullyStudent()));
+        when(groupService.getById(anyLong())).thenReturn(testItems.getSecondGroup());
 
-        Student result = studentService.updateStudentGroup(testItems.getStudentGroupDto2());
-        assertAll(() -> {
-            assertThat(result).isNotNull();
-            assertThat(result.getId()).isEqualTo(testData.getStudentId());
-            assertThat(result.getGroup()).isEqualTo(testItems.getGroup2());
-        });
+        studentService.updateStudentGroup(testItems.getStudentGroupDto2());
 
         verify(studentRepository).findById(testData.getStudentId());
-        verify(groupService).getById(testItems.getGroup2().getId());
+        verify(groupService).getById(testData.getSecondGroupId());
+        var argumentCaptor = ArgumentCaptor.forClass(Student.class);
+        verify(studentRepository).save(argumentCaptor.capture());
+        Student captorValue = argumentCaptor.getValue();
+        assertThat(captorValue.getGroup().getId()).isEqualTo(testData.getSecondGroupId());
     }
 
     @Test
     void getById_shouldReturnStudentInstance_whenIsFound() {
-        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getStudent()));
+        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyStudent()));
 
         assertThat(studentService.getById(testData.getStudentId())).isNotNull();
 
@@ -95,19 +140,27 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void saveUser_shouldReturnStudentInstanceWithId_whenIsSavedSuccessfully() {
-        when(studentRepository.save(any(Student.class))).thenReturn((Student) testItems.getUser());
+    void save_shouldReturnAdminInstanceWithId_whenIsSavedSuccessfully() {
+        when(passwordEncoder.encode(anyString())).thenReturn(testItems.getEncodedPassword());
 
-        assertThat(studentService.saveUser(testItems.userRegistrationForm()).getId()).isNotNull();
+        studentService.saveUser(testItems.userRegistrationForm());
 
-        verify(studentRepository).save(any(Student.class));
+        var argumentCapture = ArgumentCaptor.forClass(Student.class);
+        verify(studentRepository).save(argumentCapture.capture());
+        Student captureValue = argumentCapture.getValue();
+        assertAll(() -> {
+            assertThat(captureValue.getFirstName()).isEqualTo(testData.getUserFirstName());
+            assertThat(captureValue.getLastName()).isEqualTo(testData.getUserLastName());
+            assertThat(captureValue.getEmail()).isEqualTo(testData.getUserEmail());
+            assertThat(captureValue.getPassword()).isEqualTo(testItems.getEncodedPassword());
+        });
     }
 
     @Test
     void getLessonsForDay_shouldReturnListOfLessonsPerSpecifyDay_whenIsInvoke() {
         when(lessonRepository.getLessonByGroupAndDate(any(Group.class), any(LocalDate.class))).thenReturn(testItems.getAllLessonsOfGroupPerDay());
 
-        assertThat(studentService.getLessonsForDay(testItems.getStudent(), testItems.getDateOfMonday())).hasSize(8);
+        assertThat(studentService.getLessonsForDay(testItems.getFullyStudent(), testItems.getDateOfMonday())).hasSize(8);
 
         verify(lessonRepository).getLessonByGroupAndDate(testItems.getGroup(), testItems.getDateOfMonday());
     }
@@ -116,7 +169,7 @@ class StudentServiceImplTest {
     void getLessonsForWeek_shouldReturnListOfLessonsPerSpecifyWeek_whenIsInvoke() {
         when(lessonRepository.findByGroupAndDateBetween(any(Group.class), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.getAllLessonsOfGroupPerWeek());
 
-        assertThat(studentService.getLessonsForWeek(testItems.getStudent(), testItems.getDateOfMonday(), testItems.getDateOfFriday())).hasSize(30);
+        assertThat(studentService.getLessonsForWeek(testItems.getFullyStudent(), testItems.getDateOfMonday(), testItems.getDateOfFriday())).hasSize(30);
 
         verify(lessonRepository).findByGroupAndDateBetween(testItems.getGroup(), testItems.getDateOfMonday(), testItems.getDateOfFriday());
     }
@@ -130,67 +183,32 @@ class StudentServiceImplTest {
         verify(studentRepository).findAll();
     }
 
-
     @Test
-    void getUserNames() {
-        when(studentRepository.getUserNamesById(anyLong())).thenReturn(testItems.getUserNames());
+    void getDetails_shouldReturnUserDtoInstance_whenUserIsFound() {
+        when(studentRepository.getUserDataById(anyLong())).thenReturn(testItems.getUserDetails());
 
-        studentService.getUserNames(testData.getStudentId());
+        studentService.getDetails(testData.getUserId());
 
-        verify(studentRepository).getUserNamesById(testData.getStudentId());
-    }
-
-    @Test
-    void updateNames() {
-        when(studentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(testItems.getStudent()));
-        when(studentRepository.save(any(Student.class))).thenReturn((Student) testItems.getUserWithUpdatedNames());
-
-        studentService.updateNames(testItems.getUserNames());
-
-        verify(studentRepository).findById(testData.getStudentId());
-        verify(studentRepository).save(any(Student.class));
-    }
-
-    @Test
-    void getUserEmail() {
-        when(studentRepository.getUserEmailById(anyLong())).thenReturn(testItems.getEmailDto());
-
-        studentService.getUserEmail(testData.getStudentId());
-
-        verify(studentRepository).getUserEmailById(testData.getStudentId());
-    }
-
-    @Test
-    void updateEmail() {
-        when(studentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(testItems.getStudent()));
-        when(studentRepository.save(any(Student.class))).thenReturn(testItems.studentWithEmail());
-
-        studentService.updateEmail(testItems.getEmailDto());
-
-        verify(studentRepository).findById(testData.getStudentId());
-        verify(studentRepository).save(any(Student.class));
-    }
-
-    @Test
-    void getDetails() {
-        when(studentRepository.getUserDataById(testData.getStudentId())).thenReturn(testItems.getUserDto());
-
-        studentService.getDetails(testData.getStudentId());
-
-        verify(studentRepository).getUserDataById(testData.getStudentId());
+        verify(studentRepository).getUserDataById(testData.getUserId());
     }
 
     @Test
     void updatePassword() {
-        when(studentRepository.findById(testData.getStudentId())).thenReturn(Optional.ofNullable(testItems.getStudent()));
-        when(passwordEncoder.encode(anyString())).thenReturn(testItems.getEncodedPassword());
-        when(studentRepository.save(any(Student.class))).thenReturn((Student) testItems.studentWithPassword());
+        ChangePasswordForm passwordForm = testItems.getChangePasswordForm();
+        passwordForm.setId(testData.getStudentId());
 
-        studentService.updatePassword(testItems.getChangePasswordForm());
+        when(studentRepository.findById(anyLong())).thenReturn(Optional.ofNullable(testItems.getFullyStudent()));
+        when(passwordEncoder.encode(anyString())).thenReturn(testItems.getEncodedPassword2());
+
+        studentService.updatePassword(passwordForm);
 
         verify(studentRepository).findById(testData.getStudentId());
         verify(passwordEncoder).encode(testItems.getPassword());
-        verify(studentRepository).save(any(Student.class));
+
+        var argumentCaptor = ArgumentCaptor.forClass(Student.class);
+        verify(studentRepository).save(argumentCaptor.capture());
+        Student captorValue = argumentCaptor.getValue();
+        assertThat(captorValue.getPassword()).isEqualTo(testItems.getEncodedPassword2());
     }
 
     @Test()
@@ -205,11 +223,11 @@ class StudentServiceImplTest {
 
     @Test
     void deleteUser_shouldRemoveStudent_whenIsFound() {
-        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getStudent()));
+        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyStudent()));
 
         studentService.deleteUser(testData.getStudentId());
 
         verify(studentRepository).findById(testData.getStudentId());
-        verify(studentRepository).delete(testItems.getStudent());
+        verify(studentRepository).delete(testItems.getFullyStudent());
     }
 }

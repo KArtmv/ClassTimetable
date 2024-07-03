@@ -53,44 +53,38 @@ class StudentControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "student", "staff"})
-    void studentPage_shouldReturnStudentPage_whenLoginUserWithAbleAccess(String role) throws Exception {
+    void userPage_shouldReturnPageWithListOfUser_whenLoginUserWithAbleAccess(String role) throws Exception {
         when(studentService.getAll()).thenReturn(testItems.getStudents());
 
         this.mockMvc.perform(get("/student").with(testUser(role))).andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        view().name("student/student"),
-                        model().attributeExists("students"),
-                        content().string(containsString("Liam")),
+                        view().name("user/user"),
+                        model().attributeExists("users"),
                         content().string(containsString("Liam")),
                         content().string(containsString("Jones")),
-                        content().string(containsString("YS-27")),
                         content().string(containsString("Harper")),
                         content().string(containsString("Robinson")),
-                        content().string(containsString("YS-27")),
                         content().string(containsString("Lucas")),
                         content().string(containsString("Thompson")),
-                        content().string(containsString("YS-27")),
                         content().string(containsString("Carter")),
                         content().string(containsString("Clark")),
-                        content().string(containsString("YS-27")),
                         content().string(containsString("Amelia")),
-                        content().string(containsString("Martinez")),
-                        content().string(containsString("YS-27")));
+                        content().string(containsString("Martinez")));
     }
 
     @Test
-    void studentPage_shouldReturnForbiddenStatus_whenLoginUserWithAbleAccess() throws Exception {
+    void userPage_shouldReturnForbiddenStatus_whenLoginUserWithoutAbleAccess() throws Exception {
         this.mockMvc.perform(get("/student").with(testUser("teacher")))
                 .andExpect(status().isForbidden());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
-    void addStudent_shouldReturnAddUserView(String role) throws Exception {
+    void addUser_shouldReturnAddUserView_whenLoggedUserHasAccess(String role) throws Exception {
         when(groupService.getAll()).thenReturn(testItems.getGroups());
 
-        mockMvc.perform(get("/student/addStudent").with(testUser(role))).andDo(print())
+        mockMvc.perform(get("/student/addUser").with(testUser(role))).andDo(print())
                 .andExpectAll(
                         status().isOk(),
                         model().attributeExists("registrationForm"),
@@ -106,17 +100,17 @@ class StudentControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"teacher", "student"})
-    void addStudent_shouldReturnForbiddenStatus_whenLoggedUserLackAccess(String role) throws Exception {
+    void addUser_shouldReturnForbiddenStatus_whenLoggedUserLackAccess(String role) throws Exception {
         when(groupService.getAll()).thenReturn(testItems.getGroups());
 
-        mockMvc.perform(get("/student/addStudent").with(testUser(role))).andDo(print())
+        mockMvc.perform(get("/student/addUser").with(testUser(role))).andDo(print())
                 .andExpect(status().isForbidden());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
-    void saveStudent_shouldRedirectToStudentPage_whenReceivedDataIsValid(String role) throws Exception {
-        when(studentService.saveUser(any(UserRegistrationForm.class))).thenReturn((Student) testItems.getUser());
+    void saveUser_shouldRedirectToUserPage_whenReceivedDataIsValid(String role) throws Exception {
+        when(studentService.saveUser(any(UserRegistrationForm.class))).thenReturn((Student) testItems.getSavedStudent());
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("firstName", testData.getStudentFirstName());
@@ -124,7 +118,7 @@ class StudentControllerTest {
         multiValueMap.add("email", testData.getEmail());
         multiValueMap.add("password", testItems.getPassword());
         multiValueMap.add("confirmPassword", testItems.getPassword());
-        multiValueMap.add("groupId", String.valueOf(testData.getGroupId()));
+        multiValueMap.add("groupId", testData.getGroupId().toString());
 
         mockMvc.perform(post("/student/save").params(multiValueMap).with(testUser(role))).andDo(print())
                 .andExpectAll(
@@ -135,9 +129,7 @@ class StudentControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
-    void saveStudent_shouldRedirectToStudentPage_whenReceivedGroupIsInvalid(String role) throws Exception {
-        when(studentService.saveUser(any(UserRegistrationForm.class))).thenReturn((Student) testItems.getUser());
-
+    void saveStudent_shouldRedirectToRegistrationPage_whenGroupEmpty(String role) throws Exception {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("firstName", testData.getStudentFirstName());
         multiValueMap.add("lastName", testData.getStudentLastName());
@@ -157,8 +149,7 @@ class StudentControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
-    void saveStudent_shouldRedirectToStudentPage_whenReceivedEmailIsInvalid(String role) throws Exception {
-        when(studentService.saveUser(any(UserRegistrationForm.class))).thenReturn((Student) testItems.getUser());
+    void save_shouldRedirectToRegistrationPage_whenReceivedEmailIsInvalid(String role) throws Exception {
         when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(testItems.getCompliteUser()));
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
@@ -180,7 +171,7 @@ class StudentControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
-    void saveStudent_shouldRedirectToStudentPage_whenReceivedDataIsInvalid(String role) throws Exception {
+    void save_shouldDisplayedErrorMessageOnRegistrationPage_whenReceivedInvalidData(String role) throws Exception {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("firstName", "");
         multiValueMap.add("lastName", "");
@@ -216,8 +207,8 @@ class StudentControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
-    void viewStudentDetails_shouldReturnUserDetailsPage_whenLoggedUserHasAccess(String role) throws Exception {
-        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDto());
+    void viewDetails_shouldReturnUserDetailsPage_whenLoggedUserHasAccess(String role) throws Exception {
+        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
         when(studentService.getStudentGroup(anyLong())).thenReturn(testItems.getStudentGroupDto());
 
         mockMvc.perform(get("/student/details/{id}", testData.getStudentId()).with(testUser(role))).andDo(print())
@@ -226,50 +217,30 @@ class StudentControllerTest {
                         view().name("user/userDetails"),
                         model().attributeExists("user"),
                         model().attributeExists("path"),
+                        model().attributeDoesNotExist("isMyDetails"),
                         model().attributeExists("userDto"),
-                        model().attributeExists("studentGroupDto"));
+                        content().string(containsString(testData.getUserFirstName())),
+                        content().string(containsString(testData.getUserFirstName())),
+                        content().string(containsString(testData.getUserEmail())));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"student", "teacher"})
-    void viewStudentDetails_returnStatusForbidden_whenLoggedUserLacksAccess(String role) throws Exception {
+    void viewDetails_returnStatusForbidden_whenLoggedUserLacksAccess(String role) throws Exception {
         mockMvc.perform(get("/student/details/{id}", testData.getStudentId()).with(testUser(role))).andDo(print())
                 .andExpect(status().isForbidden());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff", "student"})
-    void editStudentName_shouldReturnEditUserNamesPage_whenLoggedUserHasAccess(String role) throws Exception {
-        when(studentService.getUserNames(anyLong())).thenReturn(testItems.getUserNames());
-
-        mockMvc.perform(get("/student/edit/names/{id}", testData.getStudentId()).with(testUser(role))).andDo(print())
-                .andExpectAll(
-                        status().isOk(),
-                        view().name("user/editUserNames"),
-                        model().attributeExists("userNames"),
-                        model().attributeExists("path"),
-                        content().string(containsString(testData.getStudentId().toString())),
-                        content().string(containsString(testData.getAdminFirstName())),
-                        content().string(containsString(testData.getAdminLastName()))
-                );
-    }
-
-    @Test
-    void editStudentName_shouldReturnForbiddenStatus_whenLoggedUserLacksAccess() throws Exception {
-        mockMvc.perform(get("/student/edit/names/{id}", testData.getStudentId()).with(testUser("teacher"))).andDo(print())
-                .andExpectAll(status().isForbidden());
-
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"admin", "staff", "student"})
-    void updateStudentNames_shouldRedirectToStudentPage_whenReceivedDataIsValid(String role) throws Exception {
+    void updateNames_shouldRedirectToUserPage_whenReceivedValidNames(String role) throws Exception {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("id", testData.getStudentId().toString());
         multiValueMap.add("firstName", testData.getStudentFirstName());
         multiValueMap.add("lastName", testData.getStudentLastName());
+        multiValueMap.add("email", testData.getStudentEmail());
 
-        mockMvc.perform(post("/student/update/names").with(testUser(role)).params(multiValueMap)).andDo(print())
+        mockMvc.perform(post("/student/update-names").with(testUser(role)).params(multiValueMap)).andDo(print())
                 .andExpectAll(
                         status().is3xxRedirection(),
                         redirectedUrl("/student")
@@ -279,16 +250,17 @@ class StudentControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff", "student"})
-    void updateStudentNames_shouldDisplaysErrorMessage_whenReceivedDataIsInvalid(String role) throws Exception {
+    void updateNames_shouldDisplaysErrorMessage_whenReceivedInvalidNames(String role) throws Exception {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("id", testData.getStudentId().toString());
         multiValueMap.add("firstName", "");
         multiValueMap.add("lastName", "");
+        multiValueMap.add("email", testData.getStudentEmail());
 
-        mockMvc.perform(post("/student/update/names").with(testUser(role)).params(multiValueMap)).andDo(print())
+        mockMvc.perform(post("/student/update-names").with(testUser(role)).params(multiValueMap)).andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        view().name("user/editUserNames"),
+                        view().name("user/userDetails"),
                         model().hasErrors(),
                         content().string(containsString("First name is required.")),
                         content().string(containsString("First name must be between 2 and 15 characters.")),
@@ -296,43 +268,18 @@ class StudentControllerTest {
                         content().string(containsString("Last name must be between 2 and 20 characters.")));
     }
 
-    @Test
-    void updateStudentName_shouldReturnForbiddenStatus_whenLoggedUserLacksAccess() throws Exception {
-        mockMvc.perform(post("/student/update/names", testData.getStudentId()).with(testUser("teacher"))).andDo(print())
-                .andExpect(status().is4xxClientError());
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff", "student"})
-    void editStudentEmail_shouldReturnEditUserEmail_whenLoggedUserHasAccess(String role) throws Exception {
-        when(studentService.getUserEmail(testData.getStudentId())).thenReturn(testItems.getEmailDto());
-
-        mockMvc.perform(get("/student/edit/email/{id}", testData.getStudentId()).with(testUser(role))).andDo(print())
-                .andExpectAll(
-                        status().isOk(),
-                        view().name("user/editUserEmail"),
-                        model().attributeExists("path"),
-                        model().attributeExists("userEmailDto"));
-    }
-
-    @Test
-    void editStudentEmail_shouldReturnForbiddenStatus_whenLoggedUserLackAccess() throws Exception {
-        when(studentService.getUserEmail(testData.getStudentId())).thenReturn(testItems.getEmailDto());
-
-        mockMvc.perform(get("/student/edit/email/{id}", testData.getStudentId()).with(testUser("teacher")))
-                .andExpect(status().isForbidden());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"admin", "staff", "student"})
-    void updateEmail_shouldRedirectToStudentPage_whenReceivedEmailIsValid(String role) throws Exception {
-        when(studentService.getUserEmail(testData.getStudentId())).thenReturn(testItems.getEmailDto());
+    void updateEmail_shouldRedirectToUserPage_whenReceivedValidEmail(String role) throws Exception {
+        when(studentService.getDetails(testData.getStudentId())).thenReturn(testItems.getUserDetails());
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("id", testData.getStudentId().toString());
-        multiValueMap.add("email", testData.getAdminEmail());
+        multiValueMap.add("firstName", testData.getStudentFirstName());
+        multiValueMap.add("lastName", testData.getStudentLastName());
+        multiValueMap.add("email", testData.getNewEmail());
 
-        mockMvc.perform(post("/student/update/email").with(testUser(role)).params(multiValueMap)).andDo(print())
+        mockMvc.perform(post("/student/update-email").with(testUser(role)).params(multiValueMap)).andDo(print())
                 .andExpectAll(
                         status().is3xxRedirection(),
                         view().name("redirect:/student"));
@@ -341,25 +288,20 @@ class StudentControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff", "student"})
     void updateEmail_shouldOutputErrorMessage_whenReceivedEmailIsActualUserEmail(String role) throws Exception {
-        when(studentService.getUserEmail(testData.getStudentId())).thenReturn(testItems.getEmailDto());
+        when(studentService.getDetails(testData.getStudentId())).thenReturn(testItems.getUserDetails());
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("id", testData.getStudentId().toString());
-        multiValueMap.add("email", testData.getStudentEmail());
+        multiValueMap.add("firstName", testData.getStudentFirstName());
+        multiValueMap.add("lastName", testData.getStudentLastName());
+        multiValueMap.add("email", testData.getUserEmail());
 
-        mockMvc.perform(post("/student/update/email").with(testUser(role)).params(multiValueMap)).andDo(print())
+        mockMvc.perform(post("/student/update-email").with(testUser(role)).params(multiValueMap)).andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        view().name("user/editUserEmail"),
+                        view().name("user/userDetails"),
                         model().hasErrors(),
                         content().string(containsString("Given email is current user email.")));
-    }
-
-    @Test
-    void updateEmail_shouldReturnForbiddenStatus_whenLoggedUserLackAccess() throws Exception {
-        mockMvc.perform(post("/student/update/email").with(testUser("teacher"))).andDo(print())
-                .andExpectAll(
-                        status().is4xxClientError());
     }
 
     @ParameterizedTest
@@ -368,7 +310,7 @@ class StudentControllerTest {
         when(studentService.getStudentGroup(anyLong())).thenReturn(testItems.getStudentGroupDto());
         when(groupService.getAll()).thenReturn(testItems.getGroups());
 
-        mockMvc.perform(get("/student/edit/group/{id}", testData.getStudentId()).with(testUser(role))).andDo(print())
+        mockMvc.perform(get("/student/edit-group/{id}", testData.getStudentId()).with(testUser(role))).andDo(print())
                 .andExpectAll(
                         status().isOk(),
                         view().name("student/feature/editGroup"),
@@ -383,7 +325,7 @@ class StudentControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"student", "teacher"})
     void editStudentGroup_shouldReturnForbiddenStatus_whenLoggedUserLackAccess(String role) throws Exception {
-        mockMvc.perform(get("/student/edit/group/{id}", testData.getStudentId()).with(testUser(role))).andDo(print())
+        mockMvc.perform(get("/student/edit-group/{id}", testData.getStudentId()).with(testUser(role))).andDo(print())
                 .andExpectAll(
                         status().isForbidden());
     }
@@ -393,10 +335,10 @@ class StudentControllerTest {
     void updateStudentGroup_shouldReturnStudentPage_whenLoggedUserHasAccess(String role) throws Exception {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("id", testData.getStudentId().toString());
-        multiValueMap.add("groupId", testItems.getGroup2().getId().toString());
-        multiValueMap.add("groupName", testItems.getGroup2().getGroupName());
+        multiValueMap.add("groupId", testData.getSecondGroupId().toString());
+        multiValueMap.add("groupName", testData.getSecondGroupName());
 
-        mockMvc.perform(post("/student/update/group").params(multiValueMap).with(testUser(role))).andDo(print())
+        mockMvc.perform(post("/student/update-group").params(multiValueMap).with(testUser(role))).andDo(print())
                 .andExpectAll(
                         status().is3xxRedirection(),
                         redirectedUrl("/student"));
@@ -404,33 +346,14 @@ class StudentControllerTest {
 
     @Test
     void updateStudentGroup_shouldReturnForbiddenStatus_whenLoggedUserLackAccess() throws Exception {
-        mockMvc.perform(post("/student/update/group").with(testUser("teacher"))).andDo(print())
+        mockMvc.perform(post("/student/update-group").with(testUser("teacher"))).andDo(print())
                 .andExpectAll(
                         status().is4xxClientError());
     }
 
-
     @Test
-    void editStudentPassword_shouldReturnEditPasswordPage_whenLoggedUserHasAccess() throws Exception {
-        mockMvc.perform(get("/student/edit/password").with(testUser("student"))).andDo(print())
-                .andExpectAll(
-                        status().isOk(),
-                        view().name("user/editPassword"),
-                        model().attributeExists("path"),
-                        model().attributeExists("changePasswordForm"));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"admin", "staff", "teacher"})
-    void editStudentPassword_shouldReturnForbiddenStatus_whenLoggedUserLackAccess(String role) throws Exception {
-        mockMvc.perform(get("/student/edit/password").with(testUser(role))).andDo(print())
-                .andExpect(
-                        status().isForbidden());
-    }
-
-    @Test
-    void updateStudentPassword_shouldReturnUserDetailsPage_whenPasswordChangeSucceeded() throws Exception {
-        when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(testItems.getCompliteUser()));
+    void updatePassword_shouldReturnUserDetailsPage_whenPasswordChangeSucceeded() throws Exception {
+        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
@@ -438,65 +361,74 @@ class StudentControllerTest {
         multiValueMap.add("password", testItems.getPassword());
         multiValueMap.add("confirmPassword", testItems.getPassword());
 
-        mockMvc.perform(post("/student/update/password").params(multiValueMap).with(testUser("student"))).andDo(print())
+        mockMvc.perform(post("/student/update-password").params(multiValueMap).with(testUser("student"))).andDo(print())
                 .andExpectAll(
                         status().is3xxRedirection(),
                         redirectedUrl("/student/details?success=true"));
     }
 
     @Test
-    void updateStudentPassword_shouldReturnUserDetailsPage_whenOldPasswordIsInvalid() throws Exception {
-        when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(testItems.getCompliteUser()));
+    void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenOldPasswordIsInvalid() throws Exception {
+        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", testData.getOldPassword());
         multiValueMap.add("password", testItems.getPassword());
         multiValueMap.add("confirmPassword", testItems.getPassword());
 
-        mockMvc.perform(post("/student/update/password").params(multiValueMap).with(testUser("student"))).andDo(print())
+        mockMvc.perform(post("/student/update-password").params(multiValueMap).with(testUser("student"))).andDo(print())
                 .andExpectAll(
                         status().isOk(),
                         model().hasErrors(),
-                        view().name("user/editPassword"),
+                        view().name("user/userDetails"),
+                        model().attributeExists("userDto"),
+                        model().attributeExists("isMyDetails"),
                         content().string(containsString("Old password is incorrect."))
                 );
     }
 
     @Test
-    void updateStudentPassword_shouldReturnUserDetailsPage_whenPasswordNotMatchConfirmPassword() throws Exception {
-        when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(testItems.getCompliteUser()));
+    void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenPasswordNotMatchConfirmPassword() throws Exception {
+        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", testData.getOldPassword());
         multiValueMap.add("password", testItems.getPassword());
         multiValueMap.add("confirmPassword", testItems.getPassword() + "2");
 
-        mockMvc.perform(post("/student/update/password").params(multiValueMap).with(testUser("student"))).andDo(print())
+        mockMvc.perform(post("/student/update-password").params(multiValueMap).with(testUser("student"))).andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        view().name("user/editPassword"),
+                        view().name("user/userDetails"),
                         model().hasErrors(),
+                        model().attributeExists("userDto"),
+                        model().attributeExists("isMyDetails"),
                         content().string(containsString("Oops! Looks like your passwords dont match. Double-check and try again."))
                 );
     }
 
     @Test
-    void updateStudentPassword_shouldReturnUserDetailsPageWithErrorMessages_whenPassEmptyForm() throws Exception {
-        when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(testItems.getCompliteUser()));
+    void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenReceivedEmptyForm() throws Exception {
+        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", "");
         multiValueMap.add("password", "");
         multiValueMap.add("confirmPassword", "");
 
-        mockMvc.perform(post("/student/update/password").params(multiValueMap).with(testUser("student"))).andDo(print())
+        mockMvc.perform(post("/student/update-password").params(multiValueMap).with(testUser("student"))).andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        view().name("user/editPassword"),
+                        view().name("user/userDetails"),
                         model().hasErrors(),
+                        model().attributeExists("userDto"),
+                        model().attributeExists("isMyDetails"),
                         content().string(containsString("Old password is incorrect.")),
                         content().string(containsString("Old password is required.")),
                         content().string(containsString("Password must be between 8 and 16 characters.")),
@@ -506,15 +438,15 @@ class StudentControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff", "teacher"})
     void updateStudentPassword_shouldReturnForbiddenStatus_whenLoggedUserLackAccess(String role) throws Exception {
-        mockMvc.perform(post("/student/update/password").with(testUser(role))).andDo(print())
+        mockMvc.perform(post("/student/update-password").with(testUser(role))).andDo(print())
                 .andExpect(
                         status().isForbidden());
     }
 
     @Test
     void viewMyDetails_shouldReturnUserDetailsPage_whenLoggedUserHasAccess() throws Exception {
-        when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.of(testItems.getCompliteUser()));
-        when(studentService.getDetails(anyLong())).thenReturn(testItems.getStudentDetails());
+        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
+        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
 
         mockMvc.perform(get("/student/details").with(testUser("student"))).andDo(print())
                 .andExpectAll(
@@ -523,6 +455,7 @@ class StudentControllerTest {
                         model().attributeExists("user"),
                         model().attributeExists("path"),
                         model().attributeExists("userDto"),
+                        model().attributeExists("isMyDetails"),
                         model().attributeDoesNotExist("studentGroupDto"),
                         content().string(containsString(testData.getUserId().toString())),
                         content().string(containsString(testData.getUserFirstName())),
@@ -540,17 +473,17 @@ class StudentControllerTest {
 
     @Test
     void deleteForm_shouldReturnDeleteUserPage_whenLoggedUserHasAccess() throws Exception {
-        when(studentService.getUserNames(anyLong())).thenReturn(testItems.getUserNames());
+        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
 
-        mockMvc.perform(get("/student/remove/{id}", testData.getStudentId()).with(testUser("admin"))).andDo(print())
+        mockMvc.perform(get("/student/remove/{id}", testData.getUserId()).with(testUser("admin"))).andDo(print())
                 .andExpectAll(
                         status().isOk(),
                         view().name("user/deleteUser"),
                         model().attributeExists("path"),
-                        model().attributeExists("userNames"),
-                        content().string(containsString(testData.getStudentId().toString())),
-                        content().string(containsString(testData.getAdminFirstName())),
-                        content().string(containsString(testData.getAdminLastName())));
+                        model().attributeExists("userDto"),
+                        content().string(containsString(testData.getUserId().toString())),
+                        content().string(containsString(testData.getUserFirstName())),
+                        content().string(containsString(testData.getUserLastName())));
     }
 
     @ParameterizedTest
@@ -562,8 +495,8 @@ class StudentControllerTest {
     }
 
     @Test
-    void delete() throws Exception {
-        mockMvc.perform(post("/student/delete").param("userId", testData.getStudentId().toString())
+    void delete_shouldReturnForbiddenStatus_whenLoggedUserLackAccess() throws Exception {
+        mockMvc.perform(post("/student/delete/{id}", testData.getStudentId())
                         .with(testUser("admin"))).andDo(print())
                 .andExpectAll(
                         status().is3xxRedirection(),

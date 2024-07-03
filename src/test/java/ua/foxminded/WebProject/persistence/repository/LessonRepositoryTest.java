@@ -50,7 +50,7 @@ class LessonRepositoryTest {
             assertThat(lesson.getCourse().getId()).isEqualTo(testItems.getCourseWithIdSeven().getId());
             assertThat(lesson.getGroup().getId()).isEqualTo(testItems.getGroup().getId());
             assertThat(lesson.getClassroom().getId()).isEqualTo(testItems.getClassroom().getId());
-            assertThat(lesson.getTeacher().getId()).isEqualTo(testItems.getTeacher().getId());
+            assertThat(lesson.getTeacher().getId()).isEqualTo(testItems.getTeacherId());
         });
     }
 
@@ -72,16 +72,16 @@ class LessonRepositoryTest {
     @Test
     @Sql("/sql/lesson/lessons.sql")
     void getLessonsByTeacherAndDate() {
-        assertThat(repository.getLessonsByTeacherAndDate(testItems.getTeacher(), testData.getDate())).hasSize(7);
+        assertThat(repository.getLessonsByTeacherAndDate(testItems.getFullyTeacher(), testData.getDate())).hasSize(8);
     }
 
     @Test
     @Sql("/sql/lesson/lessons.sql")
     void getLessonsByTeacherAndDateBetween() {
         assertThat(repository.getLessonsByTeacherAndDateBetween(
-                testItems.getTeacher(),
+                testItems.getFullyTeacher(),
                 testData.getDateTeacherStart(),
-                testData.getDateTeacherEnd())).hasSize(13);
+                testData.getDateTeacherEnd())).hasSize(11);
     }
 
     @Test

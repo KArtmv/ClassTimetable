@@ -8,8 +8,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import ua.foxminded.WebProject.DTO.UserDto;
-import ua.foxminded.WebProject.DTO.UserEmailDto;
-import ua.foxminded.WebProject.DTO.UserNames;
 import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
@@ -39,7 +37,7 @@ class StudentRepositoryTest {
             assertThat(result.getId()).isEqualTo(testData.getStudentId());
             assertThat(result.getFirstName()).isEqualTo(testData.getStudentFirstName());
             assertThat(result.getLastName()).isEqualTo(testData.getStudentLastName());
-            assertThat(result.getGroup().getGroupName()).isEqualTo(testData.getGroup().getGroupName());
+            assertThat(result.getGroup().getGroupName()).isEqualTo(testData.getGroupName());
         });
     }
 
@@ -50,7 +48,7 @@ class StudentRepositoryTest {
 
     @Test
     void saveStudent_shouldReturnStudentInstanceWithId_whenSavedSuccessfully() {
-        assertThat(studentRepository.save(testItems.getFullStudent()).getId()).isNotNull();
+        assertThat(studentRepository.save(testItems.getFullyStudent()).getId()).isNotNull();
     }
 
     @Test
@@ -67,27 +65,6 @@ class StudentRepositoryTest {
     @Sql(scripts = {"/sql/group/groups.sql", "/sql/student/students.sql"})
     void findAll_shouldReturnAllStudents_whenAllStudentsAreFound() {
         assertThat(studentRepository.findAll()).hasSize(3);
-    }
-
-    @Test
-    void getUserNamesById_shouldReturnUserNames_whenUserIsFound() {
-        UserNames result = studentRepository.getUserNamesById(testData.getStudentId());
-
-        assertAll(() -> {
-            assertThat(result).isNotNull();
-            assertThat(result.firstName()).isEqualTo(testData.getStudentFirstName());
-            assertThat(result.lastName()).isEqualTo(testData.getStudentLastName());
-        });
-    }
-
-    @Test
-    void getUserEmailsById_shouldReturnUserEmail_whenUserIsFound() {
-        UserEmailDto result = studentRepository.getUserEmailById(testData.getStudentId());
-
-        assertAll(() -> {
-            assertThat(result).isNotNull();
-            assertThat(result.email()).isEqualTo(testData.getStudentEmail());
-        });
     }
 
     @Test

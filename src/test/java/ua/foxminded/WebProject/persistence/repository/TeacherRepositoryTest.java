@@ -27,7 +27,7 @@ class TeacherRepositoryTest {
 
     @Test
     void save_shouldReturnTeacherInstanceWithId_whenIsSavedSuccessfully() {
-        Teacher result = repository.save(testItems.getFullTeacher());
+        Teacher result = repository.save(testItems.getFullyTeacher());
         assertThat(result.getId()).isNotNull();
     }
 
@@ -55,7 +55,7 @@ class TeacherRepositoryTest {
     void delete_shouldDeleteStudent_whenIsInvoke() {
         assertAll(() -> {
             assertThat(repository.findAll()).hasSize(8);
-            repository.delete(testItems.getTeacher());
+            repository.delete(testItems.getFullyTeacher());
             assertThat(repository.findAll()).hasSize(7);
         });
     }
