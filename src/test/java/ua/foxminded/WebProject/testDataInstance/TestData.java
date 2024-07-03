@@ -19,6 +19,8 @@ public class TestData {
     private final String groupName = "YS-27";
     private final Group group = new Group(groupName);
     private final GroupDto groupDto = new GroupDto(groupName);
+    private final Long secondGroupId = 2L;
+    private final String secondGroupName = "HV-14";
 
     private final Long courseId = 1L;
     private final String courseName = "Principles of Economics";
@@ -45,10 +47,12 @@ public class TestData {
     private final String teacherEmail = "teacher@gmail.com";
     private final Teacher teacher = new Teacher(teacherFirstName, teacherLastName);
 
+    private final Long adminId = 1L;
     private final String adminFirstName = "John";
     private final String adminLastName = "Thomson";
     private final String adminEmail = "admin@gmail.com";
 
+    private final Long staffId = 1L;
     private final String staffFirstName = "Lucas";
     private final String staffLastName = "Smith";
     private final String staffEmail = "staff@gmail.com";
@@ -56,11 +60,12 @@ public class TestData {
     private final String email = "test@gmail.com";
 
     private final Long userId = 4L;
-    private final String userFirstName = getAdminFirstName();
-    private final String userLastName = getStaffLastName();
+    private final String userFirstName = "Robert";
+    private final String userLastName = "Moore";
     private final String userEmail = "user@gmail.com";
 
     private final String oldPassword = "testPassword";
+    private final String newEmail = "new@gmail.com";
 
     private final LocalDate date = LocalDate.of(2024, 3, 11);
 
