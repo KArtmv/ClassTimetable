@@ -6,12 +6,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ua.foxminded.WebProject.DTO.UserDto;
-import ua.foxminded.WebProject.DTO.UserEmailDto;
-import ua.foxminded.WebProject.DTO.UserNames;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.form.UserRegistrationForm;
 import ua.foxminded.WebProject.persistence.entity.User;
 import ua.foxminded.WebProject.persistence.repository.UserCrudRepository;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -23,25 +22,18 @@ public abstract class AbstractUserService<T extends User> {
     protected final UserCrudRepository<T, Long> repository;
     protected final BCryptPasswordEncoder passwordEncoder;
     private final Class<T> clazz;
-
-    public UserNames getUserNames(Long id) {
-        return repository.getUserNamesById(id);
-    }
+    private final UserRepository userRepository;
 
     @Transactional
-    public T updateNames(UserNames userNameDto) {
-        T user = getById(userNameDto.id());
-        user.setFirstName(toCapitalize(userNameDto.firstName()));
-        user.setLastName(toCapitalize(userNameDto.lastName()));
+    public T updateNames(UserDto userDto) {
+        T user = getById(userDto.id());
+        user.setFirstName(toCapitalize(userDto.firstName()));
+        user.setLastName(toCapitalize(userDto.lastName()));
         return repository.save(user);
     }
 
-    public UserEmailDto getUserEmail(Long id) {
-        return repository.getUserEmailById(id);
-    }
-
     @Transactional
-    public T updateEmail(UserEmailDto emailDto) {
+    public T updateEmail(UserDto emailDto) {
         T user = getById(emailDto.id());
         user.setEmail(emailDto.email().toLowerCase());
         return repository.save(user);
@@ -85,6 +77,10 @@ public abstract class AbstractUserService<T extends User> {
 
     public List<T> getAll() {
         return repository.findAll();
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findUserByEmail(email).orElseThrow(EntityNotFoundException::new);
     }
 
     private T getNewInstance() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {

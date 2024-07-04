@@ -1,20 +1,19 @@
 package ua.foxminded.WebProject.controller;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ua.foxminded.WebProject.persistence.entity.Admin;
+import ua.foxminded.WebProject.service.AdminService;
 
 @Controller
 @RequestMapping("/admin")
-@PreAuthorize("hasRole('admin')")
-@RequiredArgsConstructor
-public class AdminController {
+@PreAuthorize("hasAnyRole('admin', 'staff')")
+public class AdminController extends AbstractUserCrudController<Admin> {
 
-    @GetMapping
-    public String adminPage() {
-        return "admin/admin";
+    public AdminController(AdminService adminService, BCryptPasswordEncoder passwordEncoder) {
+        super(adminService, passwordEncoder, Admin.class);
     }
 }
 

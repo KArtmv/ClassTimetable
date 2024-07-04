@@ -1,14 +1,18 @@
 package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
+import ua.foxminded.WebProject.persistence.entity.User;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.TeacherRepository;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 
@@ -16,68 +20,172 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = TeacherServiceImpl.class)
 class TeacherServiceImplTest {
     private final TestData testData = new TestData();
     private final TestItems testItems = new TestItems();
-    @Mock
+
+    @MockBean
     private TeacherRepository teacherRepository;
-    @Mock
+    @MockBean
     private LessonRepository lessonRepository;
-    @InjectMocks
-    private TeacherServiceImpl service;
+    @MockBean
+    private UserRepository userRepository;
+    @MockBean
+    private BCryptPasswordEncoder passwordEncoder;
 
-    @BeforeEach
-    void init() {
-        MockitoAnnotations.openMocks(this);
+    @Autowired
+    private TeacherServiceImpl teacherService;
+
+
+    @Test
+    void updateNames_shouldReturnUpdatedInstance_whenNamesUpdatedSuccessfully() {
+        when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyTeacher()));
+
+        teacherService.updateNames(testItems.getUserDetails());
+
+        var argumentCaptor = ArgumentCaptor.forClass(Teacher.class);
+        verify(teacherRepository).save(argumentCaptor.capture());
+        Teacher teacher = argumentCaptor.getValue();
+        assertAll(() -> {
+            assertThat(teacher.getFirstName()).isEqualTo(testData.getUserFirstName());
+            assertThat(teacher.getLastName()).isEqualTo(testData.getUserLastName());
+        });
     }
 
     @Test
-    void saveTeacher_shouldReturnStudentInstanceWithId_whenIsSavedSuccessfully() {
-        when(teacherRepository.save(any(Teacher.class))).thenReturn(testItems.getTeacherIdFirst());
+    void updateEmail_shouldReturnUpdatedInstance_whenEmailUpdatedSuccessfully() {
+        when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyTeacher()));
 
-        assertThat(service.saveTeacher(testItems.getTeacherDto()).getId()).isNotNull();
+        teacherService.updateEmail(testItems.getUserDetails());
+
+        var argumentCaptor = ArgumentCaptor.forClass(Teacher.class);
+        verify(teacherRepository).save(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue().getEmail()).isEqualTo(testData.getUserEmail());
     }
 
     @Test
-    void removeTeacherById_shouldRemoveTeacher_whenIsFound() {
-        when(teacherRepository.findById(testItems.getTeacherId())).thenReturn(Optional.of(testItems.getTeacher()));
+    void getUserByEmail_shouldReturnUserInstance_whenUserEmailFound() {
+        when(userRepository.findUserByEmail(anyString())).thenReturn(Optional.ofNullable(testItems.getCompliteUser()));
 
-        service.removeTeacherById(new Teacher(testItems.getTeacherId()));
+        User result = teacherService.getUserByEmail(testData.getUserEmail());
 
-        verify(teacherRepository).findById(testItems.getTeacherId());
+        assertAll(() -> {
+            assertThat(result).isNotNull();
+            assertThat(result).isInstanceOf(User.class);
+            assertThat(result.getId()).isEqualTo(testData.getUserId());
+            assertThat(result.getFirstName()).isEqualTo(testData.getUserFirstName());
+            assertThat(result.getLastName()).isEqualTo(testData.getUserLastName());
+            assertThat(result.getEmail()).isEqualTo(testData.getUserEmail());
+        });
+        verify(userRepository).findUserByEmail(testData.getUserEmail());
     }
 
     @Test
-    void removeTeacherById_shouldThrowEntityNotFoundException_whenIsNotFound() {
-        when(teacherRepository.findById(testItems.getTeacherId())).thenReturn(Optional.empty());
+    void getDetails_shouldReturnUserDtoInstance_whenUserIsFound() {
+        when(teacherRepository.getUserDataById(anyLong())).thenReturn(testItems.getUserDetails());
 
-        assertThrows(EntityNotFoundException.class, () -> service.removeTeacherById(new Teacher(testItems.getTeacherId())));
+        teacherService.getDetails(testData.getUserId());
 
-        verify(teacherRepository).findById(testItems.getTeacherId());
+        verify(teacherRepository).getUserDataById(testData.getUserId());
+    }
+
+    @Test
+    void updatePassword_shouldReturnUpdatedInstance_whenPasswordUpdatedSuccessfully() {
+        ChangePasswordForm passwordForm = testItems.getChangePasswordForm();
+        passwordForm.setId(testData.getTeacherId());
+
+        when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyTeacher()));
+        when(passwordEncoder.encode(anyString())).thenReturn(testItems.getEncodedPassword2());
+
+        teacherService.updatePassword(passwordForm);
+
+        verify(teacherRepository).findById(testData.getTeacherId());
+        verify(passwordEncoder).encode(testItems.getPassword());
+
+        var argumentCaptor = ArgumentCaptor.forClass(Teacher.class);
+        verify(teacherRepository).save(argumentCaptor.capture());
+        Teacher captorValue = argumentCaptor.getValue();
+        assertThat(captorValue.getPassword()).isEqualTo(testItems.getEncodedPassword2());
+    }
+
+    @Test
+    void save_shouldReturnTeacherInstanceWithId_whenIsSavedSuccessfully() {
+        when(passwordEncoder.encode(anyString())).thenReturn(testItems.getEncodedPassword());
+        teacherService.saveUser(testItems.userRegistrationForm());
+
+        var argumentCapture = ArgumentCaptor.forClass(Teacher.class);
+        verify(teacherRepository).save(argumentCapture.capture());
+        Teacher captureValue = argumentCapture.getValue();
+        assertAll(() -> {
+            assertThat(captureValue.getFirstName()).isEqualTo(testData.getUserFirstName());
+            assertThat(captureValue.getLastName()).isEqualTo(testData.getUserLastName());
+            assertThat(captureValue.getEmail()).isEqualTo(testData.getUserEmail());
+            assertThat(captureValue.getPassword()).isEqualTo(testItems.getEncodedPassword());
+        });
+    }
+
+    @Test
+    void deleteUser_shouldRemoveUser_whenUserIsFounded() {
+        when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyTeacher()));
+
+        teacherService.deleteUser(testData.getTeacherId());
+
+        verify(teacherRepository).findById(testData.getTeacherId());
+        var argumentCaptor = ArgumentCaptor.forClass(Teacher.class);
+        verify(teacherRepository).delete(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue().getId()).isEqualTo(testData.getTeacherId());
+    }
+
+    @Test
+    void deleteUser_shouldThrowEntityNotFoundException_whenUserIsNotFounded() {
+        when(teacherRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> teacherService.deleteUser(testData.getTeacherId()));
+
+        verify(teacherRepository).findById(testData.getTeacherId());
     }
 
     @Test
     void getAll_shouldReturnListOfTeachers_whenIsInvoke() {
         when(teacherRepository.findAll()).thenReturn(testItems.getTeachers());
 
-        assertThat(service.getAll()).hasSize(8);
+        assertThat(teacherService.getAll()).hasSize(8);
 
         verify(teacherRepository).findAll();
+    }
+
+    @Test
+    void getById_shouldReturnTeacherInstance_whenIdIsFound() {
+        when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getFullyTeacher()));
+
+        assertThat(teacherService.getById(testData.getTeacherId())).isNotNull();
+
+        verify(teacherRepository).findById(testData.getTeacherId());
+    }
+
+    @Test
+    void getById_shouldThrowEntityNotFoundException_whenIdIsNotFound() {
+        when(teacherRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> teacherService.getById(testData.getTeacherId()));
+
+        verify(teacherRepository).findById(testData.getTeacherId());
     }
 
     @Test
     void getLessonForDay_shouldReturnListOfLessonsOfTeacher_whenIsInvoke() {
         when(lessonRepository.getLessonsByTeacherAndDate(any(Teacher.class), any(LocalDate.class))).thenReturn(testItems.getTeacherLessonsPerDay());
 
-        assertThat(service.getLessonForDay(testItems.getTeacher(), testData.getDate())).hasSize(7);
+        assertThat(teacherService.getLessonForDay(testItems.getFullyTeacher(), testData.getDate())).hasSize(8);
 
-        verify(lessonRepository).getLessonsByTeacherAndDate(testItems.getTeacher(), testData.getDate());
+        verify(lessonRepository).getLessonsByTeacherAndDate(testItems.getFullyTeacher(), testData.getDate());
     }
 
     @Test
@@ -85,27 +193,9 @@ class TeacherServiceImplTest {
         when(lessonRepository.getLessonsByTeacherAndDateBetween(any(Teacher.class), any(LocalDate.class), any(LocalDate.class)))
                 .thenReturn(testItems.getTeacherLessonsPerWeek());
 
-        assertThat(service.getLessonForWeek(testItems.getTeacher(), testItems.getDateOfMonday(), testItems.getDateOfFriday()))
-                .hasSize(27);
+        assertThat(teacherService.getLessonForWeek(testItems.getFullyTeacher(), testItems.getDateOfMonday(), testItems.getDateOfFriday()))
+                .hasSize(26);
 
-        verify(lessonRepository).getLessonsByTeacherAndDateBetween(testItems.getTeacher(), testItems.getDateOfMonday(), testItems.getDateOfFriday());
-    }
-
-    @Test
-    void getById_shouldReturnTeacherInstance_whenIdIsFound() {
-        when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(testItems.getTeacher()));
-
-        assertThat(service.getById(testItems.getTeacherId())).isNotNull();
-
-        verify(teacherRepository).findById(testItems.getTeacherId());
-    }
-
-    @Test
-    void getById_shouldThrowEntityNotFoundException_whenIdIsNotFound() {
-        when(teacherRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> service.getById(testItems.getTeacherId()));
-
-        verify(teacherRepository).findById(testItems.getTeacherId());
+        verify(lessonRepository).getLessonsByTeacherAndDateBetween(testItems.getFullyTeacher(), testItems.getDateOfMonday(), testItems.getDateOfFriday());
     }
 }

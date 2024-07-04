@@ -1,15 +1,14 @@
 package ua.foxminded.WebProject.service.implementation;
 
-import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.WebProject.DTO.TeacherDto;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.TeacherRepository;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.TeacherService;
 
 import java.time.LocalDate;
@@ -17,26 +16,14 @@ import java.util.List;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class TeacherServiceImpl implements TeacherService {
+public class TeacherServiceImpl extends AbstractUserService<Teacher> implements TeacherService {
 
-    private final TeacherRepository teacherRepository;
     private final LessonRepository lessonRepository;
 
-    @Override
-    @Transactional
-    public Teacher saveTeacher(TeacherDto teacherDto) {
-        Teacher teacher = new Teacher();
-        teacher.setFirstName(teacher.getFirstName());
-        teacher.setLastName(teacher.getLastName());
-        return teacherRepository.save(teacher);
-    }
-
-    @Override
-    @Transactional
-    public void removeTeacherById(Teacher teacher) {
-        teacherRepository.delete(getById(teacher.getId()));
+    public TeacherServiceImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, TeacherRepository teacherRepository, LessonRepository lessonRepository) {
+        super(teacherRepository, passwordEncoder, Teacher.class, userRepository);
+        this.lessonRepository = lessonRepository;
     }
 
     @Override
@@ -47,16 +34,5 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     public List<Lesson> getLessonForWeek(Teacher teacher, LocalDate start, LocalDate end) {
         return lessonRepository.getLessonsByTeacherAndDateBetween(teacher, start, end);
-    }
-
-    @Override
-    public Teacher getById(Long id) {
-        return teacherRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Not found teacher by given id:" + id));
-    }
-
-    @Override
-    public List<Teacher> getAll() {
-        return teacherRepository.findAll();
     }
 }

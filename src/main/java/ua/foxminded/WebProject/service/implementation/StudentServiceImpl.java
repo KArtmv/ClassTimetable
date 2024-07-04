@@ -9,6 +9,7 @@ import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.StudentRepository;
+import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.service.StudentService;
 
@@ -24,8 +25,8 @@ public class StudentServiceImpl extends AbstractUserService<Student> implements 
     private final LessonRepository lessonRepository;
     private final StudentRepository studentRepository;
 
-    public StudentServiceImpl(BCryptPasswordEncoder passwordEncoder, GroupService groupService, LessonRepository lessonRepository, StudentRepository studentRepository) {
-        super(studentRepository, passwordEncoder, Student.class);
+    public StudentServiceImpl(BCryptPasswordEncoder passwordEncoder, GroupService groupService, LessonRepository lessonRepository, StudentRepository studentRepository, UserRepository userRepository) {
+        super(studentRepository, passwordEncoder, Student.class, userRepository);
         this.groupService = groupService;
         this.lessonRepository = lessonRepository;
         this.studentRepository = studentRepository;

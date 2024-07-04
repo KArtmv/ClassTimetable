@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <title>[[${user}]]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
+    <th:block th:replace="~{fragments/navbar :: navbar}"/>
+</head>
+<body>
+<main>
+    <div class="container">
+        <h2>[[${user}]]</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">First name</th>
+                <th scope="col">Last name</th>
+                <th scope="col">Email</th>
+                <th sec:authorize="hasAnyRole('admin', 'staff')" scope="col">Option</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <th scope="row" th:text="${user.id}"/>
+                <td th:text="${user.firstName}"/>
+                <td th:text="${user.lastName}"/>
+                <td th:text="${user.email}"/>
+                <td sec:authorize="hasAnyRole('admin', 'staff')">
+                    <a th:href="@{'/' +${path} + '/details/' + ${user.id}}" class="btn btn-primary btn-sm">Details</a>
+                    <a th:href="@{'/' +${path} + '/remove/' + ${user.id}}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div sec:authorize="hasAnyRole('admin', 'staff')">
+        <a th:href="@{'/' + ${path} + '/addUser'}" class="btn btn-primary position-fixed bottom-0 mb-4 end-0 me-4">Add
+            new
+            [[${user}]]
+        </a>
+    </div>
+</main>
+</body>
+</html>

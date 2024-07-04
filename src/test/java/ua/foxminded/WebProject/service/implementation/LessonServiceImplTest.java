@@ -1,13 +1,12 @@
 package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
@@ -31,28 +30,24 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = LessonServiceImpl.class)
 class LessonServiceImplTest {
     private final TestData testData = new TestData();
     private final TestItems testItems = new TestItems();
-    @Mock
+    @MockBean
     private LessonRepository repository;
-    @Mock
+    @MockBean
     private CourseService courseService;
-    @Mock
+    @MockBean
     private TeacherService teacherService;
-    @Mock
+    @MockBean
     private GroupService groupService;
-    @Mock
+    @MockBean
     private ClassroomService classroomService;
-    @Mock
+    @MockBean
     private MyLocalDate localDate;
-    @InjectMocks
+    @Autowired
     private LessonServiceImpl lessonService;
-
-    @BeforeEach
-    void init() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @ParameterizedTest
     @MethodSource("ua.foxminded.WebProject.testDataInstance.DataOfParametrizedTest#getLessons")
@@ -60,7 +55,7 @@ class LessonServiceImplTest {
         when(groupService.getById(anyLong())).thenReturn(testItems.getGroup());
         when(courseService.getById(anyLong())).thenReturn(testItems.getCourseWithIdSeven());
         when(classroomService.getById(anyLong())).thenReturn(testItems.getClassroom());
-        when(teacherService.getById(anyLong())).thenReturn(testItems.getTeacher());
+        when(teacherService.getById(anyLong())).thenReturn(testItems.getFullyTeacher());
         when(localDate.getCurrentDate()).thenReturn(testData.getDate());
 
         when(repository.findByGroupAndDateBetween(any(Group.class), any(LocalDate.class), any(LocalDate.class))).thenReturn(lessonsPerWeek).thenReturn(Collections.emptyList());

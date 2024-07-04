@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
@@ -13,8 +14,7 @@ import ua.foxminded.WebProject.testDataInstance.TestItems;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -27,8 +27,7 @@ class TeacherRepositoryTest {
 
     @Test
     void save_shouldReturnTeacherInstanceWithId_whenIsSavedSuccessfully() {
-        Teacher result = repository.save(testItems.getFullTeacher());
-        assertThat(result.getId()).isNotNull();
+        assertThat(repository.save(testItems.getTeacher()).getId()).isNotNull();
     }
 
     @Test
@@ -45,6 +44,11 @@ class TeacherRepositoryTest {
     }
 
     @Test
+    void findById_shouldReturnEmptyOptional_whenStudentIsNotFound() {
+        assertFalse(repository.findById(testData.getUserId()).isPresent());
+    }
+
+    @Test
     @Sql("/sql/teacher/teachers.sql")
     void findAll_shouldReturnListOfTeachers_whenIsInvoke() {
         assertThat(repository.findAll()).hasSize(8);
@@ -55,8 +59,21 @@ class TeacherRepositoryTest {
     void delete_shouldDeleteStudent_whenIsInvoke() {
         assertAll(() -> {
             assertThat(repository.findAll()).hasSize(8);
-            repository.delete(testItems.getTeacher());
+            repository.delete(testItems.getFullyTeacher());
             assertThat(repository.findAll()).hasSize(7);
+        });
+    }
+
+    @Test
+    @Sql("/sql/teacher/teacher.sql")
+    void getUserDataById_shouldReturnUserData_whenUserIsFound() {
+        UserDto result = repository.getUserDataById(testData.getTeacherId());
+
+        assertAll(() -> {
+            assertThat(result).isNotNull();
+            assertThat(result.firstName()).isEqualTo(testData.getTeacherFirstName());
+            assertThat(result.lastName()).isEqualTo(testData.getTeacherLastName());
+            assertThat(result.email()).isEqualTo(testData.getTeacherEmail());
         });
     }
 }

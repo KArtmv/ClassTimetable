@@ -8,12 +8,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import ua.foxminded.WebProject.DTO.UserDto;
-import ua.foxminded.WebProject.DTO.UserEmailDto;
-import ua.foxminded.WebProject.DTO.UserNames;
 import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,7 +38,7 @@ class StudentRepositoryTest {
             assertThat(result.getId()).isEqualTo(testData.getStudentId());
             assertThat(result.getFirstName()).isEqualTo(testData.getStudentFirstName());
             assertThat(result.getLastName()).isEqualTo(testData.getStudentLastName());
-            assertThat(result.getGroup().getGroupName()).isEqualTo(testData.getGroup().getGroupName());
+            assertThat(result.getGroup().getGroupName()).isEqualTo(testData.getGroupName());
         });
     }
 
@@ -49,12 +48,13 @@ class StudentRepositoryTest {
     }
 
     @Test
-    void saveStudent_shouldReturnStudentInstanceWithId_whenSavedSuccessfully() {
-        assertThat(studentRepository.save(testItems.getFullStudent()).getId()).isNotNull();
+    @Sql(scripts = {"/sql/group/group.sql"})
+    void save_shouldReturnStudentInstanceWithId_whenSavedSuccessfully() {
+        assertThat(studentRepository.save(testItems.getStudent()).getId()).isNotNull();
     }
 
     @Test
-    void deleteStudent_shouldDoNothing_whenStudentDeleted() {
+    void delete_shouldDoNothing_whenStudentDeleted() {
         Student student = new Student(testData.getStudentId());
         assertAll(() -> {
             assertThat(studentRepository.findAll()).hasSize(1);
@@ -70,29 +70,10 @@ class StudentRepositoryTest {
     }
 
     @Test
-    void getUserNamesById_shouldReturnUserNames_whenUserIsFound() {
-        UserNames result = studentRepository.getUserNamesById(testData.getStudentId());
-
-        assertAll(() -> {
-            assertThat(result).isNotNull();
-            assertThat(result.firstName()).isEqualTo(testData.getStudentFirstName());
-            assertThat(result.lastName()).isEqualTo(testData.getStudentLastName());
-        });
-    }
-
-    @Test
-    void getUserEmailsById_shouldReturnUserEmail_whenUserIsFound() {
-        UserEmailDto result = studentRepository.getUserEmailById(testData.getStudentId());
-
-        assertAll(() -> {
-            assertThat(result).isNotNull();
-            assertThat(result.email()).isEqualTo(testData.getStudentEmail());
-        });
-    }
-
-    @Test
     void getUserDataById_shouldReturnUserData_whenUserIsFound() {
         UserDto result = studentRepository.getUserDataById(testData.getStudentId());
+        List<Student> students = studentRepository.findAll();
+        students.forEach(s -> System.out.println(s.getId() + " " + s.getFirstName() + " " + s.getLastName() + " " + s.getEmail()));
 
         assertAll(() -> {
             assertThat(result).isNotNull();

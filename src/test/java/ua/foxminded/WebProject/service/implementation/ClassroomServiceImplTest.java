@@ -1,11 +1,10 @@
 package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import ua.foxminded.WebProject.persistence.entity.Classroom;
 import ua.foxminded.WebProject.persistence.repository.ClassroomRepository;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
@@ -19,18 +18,14 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = ClassroomServiceImpl.class)
 class ClassroomServiceImplTest {
 
     private final TestItems testItems = new TestItems();
-    @Mock
+    @MockBean
     private ClassroomRepository repository;
-    @InjectMocks
+    @Autowired
     private ClassroomServiceImpl service;
-
-    @BeforeEach
-    void init() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void findAll_shouldReturnListOfClassroom_whenIsInvoke() {

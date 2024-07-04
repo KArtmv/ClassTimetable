@@ -1,11 +1,10 @@
 package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.repository.GroupRepository;
@@ -22,18 +21,14 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = GroupServiceImpl.class)
 class GroupServiceImplTest {
     private final TestItems testItems = new TestItems();
     private final TestData testData = new TestData();
-    @Mock
+    @MockBean
     private GroupRepository repository;
-    @InjectMocks
+    @Autowired
     private GroupServiceImpl service;
-
-    @BeforeEach
-    void init() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void findAll_shouldReturnListOfGroups_whenIsInvoke() {
