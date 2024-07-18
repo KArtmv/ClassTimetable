@@ -6,17 +6,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.foxminded.WebProject.DTO.ClassroomDto;
 import ua.foxminded.WebProject.DTO.LessonDto;
-import ua.foxminded.WebProject.persistence.entity.Course;
-import ua.foxminded.WebProject.persistence.entity.Group;
-import ua.foxminded.WebProject.persistence.entity.Lesson;
-import ua.foxminded.WebProject.persistence.entity.Student;
+import ua.foxminded.WebProject.DTO.NamesDto;
+import ua.foxminded.WebProject.persistence.entity.*;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.service.*;
 import ua.foxminded.WebProject.util.MyLocalDate;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,15 +25,13 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class LessonServiceImpl implements LessonService {
 
-    private static final int MAX_AMOUNT_LESSONS_BY_COURSE_PER_WEEK = 3;
-    private static final int MAX_AMOUNT_LESSONS_PER_DAY = 8;
+    private static final List<Integer> LESSONS_COUNT = Arrays.asList(1,2,3,4,5,6,7,8);
 
-    private final LessonRepository repository;
+    private final LessonRepository lessonRepository;
     private final CourseService courseService;
     private final TeacherService teacherService;
     private final GroupService groupService;
     private final ClassroomService classroomService;
-    private final MyLocalDate localDate;
 
     @Override
     @Transactional(rollbackFor = DataIntegrityViolationException.class)
@@ -42,7 +39,9 @@ public class LessonServiceImpl implements LessonService {
         Lesson lesson = new Lesson();
         try {
             lesson = verifyId(lessonDto);
-            lesson = findAvailableWeek(lesson);
+            lesson.setLessonNum(lessonDto.getLessonNum());
+            lesson.setDate(lessonDto.getDate());
+            lessonRepository.save(lesson);
         } catch (EntityNotFoundException e) {
             log.error("Failed adding lesson: {}", e.getMessage());
         }
@@ -51,22 +50,29 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<Lesson> getAll() {
-        return repository.findAll();
+        return lessonRepository.findAll();
     }
 
     @Override
     public List<Lesson> getAllLessonsPerDay(LocalDate date) {
-        return repository.getAllByDate(date);
+        return lessonRepository.getAllByDate(date);
     }
 
     @Override
     public boolean isTableEmpty() {
-        return repository.count() == 0;
+        return lessonRepository.count() == 0;
+    }
+
+    @Override
+    public List<Integer> getAllLessonsNumberByGroupAndDate(LocalDate date, Long groupId) {
+        return LESSONS_COUNT.stream()
+                .filter(integer -> lessonRepository.getLessonByGroupAndDate(groupService.getById(groupId), date)
+                        .stream().map(Lesson::getLessonNum).noneMatch(integer::equals)).toList();
     }
 
     @Override
     public Lesson getById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found given id:" + id));
+        return lessonRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found given id:" + id));
     }
 
     @Override
@@ -80,59 +86,24 @@ public class LessonServiceImpl implements LessonService {
         }
     }
 
+    @Override
+    public List<NamesDto> getAvailableTeachers(LocalDate date, Integer lessonNum) {
+        return teacherService.getAllNames().stream().filter(t -> lessonRepository.getLessonsByDateAndLessonNum(date, lessonNum)
+                .stream().map(l -> l.getTeacher().getId()).noneMatch(t.id()::equals)).toList();
+    }
+
+    @Override
+    public List<ClassroomDto> getAvailableClassrooms(LocalDate date, Integer lessonNum) {
+        return classroomService.getAllClassrooms().stream().filter(c -> lessonRepository.getLessonsByDateAndLessonNum(date, lessonNum)
+                .stream().map(l -> l.getClassroom().getId()).noneMatch(c.id()::equals)).toList();
+    }
+
     private Lesson verifyId(LessonDto lessonDto) {
         Lesson lesson = new Lesson();
-        lesson.setGroup(groupService.getById(lessonDto.group().getId()));
-        lesson.setCourse(courseService.getById(lessonDto.course().getId()));
-        lesson.setClassroom(classroomService.getById(lessonDto.classroom().getId()));
-        lesson.setTeacher(teacherService.getById(lessonDto.teacher().getId()));
-        return lesson;
-    }
-
-    private Lesson findAvailableWeek(Lesson lesson) {
-        Group group = lesson.getGroup();
-        Course course = lesson.getCourse();
-        LocalDate date = localDate.getCurrentDate();
-        date = date.isEqual(date.with(DayOfWeek.SATURDAY)) || date.isEqual(date.with(DayOfWeek.SUNDAY)) ? date.plusWeeks(1).with(DayOfWeek.MONDAY) : date;
-        int attempts = 0;
-        int maxAttempts = 3;
-        LocalDate monday;
-
-        do {
-            monday = date.with(DayOfWeek.MONDAY);
-            if (attempts > 0) {
-                date = monday;
-            }
-
-            if (repository.findByGroupAndDateBetween(group, monday, date.with(DayOfWeek.FRIDAY)).stream()
-                    .filter(l -> l.getCourse().getId().equals(course.getId())).count() < MAX_AMOUNT_LESSONS_BY_COURSE_PER_WEEK) {
-
-                lesson = addLessonToAvailableDay(group, date, lesson.getCourse(), lesson);
-                if (lesson.getId() != null) {
-                    return lesson;
-                }
-            }
-            date = date.plusWeeks(1);
-            attempts++;
-        } while (attempts < maxAttempts);
-        return lesson;
-    }
-
-    private Lesson addLessonToAvailableDay(Group group, LocalDate date, Course course, Lesson lesson) {
-        do {
-            List<Lesson> lessonsPerDay = repository.getLessonByGroupAndDate(group, date);
-
-            if (lessonsPerDay.size() < MAX_AMOUNT_LESSONS_PER_DAY && lessonsPerDay.stream().noneMatch(l -> l.getCourse().getId().equals(course.getId()))) {
-                lesson.setLessonNum(lessonsPerDay.isEmpty() ? 1 : lessonsPerDay.size() + 1);
-                lesson.setDate(date);
-
-                lesson = repository.saveAndFlush(lesson);
-                if (lesson.getId() != null) {
-                    return lesson;
-                }
-            }
-            date = date.plusDays(1);
-        } while (date.getDayOfWeek().getValue() < DayOfWeek.SATURDAY.getValue());
+        lesson.setGroup(groupService.getById(lessonDto.getGroupId()));
+        lesson.setCourse(courseService.getById(lessonDto.getCourseId()));
+        lesson.setClassroom(classroomService.getById(lessonDto.getClassroomId()));
+        lesson.setTeacher(teacherService.getById(lessonDto.getTeacherId()));
         return lesson;
     }
 }
