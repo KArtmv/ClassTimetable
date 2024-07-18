@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.persistence.entity.Classroom;
+import ua.foxminded.WebProject.DTO.ClassroomDto;
 import ua.foxminded.WebProject.persistence.repository.ClassroomRepository;
 import ua.foxminded.WebProject.service.ClassroomService;
 
@@ -26,5 +27,10 @@ public class ClassroomServiceImpl implements ClassroomService {
     public Classroom getById(Long id) {
         return classroomRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Not found the classroom by given id:" + id));
+    }
+
+    @Override
+    public List<ClassroomDto> getAllClassrooms() {
+        return classroomRepository.getAllClassroomsNames();
     }
 }
