@@ -30,7 +30,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public List<ClassroomDto> getAllClassrooms() {
+    public List<ClassroomDto> getAllClassroomsNames() {
         return classroomRepository.getAllClassroomsNames();
     }
 }

@@ -12,7 +12,6 @@ import ua.foxminded.WebProject.DTO.NamesDto;
 import ua.foxminded.WebProject.persistence.entity.*;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.service.*;
-import ua.foxminded.WebProject.util.MyLocalDate;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -94,7 +93,7 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public List<ClassroomDto> getAvailableClassrooms(LocalDate date, Integer lessonNum) {
-        return classroomService.getAllClassrooms().stream().filter(c -> lessonRepository.getLessonsByDateAndLessonNum(date, lessonNum)
+        return classroomService.getAllClassroomsNames().stream().filter(c -> lessonRepository.getLessonsByDateAndLessonNum(date, lessonNum)
                 .stream().map(l -> l.getClassroom().getId()).noneMatch(c.id()::equals)).toList();
     }
 
