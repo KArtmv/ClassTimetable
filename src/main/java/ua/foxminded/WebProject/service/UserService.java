@@ -1,5 +1,6 @@
 package ua.foxminded.WebProject.service;
 
+import ua.foxminded.WebProject.DTO.NamesDto;
 import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.form.UserRegistrationForm;
@@ -23,4 +24,6 @@ public interface UserService<T extends User> {
     User getUserByEmail(String email);
 
     List<T> getAll();
+
+    List<NamesDto> getAllNames();
 }
