@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Lesson</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
+    <th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
+</head>
+<body>
+<main>
+    <div class="container mb-3">
+        <h2>Create lesson</h2>
+        <form th:action="@{/lesson/save}" th:object="${lessonDto}" method="post">
+            <div th:if="${#fields.hasAnyErrors()}">
+                <ul>
+                    <li th:each="error : ${#fields.allErrors()}" th:text="${error}"
+                        class="text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1">
+                    </li>
+                </ul>
+            </div>
+            <div class="mb-3">
+                <label for="group">Group:</label>
+                <select class="form-control mb-3" id="group" th:field="*{groupId}">
+                    <option value="" selected>Choose group from list</option>
+                    <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.groupName}"
+                            th:selected="${group.id == lessonDto.groupId}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('groupId')}"
+                     class="error text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                     th:errors="*{groupId}">Group error
+                </div>
+            </div>
+            <div class="mb-3" id="dateRow">
+                <label for="date">Date:</label>
+                <input type="date" class="form-control" id="date" th:field="${lessonDto.date}" th:value="${lessonDto.date}" onchange="fetchLessonsNums()">
+                <div th:if="${#fields.hasErrors('date')}"
+                     class="error text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                     th:errors="*{date}">Date error
+                </div>
+            </div>
+            <div class="mb-3" id="lessonNumRow" th:style="${#strings.isEmpty(lessonDto.lessonNum) && #strings.isEmpty(lessonDto.date) ? 'display:none;' : 'display:block;'}" onchange="appearField(this, document.getElementById('courseRow'))">
+                <label for="lessonNum">Lesson num:</label>
+                <select class="form-control mb-3" id="lessonNum" th:field="*{lessonNum}">
+                    <option th:if="${#strings.isEmpty(lessonDto.lessonNum)}" value="" selected>Choose the lesson number</option>
+                    <option th:each="lesson : ${lessons}" th:value="${lesson}" th:text="${lesson}"
+                            th:selected="${lesson == lessonDto.lessonNum}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('lessonNum')}"
+                     class="error text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                     th:errors="*{lessonNum}">Course error
+                </div>
+            </div>
+            <div class="mb-3" id="courseRow" th:style="${#strings.isEmpty(lessonDto.courseId) ? 'display:none;' : 'display:block;'}">
+                <label for="course">Course:</label>
+                <select class="form-control mb-3" id="course" th:field="*{courseId}" onchange="fetchTeachers(); fetchClassrooms()">
+                    <option value="" selected>Choose course from list</option>
+                    <option th:each="course : ${courses}" th:value="${course.id}" th:text="${course.courseName}"
+                            th:selected="${course.id == lessonDto.groupId}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('courseId')}"
+                     class="error text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                     th:errors="*{courseId}">Course error
+                </div>
+            </div>
+            <div class="mb-3" id="teacherRow" th:style="${#strings.isEmpty(lessonDto.teacherId) && #strings.isEmpty(lessonDto.courseId) ? 'display:none;' : 'display:block;'}">
+                <label for="teacher">Teacher:</label>
+                <select class="form-control mb-3" id="teacher" th:field="*{teacherId}">
+                    <option value="" selected>Choose teacher from list</option>
+                    <option th:each="teacher : ${teachers}" th:value="${teacher.id}" th:text="${teacher.firstName} + ' ' + ${teacher.lastName}"
+                            th:selected="${teacher.id == lessonDto.teacherId}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('teacherId')}"
+                     class="error text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                     th:errors="*{teacherId}">Teacher error
+                </div>
+            </div>
+            <div class="mb-3" id="classroomRow" th:style="${#strings.isEmpty(lessonDto.classroomId) && #strings.isEmpty(lessonDto.teacherId) ? 'display:none;' : 'display:block;'}">
+                <label for="classroom">Classroom:</label>
+                <select class="form-control mb-3" id="classroom" th:field="*{classroomId}">
+                    <option value="" selected>Choose classroom from list</option>
+                    <option th:each="classroom : ${classrooms}" th:value="${classroom.id}" th:text="${classroom.classroomName}"
+                            th:selected="${classroom.id == lessonDto.classroomId}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('classroomId')}"
+                     class="error text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
+                     th:errors="*{classroomId}">Classroom error
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="lesson" class="btn btn-primary">Cancel</a>
+        </form>
+    </div>
+
+    <script th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+    <script>
+        function appearField(first, second) {
+            if (first.value !== "") {
+                second.style.display = "block";
+            } else {
+                second.style.display = "none"
+            }
+        }
+
+        function fetchLessonsNums() {
+            var date = document.getElementById('date').value;
+            var groupId = document.getElementById('group').value;
+
+            if (date !== "" && groupId !== "") {
+                $.ajax({
+                    type: 'GET',
+                    url: '/lesson/fetch-lessenNum',
+                    data: {
+                        date: date,
+                        groupId: groupId
+                    },
+                    success: [function(response) {
+                        var lessonNumSelect = document.getElementById('lessonNum');
+                        lessonNumSelect.innerHTML = '<option value="" selected>Choose the lesson number</option>';
+                        response.forEach(function (lessonNum) {
+                            var option = document.createElement('option');
+                            option.value = lessonNum;
+                            option.text = lessonNum;
+                            lessonNumSelect.appendChild(option);
+                        })
+                        $('#lessonNumRow').show();
+                    }],
+                    error: function(xhr, status, error) {
+                        console.error('Error: ' + error);
+                    }
+                });
+            } else {
+                $('#lessonNumRow').hide();
+            }
+        }
+
+        function fetchTeachers() {
+            var date = document.getElementById('date').value;
+            var lessonNum = document.getElementById('lessonNum').value;
+
+            if (date !== "" && lessonNum !== "") {
+                $.ajax({
+                    type: 'GET',
+                    url: '/lesson/fetch-teachers',
+                    data: {
+                        date: date,
+                        lessonNum: lessonNum
+                    },
+                    success: [function (response) {
+                        var teacherSelect = document.getElementById('teacher');
+                        teacherSelect.innerHTML = '<option value="" selected>Choose the teacher from list</option>';
+                        response.forEach(function (teacher) {
+                            var option = document.createElement('option');
+                            option.value = teacher.id;
+                            option.text = teacher.firstName + " " + teacher.lastName;
+                            teacherSelect.appendChild(option);
+                        })
+                        $('#teacherRow').show();
+                    }],
+                    error: function (xhr, status, error) {
+                        console.error('Error: ' + error);
+                    }
+                });
+            } else {
+                $('#teacherRow').hide();
+            }
+        }
+
+        function fetchClassrooms() {
+            var date = document.getElementById('date').value;
+            var lessonNum = document.getElementById('lessonNum').value;
+
+            if (date !== "" && lessonNum !== "") {
+                $.ajax({
+                    type: 'GET',
+                    url: '/lesson/fetch-classrooms',
+                    data: {
+                        date: date,
+                        lessonNum: lessonNum
+                    },
+                    success: [function (response) {
+                        var classroomSelect = document.getElementById('classroom');
+                        classroomSelect.innerHTML = '<option value="" selected>Choose the classroom from list</option>';
+                        response.forEach(function (classroom) {
+                            var option = document.createElement('option');
+                            option.value = classroom.id;
+                            option.text = classroom.classroomName;
+                            classroomSelect.appendChild(option);
+                        })
+                        $('#classroomRow').show()
+                    }],
+                    error: function (xhr, status, error) {
+                        console.log('Error: ' + error);
+                    }
+                });
+            } else {
+                $('#classroomRow').hide();
+            }
+        }
+    </script>
+</main>
+</body>
+</html>
