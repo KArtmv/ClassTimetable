@@ -20,9 +20,6 @@ public class Classroom extends BaseEntity {
     @Column(name = "classroom_name", length = 10)
     private String classroomName;
 
-    @OneToMany(mappedBy = "classroom", orphanRemoval = true)
-    private Set<Lesson> lessons = new LinkedHashSet<>();
-
     public Classroom(Long id) {
         super(id);
     }

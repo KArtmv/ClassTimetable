@@ -17,9 +17,6 @@ import java.util.Set;
 @DiscriminatorValue(value = "teacher")
 public class Teacher extends User {
 
-    @OneToMany(mappedBy = "teacher", orphanRemoval = true)
-    private Set<Lesson> lessons = new LinkedHashSet<>();
-
     public Teacher(Long id) {
         super(id);
     }

@@ -21,12 +21,6 @@ public class Group extends BaseEntity {
     @Column(name = "group_name", length = 50)
     private String groupName;
 
-    @OneToMany(mappedBy = "group")
-    private Set<Student> students = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "group")
-    private Set<Lesson> lessons = new LinkedHashSet<>();
-
     public Group(Long id) {
         super(id);
     }
