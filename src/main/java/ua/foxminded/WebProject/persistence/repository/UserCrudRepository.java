@@ -17,5 +17,8 @@ public interface UserCrudRepository<T extends User, ID extends Serializable> ext
     UserDto getUserDataById(ID id);
 
     @Query("select new ua.foxminded.WebProject.DTO.NamesDto(u.id, u.firstName, u.lastName) from #{#entityName} u")
-    List<NamesDto> getAllNames();
+    List<NamesDto> getNamesOfAllUsers();
+
+    @Query("select new ua.foxminded.WebProject.DTO.UserDto(u.id, u.firstName, u.lastName, u.email) from #{#entityName} u")
+    List<UserDto> getDataOfAllUsers();
 }
