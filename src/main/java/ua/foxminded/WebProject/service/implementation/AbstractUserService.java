@@ -85,7 +85,7 @@ public abstract class AbstractUserService<T extends User> {
     }
 
     public List<NamesDto> getAllNames() {
-        return repository.getAllNames();
+        return repository.getNamesOfAllUsers();
     }
 
     private T getNewInstance() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
