@@ -3,7 +3,7 @@
       xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8">
-    <title>[[${user}]] Details</title>
+    <title>[[${path}]] details</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
     <th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
@@ -11,7 +11,7 @@
 <body>
 <main>
     <div class="container mb-3">
-        <h1>[[${user}]] details</h1>
+        <h2 th:text="${#strings.capitalize(path)} + 'details'"></h2>
         <div class="container card mb-3">
             <div class="mt-2">
                 <h3>First name:
@@ -79,7 +79,7 @@
                 </form>
             </div>
         </div>
-        <div th:if="${isMyDetails}" class="container card mb-3">
+        <div th:if="${#authentication.name.equalsIgnoreCase(userDto.email())}" class="container card mb-3">
             <a class="btn btn-success col-2 mb-3 mt-3" data-bs-toggle="collapse" href="#collapsePasswordForm"
                role="button" aria-expanded="false" aria-controls="collapsePasswordForm">
                 Edit password
@@ -125,11 +125,16 @@
         </div>
         <div th:if="${studentGroupDto}" class="container card mb-3">
             <h3 class="mt-2">Group:
-                <small class="text-body-secondary" th:text="${studentGroupDto.groupName}"/>
+                <a class="text-body-secondary" th:text="${studentGroupDto.groupName}"
+                   th:href="@{'/group/details-' + ${studentGroupDto.groupId()}}"></a>
             </h3>
             <a sec:authorize="hasAnyRole('admin', 'staff')"
-               th:href="@{'/' + ${path} + '/edit-group/' + ${studentGroupDto.id}}"
-               class="btn btn-success col-2 mb-3">Edit</a>
+               th:href="@{'/' + ${path} + '/edit-group/' + ${studentGroupDto.id}}" class="btn btn-success col-2 mb-3">Edit
+            </a>
+        </div>
+        <div th:switch="${path}" class="container card mb-3">
+            <a th:case="'student'" class="btn btn-success col-2 mb-3 mt-3" th:href="@{'/lesson/lessons-by-group-' + ${studentGroupDto.groupId()}}">View Lessons</a>
+            <a th:case="'teacher'" class="btn btn-success col-2 mb-3 mt-3" th:href="@{'/lesson/lessons-by-teacher-' + ${userDto.id()}}">View Lessons</a>
         </div>
         <a href="/" class="btn btn-danger">Go to home page</a>
     </div>
