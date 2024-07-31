@@ -11,7 +11,7 @@
 <body>
 <main>
     <div class="container mb-3">
-        <h2 th:text="${#strings.capitalize(path)} + 'details'"></h2>
+        <h2 th:text="${#strings.capitalize(path)} + ' details'"></h2>
         <div class="container card mb-3">
             <div class="mt-2">
                 <h3>First name:
@@ -27,11 +27,11 @@
             </a>
             <div class="collapse" id="collapseNameForm" th:classappend="${nameFormOpen} ? 'show' : ''">
                 <form class="mb-3" th:action="@{'/' + ${path} + '/update-names'}" th:object="${userDto}" method="post">
-                    <input type="hidden" th:field="*{id}"/>
-                    <input type="hidden" th:field="*{email}"/>
+                    <input type="hidden" th:field="*{id}" id="userId"/>
+                    <input type="hidden" th:field="*{email}" id="userEmailHidden"/>
                     <div class="mb-3">
-                        <label for="firstName">First name:</label>
-                        <input type="text" class="form-control" th:field="*{firstName}" id="firstName"
+                        <label for="firstNameInput">First name:</label>
+                        <input type="text" class="form-control" th:field="*{firstName}" id="firstNameInput"
                                placeholder="Enter first name">
                         <div th:if="${#fields.hasErrors('firstName')}"
                              class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
@@ -39,8 +39,8 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="lastName">Last name:</label>
-                        <input type="text" class="form-control" th:field="*{lastName}" id="lastName"
+                        <label for="lastNameInput">Last name:</label>
+                        <input type="text" class="form-control" th:field="*{lastName}" id="lastNameInput"
                                placeholder="Enter last name">
                         <div th:if="${#fields.hasErrors('lastName')}"
                              class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
@@ -62,12 +62,12 @@
             </a>
             <div class="collapse" id="collapseEmailForm" th:classappend="${emailFormOpen} ? 'show' : ''">
                 <form class="mb-3" th:action="@{'/' + ${path} + '/update-email'}" th:object="${userDto}" method="post">
-                    <input type="hidden" th:field="*{id}"/>
-                    <input type="hidden" th:field="*{firstName}"/>
-                    <input type="hidden" th:field="*{lastName}"/>
+                    <input type="hidden" th:field="*{id}" id="userIdHidden"/>
+                    <input type="hidden" th:field="*{firstName}" id="userFirstNameHidden"/>
+                    <input type="hidden" th:field="*{lastName}" id="userLastNameHidden"/>
                     <div class="mb-3">
-                        <label for="email">Email:</label>
-                        <input type="text" class="form-control" th:field="*{email}" id="email"
+                        <label for="emailInput">Email:</label>
+                        <input type="text" class="form-control" th:field="*{email}" id="emailInput"
                                placeholder="Enter email address">
                         <div th:if="${#fields.hasErrors('email')}"
                              class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
@@ -88,8 +88,8 @@
                 <form class="mb-3" th:action="@{'/' + ${path} + '/update-password'}" th:object="${changePasswordForm}"
                       method="post">
                     <div class="mb-3">
-                        <label for="oldPassword">Old password</label>
-                        <input type="password" class="form-control" th:field="*{oldPassword}" id="oldPassword"
+                        <label for="oldPasswordInput">Old password</label>
+                        <input type="password" class="form-control" th:field="*{oldPassword}" id="oldPasswordInput"
                                placeholder="Enter old password.">
                         <div th:if="${#fields.hasErrors('oldPassword')}"
                              class="alert alert-danger" role="alert"
@@ -97,8 +97,8 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="password">Password:</label>
-                        <input type="password" class="form-control" th:field="*{password}" id="password"
+                        <label for="passwordInput">Password:</label>
+                        <input type="password" class="form-control" th:field="*{password}" id="passwordInput"
                                placeholder="Enter password">
                         <div th:if="${#fields.hasErrors('password')}"
                              class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
@@ -106,8 +106,8 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="confirmPassword">Confirm password:</label>
-                        <input type="password" class="form-control" th:field="*{confirmPassword}" id="confirmPassword"
+                        <label for="confirmPasswordInput">Confirm password:</label>
+                        <input type="password" class="form-control" th:field="*{confirmPassword}" id="confirmPasswordInput"
                                placeholder="Confirm password">
                         <div th:if="${#fields.hasErrors('confirmPassword')}"
                              class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
@@ -132,10 +132,10 @@
                th:href="@{'/' + ${path} + '/edit-group/' + ${studentGroupDto.id}}" class="btn btn-success col-2 mb-3">Edit
             </a>
         </div>
-        <div th:switch="${path}" class="container card mb-3">
-            <a th:case="'student'" class="btn btn-success col-2 mb-3 mt-3" th:href="@{'/lesson/lessons-by-group-' + ${studentGroupDto.groupId()}}">View Lessons</a>
-            <a th:case="'teacher'" class="btn btn-success col-2 mb-3 mt-3" th:href="@{'/lesson/lessons-by-teacher-' + ${userDto.id()}}">View Lessons</a>
-        </div>
+            <div th:switch="${path}" class="container card mb-3">
+                <a th:case="'student'" class="btn btn-success col-2 mb-3 mt-3" th:href="@{'/lesson/lessons-by-group-' + ${studentGroupDto.groupId()}}">View Lessons</a>
+                <a th:case="'teacher'" class="btn btn-success col-2 mb-3 mt-3" th:href="@{'/lesson/lessons-by-teacher-' + ${userDto.id()}}">View Lessons</a>
+            </div>
         <a href="/" class="btn btn-danger">Go to home page</a>
     </div>
 </main>
