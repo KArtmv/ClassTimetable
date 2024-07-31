@@ -125,7 +125,8 @@
         </div>
         <div th:if="${studentGroupDto}" class="container card mb-3">
             <h3 class="mt-2">Group:
-                <a class="text-body-secondary" th:text="${studentGroupDto.groupName}"
+                <small sec:authorize="hasRole('student')" class="text-body-secondary" th:text="${studentGroupDto.groupName}"/>
+                <a sec:authorize="hasAnyRole('admin', 'staff')" class="text-body-secondary" th:text="${studentGroupDto.groupName}"
                    th:href="@{'/group/details-' + ${studentGroupDto.groupId()}}"></a>
             </h3>
             <a sec:authorize="hasAnyRole('admin', 'staff')"
