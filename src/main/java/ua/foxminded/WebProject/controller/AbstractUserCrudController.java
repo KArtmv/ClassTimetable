@@ -30,7 +30,6 @@ public abstract class AbstractUserCrudController<T extends User> {
     public String userPage(Model model) {
         model.addAttribute("users", userService.getAll());
         model.addAttribute("path", this.user);
-        model.addAttribute("user", this.user);
         return "user/user";
     }
 
@@ -38,7 +37,6 @@ public abstract class AbstractUserCrudController<T extends User> {
     @PreAuthorize("hasAnyRole('admin', 'staff')")
     public String addUser(Model model) {
         model.addAttribute("registrationForm", new UserRegistrationForm());
-        model.addAttribute("user", this.user);
         model.addAttribute("path", this.user);
         return "user/addUser";
     }
@@ -50,7 +48,6 @@ public abstract class AbstractUserCrudController<T extends User> {
                            @RequestParam(required = false) Long groupId,
                            Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("user", this.user);
             model.addAttribute("path", this.user);
             return "user/addUser";
         }
@@ -61,18 +58,15 @@ public abstract class AbstractUserCrudController<T extends User> {
     @GetMapping("/details")
     protected String viewMyDetails(Model model, Principal principal) {
         User loggedUser = userService.getUserByEmail(principal.getName());
-        model.addAttribute("user", this.user);
         model.addAttribute("path", this.user);
         model.addAttribute("userDto", userService.getDetails(loggedUser.getId()));
         model.addAttribute("changePasswordForm", new ChangePasswordForm());
-        model.addAttribute("isMyDetails", true);
         return "user/userDetails";
     }
 
     @GetMapping("/details/{id}")
     @PreAuthorize("hasAnyRole('admin', 'staff')")
     public String viewUserDetails(@PathVariable Long id, Model model) {
-        model.addAttribute("user", this.user);
         model.addAttribute("path", this.user);
         model.addAttribute("userDto", userService.getDetails(id));
 
@@ -82,7 +76,6 @@ public abstract class AbstractUserCrudController<T extends User> {
     @PostMapping("/update-names")
     public String updateUserNames(@Valid UserDto userDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("user", this.user);
             model.addAttribute("path", this.user);
             model.addAttribute("nameFormOpen", true);
             model.addAttribute("changePasswordForm", new ChangePasswordForm());
