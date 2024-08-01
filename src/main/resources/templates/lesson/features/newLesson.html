@@ -2,16 +2,16 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Lesson</title>
+    <title th:text="${edit} ? 'Edit Lesson' : 'Create Lesson'"></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
     <th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
 </head>
 <body>
 <main>
-    <div class="container mb-3">
-        <h2>Create lesson</h2>
-        <form th:action="@{/lesson/save}" th:object="${lessonDto}" method="post">
+    <div th:with="action=${edit} ? '/update' : '/save'" class="container mb-3">
+        <h2 th:text="${edit} ? 'Edit Lesson' : 'Create Lesson'"></h2>
+        <form th:action="@{'/lesson' + ${action}}" th:object="${lessonDto}" method="post">
             <div th:if="${#fields.hasAnyErrors()}">
                 <ul>
                     <li th:each="error : ${#fields.allErrors()}" th:text="${error}"
@@ -19,6 +19,7 @@
                     </li>
                 </ul>
             </div>
+            <input type="hidden" th:field="*{id}">
             <div class="mb-3">
                 <label for="group">Group:</label>
                 <select class="form-control mb-3" id="group" th:field="*{groupId}">
@@ -42,8 +43,8 @@
             <div class="mb-3" id="lessonNumRow" th:style="${#strings.isEmpty(lessonDto.lessonNum) && #strings.isEmpty(lessonDto.date) ? 'display:none;' : 'display:block;'}" onchange="appearField(this, document.getElementById('courseRow'))">
                 <label for="lessonNum">Lesson num:</label>
                 <select class="form-control mb-3" id="lessonNum" th:field="*{lessonNum}">
-                    <option th:if="${#strings.isEmpty(lessonDto.lessonNum)}" value="" selected>Choose the lesson number</option>
-                    <option th:each="lesson : ${lessons}" th:value="${lesson}" th:text="${lesson}"
+                    <option value="" selected>Choose the lesson number</option>
+                    <option th:each="lesson : ${lessonsNum}" th:value="${lesson}" th:text="${lesson}"
                             th:selected="${lesson == lessonDto.lessonNum}"></option>
                 </select>
                 <div th:if="${#fields.hasErrors('lessonNum')}"
@@ -87,8 +88,8 @@
                      th:errors="*{classroomId}">Classroom error
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Save</button>
-            <a href="lesson" class="btn btn-primary">Cancel</a>
+            <button type="submit" class="btn btn-success" th:text="${edit} ? 'Update Lesson' : 'Save Lesson'"></button>
+            <a href="/lesson" class="btn btn-primary">Cancel</a>
         </form>
     </div>
 
