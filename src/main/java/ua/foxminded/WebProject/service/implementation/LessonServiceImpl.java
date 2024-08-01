@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.WebProject.DTO.ClassroomDto;
 import ua.foxminded.WebProject.DTO.LessonDto;
 import ua.foxminded.WebProject.DTO.NamesDto;
 import ua.foxminded.WebProject.persistence.entity.*;
@@ -15,7 +14,6 @@ import ua.foxminded.WebProject.service.*;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -24,7 +22,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class LessonServiceImpl implements LessonService {
 
-    private static final List<Integer> LESSONS_COUNT = Arrays.asList(1,2,3,4,5,6,7,8);
+    private static final List<Integer> LESSONS_NUMS = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
 
     private final LessonRepository lessonRepository;
     private final CourseService courseService;
@@ -35,16 +33,15 @@ public class LessonServiceImpl implements LessonService {
     @Override
     @Transactional(rollbackFor = DataIntegrityViolationException.class)
     public Lesson saveLesson(LessonDto lessonDto) {
-        Lesson lesson = new Lesson();
         try {
-            lesson = verifyId(lessonDto);
+            Lesson lesson = verifyId(lessonDto, new Lesson());
             lesson.setLessonNum(lessonDto.getLessonNum());
             lesson.setDate(lessonDto.getDate());
-            lessonRepository.save(lesson);
+            return lessonRepository.save(lesson);
         } catch (EntityNotFoundException e) {
             log.error("Failed adding lesson: {}", e.getMessage());
+            return new Lesson();
         }
-        return lesson;
     }
 
     @Override
@@ -53,36 +50,15 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<Lesson> getAllLessonsPerDay(LocalDate date) {
-        return lessonRepository.getAllByDate(date);
-    }
-
-    @Override
-    public boolean isTableEmpty() {
-        return lessonRepository.count() == 0;
-    }
-
-    @Override
-    public List<Integer> getAllLessonsNumberByGroupAndDate(LocalDate date, Long groupId) {
-        return LESSONS_COUNT.stream()
-                .filter(integer -> lessonRepository.getLessonByGroupAndDate(groupService.getById(groupId), date)
-                        .stream().map(Lesson::getLessonNum).noneMatch(integer::equals)).toList();
-    }
-
-    @Override
     public Lesson getById(Long id) {
         return lessonRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found given id:" + id));
     }
 
     @Override
-    public List<Student> getParticipantsOfLesson(Lesson lessonId) {
-        try {
-            Lesson lesson = getById(lessonId.getId());
-            return lesson.getGroup().getStudents().stream().toList();
-        } catch (EntityNotFoundException e) {
-            log.error("Failed to get participants of lessons: {}", e.getMessage());
-            return Collections.emptyList();
-        }
+    public List<Integer> getAvailableNumbersOfLessons(LocalDate date, Long groupId) {
+        return LESSONS_NUMS.stream()
+                .filter(integer -> getLessonsByGroupIdPerDay(groupId, date)
+                        .stream().map(Lesson::getLessonNum).noneMatch(integer::equals)).toList();
     }
 
     @Override
@@ -92,13 +68,61 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<ClassroomDto> getAvailableClassrooms(LocalDate date, Integer lessonNum) {
-        return classroomService.getAllClassroomsNames().stream().filter(c -> lessonRepository.getLessonsByDateAndLessonNum(date, lessonNum)
-                .stream().map(l -> l.getClassroom().getId()).noneMatch(c.id()::equals)).toList();
+    public List<Classroom> getAvailableClassrooms(LocalDate date, Integer lessonNum) {
+        return classroomService.getAll().stream().filter(c -> lessonRepository.getLessonsByDateAndLessonNum(date, lessonNum)
+                .stream().map(Lesson::getClassroom).noneMatch(c::equals)).toList();
     }
 
-    private Lesson verifyId(LessonDto lessonDto) {
-        Lesson lesson = new Lesson();
+    @Override
+    public LessonDto getLessonDtoById(Long id) {
+        return lessonRepository.getLessonDto(id);
+    }
+
+    @Override
+    public List<Integer> getLessonsNums() {
+        return LESSONS_NUMS;
+    }
+
+    @Override
+    @Transactional
+    public void update(LessonDto lessonDto) {
+        Lesson lesson = verifyId(lessonDto, getById(lessonDto.getId()));
+        lesson.setDate(lessonDto.getDate());
+        lesson.setLessonNum(lessonDto.getLessonNum());
+        lessonRepository.save(lesson);
+    }
+
+    @Override
+    public List<Lesson> getLessonsByGroupIdPerDay(Long groupId, LocalDate date) {
+        return lessonRepository.getLessonByGroupIdAndDate(groupId, date);
+    }
+
+    @Override
+    public List<Lesson> getLessonsByGroupIdPerWeek(Long groupId, LocalDate start, LocalDate end) {
+        return lessonRepository.getLessonsByGroupIdAndDateBetween(groupId, start, end);
+    }
+
+    @Override
+    public List<Lesson> getLessonsByTeacherIdPerDay(Long teacherId, LocalDate localDate) {
+        return lessonRepository.getLessonsByTeacherIdAndDate(teacherId, localDate);
+    }
+
+    @Override
+    public List<Lesson> getLessonsByTeacherIdPerWeek(Long teacherId, LocalDate start, LocalDate end) {
+        return lessonRepository.getLessonsByTeacherIdAndDateBetween(teacherId, start, end);
+    }
+
+    @Override
+    public List<Lesson> getLessonsPerDay(LocalDate date) {
+        return lessonRepository.getAllByDate(date);
+    }
+
+    @Override
+    public List<Lesson> getLessonsBetweenDates(LocalDate start, LocalDate end) {
+        return lessonRepository.getLessonsByDateBetween(start, end);
+    }
+
+    private Lesson verifyId(LessonDto lessonDto, Lesson lesson) {
         lesson.setGroup(groupService.getById(lessonDto.getGroupId()));
         lesson.setCourse(courseService.getById(lessonDto.getCourseId()));
         lesson.setClassroom(classroomService.getById(lessonDto.getClassroomId()));
