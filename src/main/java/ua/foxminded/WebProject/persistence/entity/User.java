@@ -36,7 +36,6 @@ public class User extends BaseEntity {
     private String email;
 
     @Column(name = "password", length = 128)
-    @Size(min = 8, max = 16, message = "Password must be between 8 and 16 characters.")
     @NotEmpty(message = "Password is required.")
     private String password;
 
