@@ -1,6 +1,7 @@
 package ua.foxminded.WebProject.DTO;
 
 import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class LessonDto implements Serializable {
     private Long id;
 
     @NotNull(message = "Date is required")
-    @Future(message = "Date should be after today")
+    @FutureOrPresent(message = "Can`t be past date")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate date;
 
@@ -32,18 +33,13 @@ public class LessonDto implements Serializable {
 
     @NotNull(message = "Course is required")
     private Long courseId;
-    private String courseCourseName;
 
     @NotNull(message = "Group is required")
     private Long groupId;
-    private  String groupGroupName;
 
     @NotNull(message = "Classroom is required")
     private Long classroomId;
-    private String classroomClassroomName;
 
     @NotNull(message = "Teacher is required")
     private Long teacherId;
-    private String teacherFirstName;
-    private String teacherLastName;
 }
