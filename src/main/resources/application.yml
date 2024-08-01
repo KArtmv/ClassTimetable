@@ -28,6 +28,3 @@ server:
       enabled: false
     path: '/error'
   port: 8081
-
-amount:
-  maxLessons: 350
