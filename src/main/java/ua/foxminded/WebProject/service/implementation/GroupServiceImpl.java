@@ -2,13 +2,14 @@ package ua.foxminded.WebProject.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.WebProject.DTO.GroupDto;
+import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.repository.GroupRepository;
+import ua.foxminded.WebProject.persistence.repository.StudentRepository;
 import ua.foxminded.WebProject.service.GroupService;
+import ua.foxminded.WebProject.service.StudentService;
 
 import java.util.List;
 
@@ -37,23 +38,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    @Transactional(rollbackFor = DataIntegrityViolationException.class)
-    public Group saveGroup(GroupDto groupDto) {
-        try {
-            Group group = toGroup(groupDto);
-            return checkDuplicate(group) ? new Group() : repository.save(group);
-        } catch (DataIntegrityViolationException e) {
-            return new Group();
-        }
+    @Transactional
+    public Group save(Group group) {
+        return repository.save(group);
     }
-
-    private boolean checkDuplicate(Group group) {
-        return getAll().stream().anyMatch(g -> g.getGroupName().equals(group.getGroupName()));
-    }
-
-    private Group toGroup(GroupDto groupDto) {
-        return new Group(groupDto.groupName());
-    }
-
-
 }
