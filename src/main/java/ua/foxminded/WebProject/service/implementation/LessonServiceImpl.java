@@ -122,6 +122,12 @@ public class LessonServiceImpl implements LessonService {
         return lessonRepository.getLessonsByDateBetween(start, end);
     }
 
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        lessonRepository.deleteById(id);
+    }
+
     private Lesson verifyId(LessonDto lessonDto, Lesson lesson) {
         lesson.setGroup(groupService.getById(lessonDto.getGroupId()));
         lesson.setCourse(courseService.getById(lessonDto.getCourseId()));

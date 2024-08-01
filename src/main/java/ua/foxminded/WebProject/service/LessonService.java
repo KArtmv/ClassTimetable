@@ -33,4 +33,6 @@ public interface LessonService extends AbstractService<Lesson, Long> {
     List<Lesson> getLessonsPerDay(LocalDate date);
 
     List<Lesson> getLessonsBetweenDates(LocalDate start, LocalDate end);
+
+    void delete(Long id);
 }
