@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
+import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
@@ -22,13 +23,11 @@ import java.util.List;
 public class StudentServiceImpl extends AbstractUserService<Student> implements StudentService {
 
     private final GroupService groupService;
-    private final LessonRepository lessonRepository;
     private final StudentRepository studentRepository;
 
-    public StudentServiceImpl(BCryptPasswordEncoder passwordEncoder, GroupService groupService, LessonRepository lessonRepository, StudentRepository studentRepository, UserRepository userRepository) {
+    public StudentServiceImpl(BCryptPasswordEncoder passwordEncoder, GroupService groupService, StudentRepository studentRepository, UserRepository userRepository) {
         super(studentRepository, passwordEncoder, Student.class, userRepository);
         this.groupService = groupService;
-        this.lessonRepository = lessonRepository;
         this.studentRepository = studentRepository;
     }
 
@@ -46,12 +45,7 @@ public class StudentServiceImpl extends AbstractUserService<Student> implements 
     }
 
     @Override
-    public List<Lesson> getLessonsForDay(Student student, LocalDate localDate) {
-        return lessonRepository.getLessonByGroupAndDate(student.getGroup(), localDate);
-    }
-
-    @Override
-    public List<Lesson> getLessonsForWeek(Student student, LocalDate start, LocalDate end) {
-        return lessonRepository.findByGroupAndDateBetween(student.getGroup(), start, end);
+    public List<UserDto> getStudentsByGroupId(Long groupId) {
+        return studentRepository.getAllByGroupId(groupId);
     }
 }

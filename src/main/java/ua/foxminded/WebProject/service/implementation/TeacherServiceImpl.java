@@ -19,20 +19,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class TeacherServiceImpl extends AbstractUserService<Teacher> implements TeacherService {
 
-    private final LessonRepository lessonRepository;
 
-    public TeacherServiceImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, TeacherRepository teacherRepository, LessonRepository lessonRepository) {
+    public TeacherServiceImpl(BCryptPasswordEncoder passwordEncoder, UserRepository userRepository, TeacherRepository teacherRepository) {
         super(teacherRepository, passwordEncoder, Teacher.class, userRepository);
-        this.lessonRepository = lessonRepository;
-    }
-
-    @Override
-    public List<Lesson> getLessonForDay(Teacher teacher, LocalDate localDate) {
-        return lessonRepository.getLessonsByTeacherAndDate(teacher, localDate);
-    }
-
-    @Override
-    public List<Lesson> getLessonForWeek(Teacher teacher, LocalDate start, LocalDate end) {
-        return lessonRepository.getLessonsByTeacherAndDateBetween(teacher, start, end);
     }
 }
