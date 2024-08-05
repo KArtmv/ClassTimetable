@@ -3,7 +3,6 @@ package ua.foxminded.WebProject.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +35,7 @@ public class LessonController {
     private static final String LESSONS_BETWEEN_DATES_PATH = "/lessons-between-dates";
     private static final String LESSONS_BETWEEN_DAYS_BY_GROUP_ID = "/lessons-between-dates/group-{id}";
     private static final String LESSONS_BETWEEN_DAYS_BY_TEACHER_ID = "/lessons-between-dates/teacher-{id}";
+    private static LocalDate LOCAL_DATE = LocalDate.now();
 
 
     private final LessonService lessonService;
@@ -79,13 +79,13 @@ public class LessonController {
 
     @PostMapping("/save")
     public String save(@Valid LessonDto lessonDto, BindingResult bindingResult, Model model) {
-        if (isWeekendDay(lessonDto.getDate())) {
+        if (lessonDto.getDate() != null && isWeekendDay(lessonDto.getDate())) {
             bindingResult.rejectValue("date", "", "Cannot be weekend day");
         }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("lessonDto", lessonDto);
-            model.addAttribute("lessons", lessonService.getAvailableNumbersOfLessons(lessonDto.getDate(), lessonDto.getGroupId()));
+            model.addAttribute("lessonsNum", lessonService.getAvailableNumbersOfLessons(lessonDto.getDate(), lessonDto.getGroupId()));
             model.addAttribute("teachers", lessonService.getAvailableTeachers(lessonDto.getDate(), lessonDto.getLessonNum()));
             model.addAttribute("classrooms", lessonService.getAvailableClassrooms(lessonDto.getDate(), lessonDto.getLessonNum()));
             model.addAllAttributes(fillModel());
@@ -109,15 +109,16 @@ public class LessonController {
 
     @PostMapping("/update")
     public String update(@Valid LessonDto lessonDto, BindingResult bindingResult, Model model) {
-        if (isWeekendDay(lessonDto.getDate())) {
+        if (lessonDto.getDate() != null && isWeekendDay(lessonDto.getDate())) {
             bindingResult.rejectValue("date", "", "Cannot be weekend day");
         }
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("lessonDto", lessonDto);
-            model.addAttribute("lessons", lessonService.getAvailableNumbersOfLessons(lessonDto.getDate(), lessonDto.getGroupId()));
+            model.addAttribute("lessonsNum", lessonService.getAvailableNumbersOfLessons(lessonDto.getDate(), lessonDto.getGroupId()));
             model.addAttribute("teachers", lessonService.getAvailableTeachers(lessonDto.getDate(), lessonDto.getLessonNum()));
             model.addAttribute("classrooms", lessonService.getAvailableClassrooms(lessonDto.getDate(), lessonDto.getLessonNum()));
+            model.addAllAttributes(fillModel());
             model.addAttribute("edit", true);
             return "lesson/features/newLesson";
         }
@@ -139,9 +140,9 @@ public class LessonController {
                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                  @RequestParam(value = "end", required = false)
                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
-        if (start == null || end == null || start.isBefore(LocalDate.now())) {
-            start = LocalDate.now().with(DayOfWeek.MONDAY);
-            end = LocalDate.now().with(DayOfWeek.FRIDAY);
+        if (start == null || end == null || start.isBefore(LOCAL_DATE)) {
+            start = LOCAL_DATE.with(DayOfWeek.MONDAY);
+            end = LOCAL_DATE.with(DayOfWeek.FRIDAY);
         }
         model.addAttribute("startDate", start);
         model.addAttribute("endDate", end);
@@ -156,8 +157,8 @@ public class LessonController {
                                 HttpServletRequest request,
                                 @RequestParam(value = "date", required = false)
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        if (date == null || date.isBefore(LocalDate.now())) {
-            date = LocalDate.now();
+        if (date == null || date.isBefore(LOCAL_DATE)) {
+            date = LOCAL_DATE;
         }
         processLessonsPerDay(id, date, request.getRequestURI(), model);
         model.addAttribute("selectedDate", date);
@@ -190,11 +191,11 @@ public class LessonController {
         if (url.contains("group")) {
             model.addAttribute("lessonPerDayPath", cutId(LESSONS_PER_DAY_BY_GROUP_ID) + id);
             model.addAttribute("lessonByDatesPath", cutId(LESSONS_BETWEEN_DAYS_BY_GROUP_ID) + id);
-            model.addAttribute("classtables", sortLessonsByDateMap(lessonService.getLessonsByGroupIdPerWeek(id, start, end)));
+            model.addAttribute("classtables", sortLessonsByDateMap(lessonService.getLessonsByGroupIdBetweenDates(id, start, end)));
         } else if (url.contains("teacher")) {
             model.addAttribute("lessonPerDayPath", cutId(LESSONS_PER_DAY_BY_TEACHER_ID) + id);
             model.addAttribute("lessonByDatesPath", cutId(LESSONS_BETWEEN_DAYS_BY_TEACHER_ID) + id);
-            model.addAttribute("classtables", sortLessonsByDateMap(lessonService.getLessonsByTeacherIdPerWeek(id, start, end)));
+            model.addAttribute("classtables", sortLessonsByDateMap(lessonService.getLessonsByTeacherIdBetweenDates(id, start, end)));
         } else {
             model.addAttribute("lessonPerDayPath", LESSONS_PER_DAY_PATH);
             model.addAttribute("lessonByDatesPath", LESSONS_BETWEEN_DATES_PATH);
