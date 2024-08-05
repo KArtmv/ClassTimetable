@@ -24,11 +24,11 @@ public interface LessonService extends AbstractService<Lesson, Long> {
 
     List<Lesson> getLessonsByGroupIdPerDay(Long groupId, LocalDate date);
 
-    List<Lesson> getLessonsByGroupIdPerWeek(Long groupId, LocalDate start, LocalDate end);
+    List<Lesson> getLessonsByGroupIdBetweenDates(Long groupId, LocalDate start, LocalDate end);
 
     List<Lesson> getLessonsByTeacherIdPerDay(Long teacherId, LocalDate localDate);
 
-    List<Lesson> getLessonsByTeacherIdPerWeek(Long teacherId, LocalDate start, LocalDate end);
+    List<Lesson> getLessonsByTeacherIdBetweenDates(Long teacherId, LocalDate start, LocalDate end);
 
     List<Lesson> getLessonsPerDay(LocalDate date);
 

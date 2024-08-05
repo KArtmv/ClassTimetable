@@ -98,7 +98,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<Lesson> getLessonsByGroupIdPerWeek(Long groupId, LocalDate start, LocalDate end) {
+    public List<Lesson> getLessonsByGroupIdBetweenDates(Long groupId, LocalDate start, LocalDate end) {
         return lessonRepository.getLessonsByGroupIdAndDateBetween(groupId, start, end);
     }
 
@@ -108,7 +108,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public List<Lesson> getLessonsByTeacherIdPerWeek(Long teacherId, LocalDate start, LocalDate end) {
+    public List<Lesson> getLessonsByTeacherIdBetweenDates(Long teacherId, LocalDate start, LocalDate end) {
         return lessonRepository.getLessonsByTeacherIdAndDateBetween(teacherId, start, end);
     }
 
