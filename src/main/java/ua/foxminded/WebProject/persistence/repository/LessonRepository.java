@@ -26,14 +26,4 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
     List<Lesson> getLessonsByDateBetween(LocalDate start, LocalDate end);
 
     List<Lesson> getLessonsByDateAndLessonNum(LocalDate date, Integer lessonNum);
-
-    @Query("select new ua.foxminded.WebProject.DTO.LessonDto(l.id, l.date, l.lessonNum, c.id, g.id, cr.id, t.id) " +
-            "from Lesson l " +
-            "join l.group g " +
-            "join l.course c " +
-            "join l.teacher t " +
-            "join l.classroom cr " +
-            "where l.id = ?1")
-    LessonDto getLessonDto(Long id);
-
 }
