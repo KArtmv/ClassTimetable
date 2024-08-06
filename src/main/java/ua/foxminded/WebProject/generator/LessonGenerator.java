@@ -1,14 +1,10 @@
 package ua.foxminded.WebProject.generator;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import ua.foxminded.WebProject.DTO.LessonDto;
 import ua.foxminded.WebProject.persistence.entity.*;
-import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.service.*;
 
 import java.time.DayOfWeek;
@@ -23,15 +19,15 @@ public class LessonGenerator {
 
     private static final int MAX_AMOUNT_LESSONS_BY_COURSE_PER_WEEK = 3;
     private static final int MAX_AMOUNT_LESSONS_PER_DAY = 8;
-    private static final int LESSON_COUNT = 350;
-    private static final LocalDate LOCAL_DATE = LocalDate.now();
+    private static int LESSON_COUNT = 350;
+    private static LocalDate LOCAL_DATE = LocalDate.now();
+
 
     private final GroupService groupService;
     private final CourseService courseService;
     private final TeacherService teacherService;
     private final ClassroomService classroomService;
     private final LessonService lessonService;
-    private final LessonRepository lessonRepository;
     private final RandomGenerator randomGenerator;
 
 
@@ -42,75 +38,67 @@ public class LessonGenerator {
         int classroomsSize = classroomService.getAll().size();
 
         while (lessonService.getAll().size() < LESSON_COUNT) {
-            try {
-                saveLesson(generateLesson(coursesSize, groupsSize, teachersSize, classroomsSize));
-            } catch (DataIntegrityViolationException e) {
-                log.error(e.getMessage());
-            }
+            assignLessonToAvailableWeek(createLessonDto(coursesSize, groupsSize, teachersSize, classroomsSize));
         }
     }
 
-    private LessonDto generateLesson(Integer coursesSize, Integer teachersSize, Integer classroomsSize, Integer groupsSize) {
+    private LessonDto createLessonDto(Integer coursesSize, Integer teachersSize, Integer classroomsSize, Integer groupsSize) {
         LessonDto lessonDto = new LessonDto();
-        lessonDto.setCourseId(randomGenerator.nextLong(coursesSize));
-        lessonDto.setTeacherId(randomGenerator.nextLong(teachersSize));
-        lessonDto.setClassroomId(randomGenerator.nextLong(classroomsSize));
-        lessonDto.setGroupId(randomGenerator.nextLong(groupsSize));
+        lessonDto.setCourseId(generateRandomId(coursesSize));
+        lessonDto.setTeacherId(generateRandomId(teachersSize));
+        lessonDto.setClassroomId(generateRandomId(classroomsSize));
+        lessonDto.setGroupId(generateRandomId(groupsSize));
 
         return lessonDto;
     }
 
-    private Lesson verifyId(LessonDto lessonDto) {
-        Lesson lesson = new Lesson();
-        lesson.setGroup(groupService.getById(lessonDto.getGroupId()));
-        lesson.setCourse(courseService.getById(lessonDto.getCourseId()));
-        lesson.setClassroom(classroomService.getById(lessonDto.getClassroomId()));
-        lesson.setTeacher(teacherService.getById(lessonDto.getTeacherId()));
-        return lesson;
+    private long generateRandomId(Integer size) {
+        return randomGenerator.nextLong(1L, size + 1L);
     }
 
-    private void saveLesson(LessonDto lessonDto) {
-        try {
-            saveToAvailableDate(verifyId(lessonDto));
-        } catch (EntityNotFoundException e) {
-            log.error("Failed adding lesson: {}", e.getMessage());
-        }
-    }
-
-    private void saveToAvailableDate(Lesson lesson) {
-        Group group = lesson.getGroup();
-        Course course = lesson.getCourse();
-        LocalDate date = LOCAL_DATE;
-        date = date.isEqual(date.with(DayOfWeek.SATURDAY)) || date.isEqual(date.with(DayOfWeek.SUNDAY)) ? date.plusWeeks(1).with(DayOfWeek.MONDAY) : date;
+    private void assignLessonToAvailableWeek(LessonDto lessonDto) {
+        LocalDate mondayDate = getMondayDate();
         int attempts = 0;
         int maxAttempts = 3;
-        LocalDate monday;
 
         do {
-            monday = date.with(DayOfWeek.MONDAY);
-            if (attempts > 0) {
-                date = monday;
+            if (isCourseCountLess(lessonDto, mondayDate) < MAX_AMOUNT_LESSONS_BY_COURSE_PER_WEEK) {
+                assignLessonToAvailableDay(mondayDate, lessonDto);
+                break;
             }
-
-            if (lessonRepository.getLessonsByGroupIdAndDateBetween(group.getId(), monday, date.with(DayOfWeek.FRIDAY)).stream()
-                    .filter(l -> l.getCourse().getId().equals(course.getId())).count() < MAX_AMOUNT_LESSONS_BY_COURSE_PER_WEEK) {
-                addLessonToAvailableDay(group, date, lesson.getCourse(), lesson);
-            }
-            date = date.plusWeeks(1);
+            mondayDate = mondayDate.plusWeeks(1);
             attempts++;
         } while (attempts < maxAttempts);
     }
 
-    private void addLessonToAvailableDay(Group group, LocalDate date, Course course, Lesson lesson) {
-        do {
-            List<Lesson> lessonsPerDay = lessonRepository.getLessonByGroupIdAndDate(group.getId(), date);
+    private static LocalDate getMondayDate() {
+        return isWeekend(LOCAL_DATE) ? LOCAL_DATE.plusWeeks(1).with(DayOfWeek.MONDAY) : LOCAL_DATE.with(DayOfWeek.MONDAY);
+    }
 
-            if (lessonsPerDay.size() < MAX_AMOUNT_LESSONS_PER_DAY && lessonsPerDay.stream().noneMatch(l -> l.getCourse().getId().equals(course.getId()))) {
-                lesson.setLessonNum(lessonsPerDay.isEmpty() ? 1 : lessonsPerDay.size() + 1);
-                lesson.setDate(date);
-                lessonRepository.saveAndFlush(lesson);
+    private static boolean isWeekend(LocalDate date) {
+        return date.isEqual(date.with(DayOfWeek.SATURDAY)) || date.isEqual(date.with(DayOfWeek.SUNDAY));
+    }
+
+    private long isCourseCountLess(LessonDto lessonDto, LocalDate mondayDate) {
+        return lessonService.getLessonsByGroupIdBetweenDates(lessonDto.getGroupId(), mondayDate, mondayDate.with(DayOfWeek.FRIDAY)).stream()
+                .filter(l -> l.getCourse().getId().equals(lessonDto.getCourseId())).count();
+    }
+
+    private void assignLessonToAvailableDay(LocalDate date, LessonDto lessonDto) {
+        do {
+            List<Lesson> lessonsPerDay = lessonService.getLessonsByGroupIdPerDay(lessonDto.getGroupId(), date);
+
+            if (lessonsPerDay.size() < MAX_AMOUNT_LESSONS_PER_DAY && isHasCourse(lessonDto, lessonsPerDay)) {
+                lessonDto.setLessonNum(lessonsPerDay.isEmpty() ? 1 : lessonsPerDay.size() + 1);
+                lessonDto.setDate(date);
+                lessonService.saveLesson(lessonDto);
+                break;
             }
             date = date.plusDays(1);
         } while (date.getDayOfWeek().getValue() < DayOfWeek.SATURDAY.getValue());
+    }
+
+    private static boolean isHasCourse(LessonDto lessonDto, List<Lesson> lessonsPerDay) {
+        return lessonsPerDay.stream().noneMatch(l -> l.getCourse().getId().equals(lessonDto.getCourseId()));
     }
 }
