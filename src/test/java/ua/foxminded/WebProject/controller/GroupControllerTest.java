@@ -176,6 +176,26 @@ class GroupControllerTest {
                 .andDo(print()).andExpect(status().isForbidden());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"admin", "staff"})
+    void details_shouldReturnDetails_whenUserRoleHasAccess(String role) throws Exception {
+        when(groupService.getById(anyLong())).thenReturn(testItems.getGroup());
+
+        mockMvc.perform(get("/group/details-{id}", testData.getGroupId()).with(testUser(role)))
+                .andDo(print()).andExpectAll(
+                        status().isOk(),
+                        model().attributeExists("group"),
+                        view().name("group/features/details"),
+                        content().string(containsString(testData.getGroupName())));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"student", "teacher"})
+    void details_shouldReturnStatusForbidden_whenUserRoleLackAccess(String role) throws Exception {
+        mockMvc.perform(get("/group/details-{id}", testData.getGroupId()).with(testUser(role)))
+                .andDo(print()).andExpect(status().isForbidden());
+    }
+
 
 
 
