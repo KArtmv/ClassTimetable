@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.LessonDto;
 import ua.foxminded.WebProject.DTO.NamesDto;
-import ua.foxminded.WebProject.persistence.entity.*;
+import ua.foxminded.WebProject.persistence.entity.Classroom;
+import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.service.*;
 
@@ -75,7 +76,14 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public LessonDto getLessonDtoById(Long id) {
-        return lessonRepository.getLessonDto(id);
+        Lesson lesson = getById(id);
+        return new LessonDto(lesson.getId(),
+                lesson.getDate(),
+                lesson.getLessonNum(),
+                lesson.getCourse().getId(),
+                lesson.getGroup().getId(),
+                lesson.getClassroom().getId(),
+                lesson.getTeacher().getId());
     }
 
     @Override
