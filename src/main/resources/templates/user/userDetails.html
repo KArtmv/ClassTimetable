@@ -92,7 +92,7 @@
                         <input type="password" class="form-control" th:field="*{oldPassword}" id="oldPasswordInput"
                                placeholder="Enter old password.">
                         <div th:if="${#fields.hasErrors('oldPassword')}"
-                             class="alert alert-danger" role="alert"
+                             class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
                              th:errors="*{oldPassword}">Enter old password
                         </div>
                     </div>
