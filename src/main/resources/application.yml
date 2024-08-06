@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://openmediavault.local:5432/scheduledb
+    url: jdbc:postgresql://localhost:5432/scheduleDB
     username: admin
     password: admin
   jpa:
@@ -27,4 +27,3 @@ server:
     whitelabel:
       enabled: false
     path: '/error'
-  port: 8081
