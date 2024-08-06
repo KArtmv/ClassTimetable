@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
+import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Student;
@@ -20,6 +21,8 @@ import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,8 +43,6 @@ class StudentServiceImplTest {
     private StudentRepository studentRepository;
     @MockBean
     private BCryptPasswordEncoder passwordEncoder;
-    @MockBean
-    private LessonRepository lessonRepository;
     @MockBean
     private UserRepository userRepository;
     @Autowired
@@ -210,5 +211,14 @@ class StudentServiceImplTest {
 
         verify(studentRepository).findById(testData.getStudentId());
         verify(studentRepository).delete(testItems.getFullyStudent());
+    }
+
+    @Test
+    void getStudentsByGroupId_shouldReturnStudentsNamesList_whenIsFound() {
+        when(studentRepository.getAllByGroupId(anyLong())).thenReturn(Collections.singletonList(testItems.userDto(testItems.getFullyStudent())));
+
+        assertThat(studentService.getStudentsByGroupId(testData.getGroupId())).hasSize(1);
+
+        verify(studentRepository).getAllByGroupId(testData.getGroupId());
     }
 }
