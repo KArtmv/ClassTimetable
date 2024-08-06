@@ -34,13 +34,16 @@
             </div>
             <div class="mb-3" id="dateRow">
                 <label for="date">Date:</label>
-                <input type="date" class="form-control" id="date" th:field="${lessonDto.date}" th:value="${lessonDto.date}" onchange="fetchLessonsNums()">
+                <input type="date" class="form-control" id="date" th:field="${lessonDto.date}"
+                       th:value="${lessonDto.date}" onchange="fetchLessonsNums()">
                 <div th:if="${#fields.hasErrors('date')}"
                      class="error text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
                      th:errors="*{date}">Date error
                 </div>
             </div>
-            <div class="mb-3" id="lessonNumRow" th:style="${#strings.isEmpty(lessonDto.lessonNum) && #strings.isEmpty(lessonDto.date) ? 'display:none;' : 'display:block;'}" onchange="appearField(this, document.getElementById('courseRow'))">
+            <div class="mb-3" id="lessonNumRow"
+                 th:style="${#strings.isEmpty(lessonDto.lessonNum) && #strings.isEmpty(lessonDto.date) ? 'display:none;' : 'display:block;'}"
+                 onchange="appearField(this, document.getElementById('courseRow'))">
                 <label for="lessonNum">Lesson num:</label>
                 <select class="form-control mb-3" id="lessonNum" th:field="*{lessonNum}">
                     <option value="" selected>Choose the lesson number</option>
@@ -52,9 +55,11 @@
                      th:errors="*{lessonNum}">Course error
                 </div>
             </div>
-            <div class="mb-3" id="courseRow" th:style="${#strings.isEmpty(lessonDto.courseId) ? 'display:none;' : 'display:block;'}">
+            <div class="mb-3" id="courseRow"
+                 th:style="${#strings.isEmpty(lessonDto.courseId) ? 'display:none;' : 'display:block;'}">
                 <label for="course">Course:</label>
-                <select class="form-control mb-3" id="course" th:field="*{courseId}" onchange="fetchTeachers(); fetchClassrooms()">
+                <select class="form-control mb-3" id="course" th:field="*{courseId}"
+                        onchange="fetchTeachers(); fetchClassrooms()">
                     <option value="" selected>Choose course from list</option>
                     <option th:each="course : ${courses}" th:value="${course.id}" th:text="${course.courseName}"
                             th:selected="${course.id == lessonDto.groupId}"></option>
@@ -64,11 +69,13 @@
                      th:errors="*{courseId}">Course error
                 </div>
             </div>
-            <div class="mb-3" id="teacherRow" th:style="${#strings.isEmpty(lessonDto.teacherId) && #strings.isEmpty(lessonDto.courseId) ? 'display:none;' : 'display:block;'}">
+            <div class="mb-3" id="teacherRow"
+                 th:style="${#strings.isEmpty(lessonDto.teacherId) && #strings.isEmpty(lessonDto.courseId) ? 'display:none;' : 'display:block;'}">
                 <label for="teacher">Teacher:</label>
                 <select class="form-control mb-3" id="teacher" th:field="*{teacherId}">
                     <option value="" selected>Choose teacher from list</option>
-                    <option th:each="teacher : ${teachers}" th:value="${teacher.id}" th:text="${teacher.firstName} + ' ' + ${teacher.lastName}"
+                    <option th:each="teacher : ${teachers}" th:value="${teacher.id}"
+                            th:text="${teacher.firstName} + ' ' + ${teacher.lastName}"
                             th:selected="${teacher.id == lessonDto.teacherId}"></option>
                 </select>
                 <div th:if="${#fields.hasErrors('teacherId')}"
@@ -76,11 +83,13 @@
                      th:errors="*{teacherId}">Teacher error
                 </div>
             </div>
-            <div class="mb-3" id="classroomRow" th:style="${#strings.isEmpty(lessonDto.classroomId) && #strings.isEmpty(lessonDto.teacherId) ? 'display:none;' : 'display:block;'}">
+            <div class="mb-3" id="classroomRow"
+                 th:style="${#strings.isEmpty(lessonDto.classroomId) && #strings.isEmpty(lessonDto.teacherId) ? 'display:none;' : 'display:block;'}">
                 <label for="classroom">Classroom:</label>
                 <select class="form-control mb-3" id="classroom" th:field="*{classroomId}">
                     <option value="" selected>Choose classroom from list</option>
-                    <option th:each="classroom : ${classrooms}" th:value="${classroom.id}" th:text="${classroom.classroomName}"
+                    <option th:each="classroom : ${classrooms}" th:value="${classroom.id}"
+                            th:text="${classroom.classroomName}"
                             th:selected="${classroom.id == lessonDto.classroomId}"></option>
                 </select>
                 <div th:if="${#fields.hasErrors('classroomId')}"
@@ -116,7 +125,7 @@
                         date: date,
                         groupId: groupId
                     },
-                    success: [function(response) {
+                    success: [function (response) {
                         var lessonNumSelect = document.getElementById('lessonNum');
                         lessonNumSelect.innerHTML = '<option value="" selected>Choose the lesson number</option>';
                         response.forEach(function (lessonNum) {
@@ -127,7 +136,7 @@
                         })
                         $('#lessonNumRow').show();
                     }],
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error('Error: ' + error);
                     }
                 });

@@ -4,12 +4,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.repository.GroupRepository;
-import ua.foxminded.WebProject.persistence.repository.StudentRepository;
 import ua.foxminded.WebProject.service.GroupService;
-import ua.foxminded.WebProject.service.StudentService;
 
 import java.util.List;
 

@@ -1,12 +1,8 @@
 package ua.foxminded.WebProject.persistence.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ua.foxminded.WebProject.DTO.LessonDto;
-import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
-import ua.foxminded.WebProject.persistence.entity.Teacher;
 
 import java.time.LocalDate;
 import java.util.List;

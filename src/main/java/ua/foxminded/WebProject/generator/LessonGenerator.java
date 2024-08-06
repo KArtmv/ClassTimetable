@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ua.foxminded.WebProject.DTO.LessonDto;
-import ua.foxminded.WebProject.persistence.entity.*;
+import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.service.*;
 
 import java.time.DayOfWeek;

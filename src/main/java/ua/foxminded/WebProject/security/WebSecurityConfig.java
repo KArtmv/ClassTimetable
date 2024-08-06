@@ -34,9 +34,9 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/login*").anonymous()
                         .requestMatchers("/student", "/lesson/lessons-between-dates/group-{id}", "/lesson/lessons-by-group-{id}")
-                            .hasAnyRole("student", "admin", "staff")
+                        .hasAnyRole("student", "admin", "staff")
                         .requestMatchers("/teacher", "/lesson/lessons-between-dates/teacher-{id}", "/lesson/lessons-by-teacher-{id}")
-                            .hasAnyRole("teacher", "admin", "staff")
+                        .hasAnyRole("teacher", "admin", "staff")
                         .requestMatchers("/admin", "/staff", "/lesson/lessons-per-day", "/lesson/lessons-between-dates").hasAnyRole("admin", "staff")
                         .requestMatchers("/admin/details", "/admin/update-password").hasRole("admin")
                         .requestMatchers("/staff/details", "/staff/update-password").hasRole("staff")

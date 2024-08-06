@@ -4,15 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
-import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.TeacherRepository;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.TeacherService;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @Slf4j

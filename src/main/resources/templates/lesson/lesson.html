@@ -14,7 +14,8 @@
         <div class="accordion" id="lessonAccordion">
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                         Select Date
                     </button>
                 </h2>
@@ -22,7 +23,8 @@
                     <div class="accordion-body">
                         <form th:action="@{'/lesson' + ${lessonPerDayPath}}" method="get">
                             <label for="date">Date:</label>
-                            <input type="date" id="date" name="date" th:value="${selectedDate}" class="form-control mb-3">
+                            <input type="date" id="date" name="date" th:value="${selectedDate}"
+                                   class="form-control mb-3">
                             <button type="submit" class="btn btn-success">Find</button>
                         </form>
                     </div>
@@ -30,7 +32,8 @@
             </div>
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                         Select Date Range
                     </button>
                 </h2>
@@ -38,7 +41,8 @@
                     <div class="accordion-body">
                         <form th:action="@{'/lesson' + ${lessonByDatesPath}}" method="get">
                             <label for="start">Start date:</label>
-                            <input type="date" id="start" name="start" th:value="${startDate}" class="form-control mb-3">
+                            <input type="date" id="start" name="start" th:value="${startDate}"
+                                   class="form-control mb-3">
                             <label for="end">End date:</label>
                             <input type="date" id="end" name="end" th:value="${endDate}" class="form-control mb-3">
                             <button type="submit" class="btn btn-success">Find</button>
@@ -70,7 +74,8 @@
                             <tbody>
                             <tr th:each="lesson : ${group.getValue()}">
                                 <td>
-                                    <a th:text="${lesson.lessonNum}" th:href="@{'/lesson/details-' + ${lesson.getId()}}"></a>
+                                    <a th:text="${lesson.lessonNum}"
+                                       th:href="@{'/lesson/details-' + ${lesson.getId()}}"></a>
                                 </td>
                                 <td th:text="${lesson.course.courseName}"></td>
                                 <td th:text="${lesson.classroom.classroomName}"></td>

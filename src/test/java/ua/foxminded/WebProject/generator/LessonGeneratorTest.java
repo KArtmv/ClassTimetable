@@ -1,22 +1,12 @@
 package ua.foxminded.WebProject.generator;
 
-import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.util.ReflectionTestUtils;
 import ua.foxminded.WebProject.DTO.LessonDto;
-import ua.foxminded.WebProject.persistence.entity.Group;
-import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.service.*;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
@@ -24,7 +14,6 @@ import ua.foxminded.WebProject.testDataInstance.TestItems;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.List;
 import java.util.random.RandomGenerator;
 
 import static org.assertj.core.api.Assertions.assertThat;

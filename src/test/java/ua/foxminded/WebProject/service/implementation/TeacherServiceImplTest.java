@@ -10,19 +10,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
 import ua.foxminded.WebProject.persistence.entity.User;
-import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.TeacherRepository;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

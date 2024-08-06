@@ -1,7 +1,6 @@
 package ua.foxminded.WebProject.testDataInstance;
 
 import lombok.Getter;
-//import ua.foxminded.WebProject.DTO.GroupDto;
 import ua.foxminded.WebProject.persistence.entity.*;
 
 import java.time.DayOfWeek;

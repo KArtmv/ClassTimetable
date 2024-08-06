@@ -6,15 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import ua.foxminded.WebProject.DTO.UserDto;
-import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Student;
-import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.StudentRepository;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.service.StudentService;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service

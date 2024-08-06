@@ -27,7 +27,8 @@
                         <ul class="dropdown-menu">
                             <li><a th:href="@{/student}" class="dropdown-item">Student</a></li>
                             <li><a th:href="@{/teacher}" class="dropdown-item">Teacher</a></li>
-                            <li><a sec:authorize="hasRole('admin')" th:href="@{/staff}" class="dropdown-item">Staff</a></li>
+                            <li><a sec:authorize="hasRole('admin')" th:href="@{/staff}" class="dropdown-item">Staff</a>
+                            </li>
                             <li><a th:href="@{/lesson}" class="dropdown-item">Lesson</a></li>
                             <li><a th:href="@{/course}" class="dropdown-item">Course</a></li>
                             <li><a th:href="@{/group}" class="dropdown-item">Group</a></li>

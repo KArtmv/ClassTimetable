@@ -20,15 +20,20 @@
         </h3>
         <h3>Course:
             <small class="text-body-secondary" th:text="${lesson.course.courseName}"></small><br>
-            <small class="text-body-secondary ms-5" th:text="${'Description: ' + lesson.course.courseDescription}"></small>
+            <small class="text-body-secondary ms-5"
+                   th:text="${'Description: ' + lesson.course.courseDescription}"></small>
         </h3>
         <h3>Group:
-            <small sec:authorize="hasAnyRole('teacher', 'student')" class="text-body-secondary" th:text="${lesson.group.groupName}"></small>
-            <a sec:authorize="hasAnyRole('admin', 'staff')" class="text-body-secondary" th:text="${lesson.group.groupName}" th:href="@{'/group/details-' + ${lesson.group.id}}"></a>
+            <small sec:authorize="hasAnyRole('teacher', 'student')" class="text-body-secondary"
+                   th:text="${lesson.group.groupName}"></small>
+            <a sec:authorize="hasAnyRole('admin', 'staff')" class="text-body-secondary"
+               th:text="${lesson.group.groupName}" th:href="@{'/group/details-' + ${lesson.group.id}}"></a>
         </h3>
         <h3>Teacher:
-            <small sec:authorize="hasAnyRole('teacher', 'student')" class="text-body-secondary" th:text="${lesson.teacher.firstName} + ' ' + ${lesson.teacher.lastName}"></small>
-            <a sec:authorize="hasAnyRole('admin', 'staff')" class="text-body-secondary" th:text="${lesson.teacher.firstName} + ' ' + ${lesson.teacher.lastName}"
+            <small sec:authorize="hasAnyRole('teacher', 'student')" class="text-body-secondary"
+                   th:text="${lesson.teacher.firstName} + ' ' + ${lesson.teacher.lastName}"></small>
+            <a sec:authorize="hasAnyRole('admin', 'staff')" class="text-body-secondary"
+               th:text="${lesson.teacher.firstName} + ' ' + ${lesson.teacher.lastName}"
                th:href="@{'/teacher/details/' + ${lesson.teacher.id}}"></a>
         </h3>
         <h3>Classroom:
@@ -40,12 +45,16 @@
             </h3>
             <div>
                 <a class="btn btn-success col-1 mb-3" th:href="@{'/lesson/edit-' + ${lesson.id}}">Edit</a>
-                <a class="btn btn-danger col-1 mb-3" data-bs-toggle="collapse" href="#collapseDeleteForm" role="button" aria-expanded="false" aria-controls="collapseDeleteForm">Delete</a>
+                <a class="btn btn-danger col-1 mb-3" data-bs-toggle="collapse" href="#collapseDeleteForm" role="button"
+                   aria-expanded="false" aria-controls="collapseDeleteForm">Delete</a>
                 <div class="collapse" id="collapseDeleteForm">
-                    <form class="card mb-3 p-3" th:action="@{'/lesson/delete-' + ${lesson.id}}" method="post" id="deleteForm">
+                    <form class="card mb-3 p-3" th:action="@{'/lesson/delete-' + ${lesson.id}}" method="post"
+                          id="deleteForm">
                         <div class="form-check d-flex align-items-center">
-                            <input class="form-check-input me-2" type="checkbox" id="isAgree" onchange="$('#deleteForm').submit();">
-                            <label class="form-check-label" for="isAgree">Are you sure that you want to delete the given lesson?</label>
+                            <input class="form-check-input me-2" type="checkbox" id="isAgree"
+                                   onchange="$('#deleteForm').submit();">
+                            <label class="form-check-label" for="isAgree">Are you sure that you want to delete the given
+                                lesson?</label>
                         </div>
                     </form>
                 </div>

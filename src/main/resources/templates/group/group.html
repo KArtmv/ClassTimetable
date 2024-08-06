@@ -23,7 +23,8 @@
             <tr th:each="group : ${groups}">
                 <th scope="row" th:text="${group.id}"></th>
                 <td>
-                    <a class="text-body-secondary" th:text="${group.groupName}" th:href="@{'/group/details-' + ${group.id}}"></a>
+                    <a class="text-body-secondary" th:text="${group.groupName}"
+                       th:href="@{'/group/details-' + ${group.id}}"></a>
                 <td>
                     <a th:href="@{'/group/delete/' + ${group.id}}" class="btn btn-danger">Delete</a>
                 </td>

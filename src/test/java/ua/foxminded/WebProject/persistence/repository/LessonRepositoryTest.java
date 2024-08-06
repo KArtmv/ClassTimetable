@@ -10,7 +10,6 @@ import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

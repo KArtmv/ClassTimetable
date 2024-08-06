@@ -1,10 +1,6 @@
 package ua.foxminded.WebProject.service;
 
-import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
-
-import java.time.LocalDate;
-import java.util.List;
 
 public interface TeacherService extends AbstractService<Teacher, Long>, UserService<Teacher> {
 

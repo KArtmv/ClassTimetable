@@ -136,10 +136,10 @@ public class LessonController {
     @PreAuthorize("hasAnyRole('admin', 'staff', 'student', 'teacher')")
     @GetMapping(value = {LESSONS_BETWEEN_DATES_PATH, LESSONS_BETWEEN_DAYS_BY_GROUP_ID, LESSONS_BETWEEN_DAYS_BY_TEACHER_ID})
     public String lessonsBetweenDates(@PathVariable(required = false) Long id, Model model, HttpServletRequest request,
-                                @RequestParam(value = "start", required = false)
-                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-                                 @RequestParam(value = "end", required = false)
-                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+                                      @RequestParam(value = "start", required = false)
+                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+                                      @RequestParam(value = "end", required = false)
+                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
         if (start == null || end == null || start.isBefore(LOCAL_DATE)) {
             start = LOCAL_DATE.with(DayOfWeek.MONDAY);
             end = LOCAL_DATE.with(DayOfWeek.FRIDAY);
@@ -156,7 +156,7 @@ public class LessonController {
                                 Model model,
                                 HttpServletRequest request,
                                 @RequestParam(value = "date", required = false)
-                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         if (date == null || date.isBefore(LOCAL_DATE)) {
             date = LOCAL_DATE;
         }

@@ -18,7 +18,6 @@ import ua.foxminded.WebProject.util.GroupNameGenerator;
 import ua.foxminded.WebProject.util.MyBeans;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -195,8 +194,6 @@ class GroupControllerTest {
         mockMvc.perform(get("/group/details-{id}", testData.getGroupId()).with(testUser(role)))
                 .andDo(print()).andExpect(status().isForbidden());
     }
-
-
 
 
 }

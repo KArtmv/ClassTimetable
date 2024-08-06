@@ -139,7 +139,7 @@ public class TestItems {
         return studentDtos;
     }
 
-     private final List<Lesson> allLessons = lessons.getLessons().stream().toList();
+    private final List<Lesson> allLessons = lessons.getLessons().stream().toList();
 
     public List<Lesson> lessonsByDate(LocalDate date) {
         return lessons.getLessons().stream().filter(l -> l.getDate().isEqual(date)).toList();

@@ -107,7 +107,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="confirmPasswordInput">Confirm password:</label>
-                        <input type="password" class="form-control" th:field="*{confirmPassword}" id="confirmPasswordInput"
+                        <input type="password" class="form-control" th:field="*{confirmPassword}"
+                               id="confirmPasswordInput"
                                placeholder="Confirm password">
                         <div th:if="${#fields.hasErrors('confirmPassword')}"
                              class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1"
@@ -125,18 +126,22 @@
         </div>
         <div th:if="${studentGroupDto}" class="container card mb-3">
             <h3 class="mt-2">Group:
-                <small sec:authorize="hasRole('student')" class="text-body-secondary" th:text="${studentGroupDto.groupName}"/>
-                <a sec:authorize="hasAnyRole('admin', 'staff')" class="text-body-secondary" th:text="${studentGroupDto.groupName}"
+                <small sec:authorize="hasRole('student')" class="text-body-secondary"
+                       th:text="${studentGroupDto.groupName}"/>
+                <a sec:authorize="hasAnyRole('admin', 'staff')" class="text-body-secondary"
+                   th:text="${studentGroupDto.groupName}"
                    th:href="@{'/group/details-' + ${studentGroupDto.groupId()}}"></a>
             </h3>
             <a sec:authorize="hasAnyRole('admin', 'staff')"
                th:href="@{'/' + ${path} + '/edit-group/' + ${studentGroupDto.id}}" class="btn btn-success col-2 mb-3">Edit
             </a>
         </div>
-            <div th:switch="${path}" class="container card mb-3">
-                <a th:case="'student'" class="btn btn-success col-2 mb-3 mt-3" th:href="@{'/lesson/lessons-by-group-' + ${studentGroupDto.groupId()}}">View Lessons</a>
-                <a th:case="'teacher'" class="btn btn-success col-2 mb-3 mt-3" th:href="@{'/lesson/lessons-by-teacher-' + ${userDto.id()}}">View Lessons</a>
-            </div>
+        <div th:switch="${path}" class="container card mb-3">
+            <a th:case="'student'" class="btn btn-success col-2 mb-3 mt-3"
+               th:href="@{'/lesson/lessons-by-group-' + ${studentGroupDto.groupId()}}">View Lessons</a>
+            <a th:case="'teacher'" class="btn btn-success col-2 mb-3 mt-3"
+               th:href="@{'/lesson/lessons-by-teacher-' + ${userDto.id()}}">View Lessons</a>
+        </div>
         <a href="/" class="btn btn-danger">Go to home page</a>
     </div>
 </main>
