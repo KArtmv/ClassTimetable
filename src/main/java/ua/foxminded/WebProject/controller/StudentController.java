@@ -36,7 +36,6 @@ public class StudentController extends AbstractUserCrudController<Student> {
     @Override
     public String addUser(Model model) {
         model.addAttribute("registrationForm", new UserRegistrationForm());
-        model.addAttribute("user", user);
         model.addAttribute("path", user);
         model.addAttribute("groups", groupService.getAll());
 
@@ -51,7 +50,6 @@ public class StudentController extends AbstractUserCrudController<Student> {
                            Model model) {
         if (result.hasErrors() || groupId == 0) {
             model.addAttribute("selectedGroupId", groupId);
-            model.addAttribute("user", user);
             model.addAttribute("path", user);
             model.addAttribute("groups", groupService.getAll());
             model.addAttribute("emptyGroup", groupId == 0);
@@ -69,8 +67,7 @@ public class StudentController extends AbstractUserCrudController<Student> {
     @Override
     protected String viewMyDetails(Model model, Principal principal) {
         User loggedUser = userService.getUserByEmail(principal.getName());
-        model.addAttribute("path", this.user);
-        model.addAttribute("userDto", userService.getDetails(loggedUser.getId()));
+        super.setPathWithUserDto(model, userService.getDetails(loggedUser.getId()));
         model.addAttribute("changePasswordForm", new ChangePasswordForm());
         model.addAttribute("studentGroupDto", studentService.getStudentGroup(loggedUser.getId()));
 
@@ -80,11 +77,64 @@ public class StudentController extends AbstractUserCrudController<Student> {
     @Override
     public String viewUserDetails(@PathVariable Long id, Model model) {
         UserDto userDto = userService.getDetails(id);
-        model.addAttribute("path", user);
-        model.addAttribute("userDto", userDto);
+        super.setPathWithUserDto(model, userDto);
         model.addAttribute("studentGroupDto", studentService.getStudentGroup(userDto.id()));
 
         return "user/userDetails";
+    }
+
+    @Override
+    public String updateUserNames(@Valid UserDto userDto, BindingResult result, Model model, Principal principal) {
+        if (result.hasErrors()) {
+            super.setPathWithUserDto(model, userDto);
+            model.addAttribute("nameFormOpen", true);
+            model.addAttribute("studentGroupDto", studentService.getStudentGroup(userDto.id()));
+            if (principal.getName().equalsIgnoreCase(userDto.email())) {
+                model.addAttribute("changePasswordForm", new ChangePasswordForm());
+            }
+            return "user/userDetails";
+        }
+        userService.updateNames(userDto);
+        return "redirect:/student";
+    }
+
+    @Override
+    public String updateEmail(@Valid UserDto userDto, BindingResult result, Model model, Principal principal) {
+        if (userDto.email().equals(userService.getDetails(userDto.id()).email())) {
+            result.rejectValue("email", "", "Given email is current user email.");
+        }
+
+        if (result.hasErrors()) {
+            super.setPathWithUserDto(model, userDto);
+            model.addAttribute("emailFormOpen", true);
+            model.addAttribute("studentGroupDto", studentService.getStudentGroup(userDto.id()));
+            if (principal.getName().equalsIgnoreCase(userDto.email())) {
+                model.addAttribute("changePasswordForm", new ChangePasswordForm());
+            }
+            return "user/userDetails";
+        }
+
+        userService.updateEmail(userDto);
+        return "redirect:/student";
+    }
+
+    @Override
+    public String updateUserPassword(@Valid ChangePasswordForm changePasswordForm, BindingResult result, Model model, Principal principal) {
+        User loggedUser = userService.getUserByEmail(principal.getName());
+
+        if (!super.passwordEncoder.matches(changePasswordForm.getOldPassword(), loggedUser.getPassword())) {
+            result.rejectValue("oldPassword", "", "Old password is incorrect.");
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("passwordFormOpen", true);
+            super.setPathWithUserDto(model, studentService.getDetails(loggedUser.getId()));
+            model.addAttribute("studentGroupDto", studentService.getStudentGroup(loggedUser.getId()));
+            return "user/userDetails";
+        }
+        changePasswordForm.setId(loggedUser.getId());
+        userService.updatePassword(changePasswordForm);
+        return "redirect:/student/details?success=true";
     }
 
     @GetMapping("/edit-group/{id}")
