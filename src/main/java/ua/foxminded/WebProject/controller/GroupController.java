@@ -63,7 +63,6 @@ public class GroupController {
     public String studentsOfGroup(@PathVariable Long id, Model model) {
         model.addAttribute("users", studentService.getStudentsByGroupId(id));
         model.addAttribute("path", "student");
-        model.addAttribute("user", "List of participants");
         return "user/user";
     }
 

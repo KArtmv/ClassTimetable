@@ -8,10 +8,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.foxminded.WebProject.DTO.GroupDto;
-import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.security.WebSecurityConfig;
 import ua.foxminded.WebProject.service.GroupService;
+import ua.foxminded.WebProject.service.StudentService;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
@@ -42,6 +41,8 @@ class GroupControllerTest {
     private GroupService groupService;
     @MockBean
     private GroupNameGenerator groupNameGenerator;
+    @MockBean
+    private StudentService studentService;
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
@@ -74,8 +75,7 @@ class GroupControllerTest {
         mockMvc.perform(get("/group/addGroup").with(testUser(role)))
                 .andDo(print()).andExpectAll(
                         status().isOk(),
-                        model().attributeExists("groupDto"),
-                        model().attributeExists("duplicate"),
+                        model().attributeExists("group"),
                         view().name("group/features/addGroup"));
     }
 
@@ -90,26 +90,30 @@ class GroupControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
     void save_shouldRedirectToGroupPage_whenGroupSavedSuccessfully(String role) throws Exception {
-        when(groupService.saveGroup(any(GroupDto.class))).thenReturn(testItems.getGroup());
         when(groupNameGenerator.generateGroupName()).thenReturn(testData.getGroupName());
 
-        mockMvc.perform(post("/group/save").with(testUser(role)))
-                .andDo(print()).andExpectAll(status().is3xxRedirection(),
+        mockMvc.perform(post("/group/save")
+                        .queryParam("groupName", testData.getGroupName())
+                        .with(testUser(role)))
+                .andDo(print()).andExpectAll(
+                        status().is3xxRedirection(),
                         view().name("redirect:/group"));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
     void save_shouldReturnGroupForm_whenGroupSavedFail(String role) throws Exception {
-        when(groupService.saveGroup(any(GroupDto.class))).thenReturn(new Group());
+        when(groupService.getAll()).thenReturn(testItems.getGroups());
         when(groupNameGenerator.generateGroupName()).thenReturn(testData.getGroupName());
 
         mockMvc.perform(post("/group/save")
                         .queryParam("groupName", testData.getGroupName())
                         .with(testUser(role)))
-                .andDo(print()).andExpectAll(status().isOk(),
+                .andDo(print())
+                .andExpectAll(status().isOk(),
+                        model().attributeExists("group"),
                         view().name("group/features/addGroup"),
-                        content().string(containsString("Given group name: \"YS-27\" already exists, try again.")));
+                        content().string(containsString("Group with given name: YS-27 already exists")));
     }
 
     @ParameterizedTest
@@ -137,7 +141,7 @@ class GroupControllerTest {
     @ValueSource(strings = {"student", "teacher", "staff"})
     void deleteGroupConfirmationForm(String role) throws Exception {
         mockMvc.perform(get("/group/delete/{id}", testData.getGroupId()).with(testUser(role)))
-                .andDo(print()).andExpectAll(
+                .andDo(print()).andExpect(
                         status().isForbidden());
     }
 
@@ -150,4 +154,29 @@ class GroupControllerTest {
                         status().is3xxRedirection(),
                         view().name("redirect:/group"));
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"admin", "staff"})
+    void studentsOfGroup_shouldReturnUserPage_whenUserRoleHasAccess(String role) throws Exception {
+        when(studentService.getStudentsByGroupId(anyLong())).thenReturn(testItems.getStudentNames());
+
+        mockMvc.perform(get("/group/students-of-group-{id}", testData.getGroupId()).with(testUser(role)))
+                .andDo(print()).andExpectAll(
+                        status().isOk(),
+                        model().attributeExists("users"),
+                        model().attributeExists("path"),
+                        view().name("user/user"),
+                        content().string(containsString(testData.getStaffFirstName())));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"student", "teacher"})
+    void studentsOfGroup_shouldReturnStatusForbidden_whenUserRoleLackAccess(String role) throws Exception {
+        mockMvc.perform(get("/group/students-of-group-{id}", testData.getGroupId()).with(testUser(role)))
+                .andDo(print()).andExpect(status().isForbidden());
+    }
+
+
+
+
 }
