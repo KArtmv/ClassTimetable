@@ -84,14 +84,12 @@ public class StudentController extends AbstractUserCrudController<Student> {
     }
 
     @Override
-    public String updateUserNames(@Valid UserDto userDto, BindingResult result, Model model, Principal principal) {
+    public String updateUserNames(@Valid UserDto userDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
             super.setPathWithUserDto(model, userDto);
             model.addAttribute("nameFormOpen", true);
+            model.addAttribute("changePasswordForm", new ChangePasswordForm());
             model.addAttribute("studentGroupDto", studentService.getStudentGroup(userDto.id()));
-            if (principal.getName().equalsIgnoreCase(userDto.email())) {
-                model.addAttribute("changePasswordForm", new ChangePasswordForm());
-            }
             return "user/userDetails";
         }
         userService.updateNames(userDto);
@@ -99,7 +97,7 @@ public class StudentController extends AbstractUserCrudController<Student> {
     }
 
     @Override
-    public String updateEmail(@Valid UserDto userDto, BindingResult result, Model model, Principal principal) {
+    public String updateEmail(@Valid UserDto userDto, BindingResult result, Model model) {
         if (userDto.email().equals(userService.getDetails(userDto.id()).email())) {
             result.rejectValue("email", "", "Given email is current user email.");
         }
@@ -107,10 +105,8 @@ public class StudentController extends AbstractUserCrudController<Student> {
         if (result.hasErrors()) {
             super.setPathWithUserDto(model, userDto);
             model.addAttribute("emailFormOpen", true);
+            model.addAttribute("changePasswordForm", new ChangePasswordForm());
             model.addAttribute("studentGroupDto", studentService.getStudentGroup(userDto.id()));
-            if (principal.getName().equalsIgnoreCase(userDto.email())) {
-                model.addAttribute("changePasswordForm", new ChangePasswordForm());
-            }
             return "user/userDetails";
         }
 

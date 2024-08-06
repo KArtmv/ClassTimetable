@@ -71,13 +71,11 @@ public abstract class AbstractUserCrudController<T extends User> {
     }
 
     @PostMapping("/update-names")
-    public String updateUserNames(@Valid UserDto userDto, BindingResult result, Model model, Principal principal) {
+    public String updateUserNames(@Valid UserDto userDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
             setPathWithUserDto(model, userDto);
             model.addAttribute("nameFormOpen", true);
-            if (principal.getName().equalsIgnoreCase(userDto.email())) {
-                model.addAttribute("changePasswordForm", new ChangePasswordForm());
-            }
+            model.addAttribute("changePasswordForm", new ChangePasswordForm());
             return "user/userDetails";
         }
         userService.updateNames(userDto);
@@ -85,7 +83,7 @@ public abstract class AbstractUserCrudController<T extends User> {
     }
 
     @PostMapping("/update-email")
-    public String updateEmail(@Valid UserDto userDto, BindingResult result, Model model, Principal principal) {
+    public String updateEmail(@Valid UserDto userDto, BindingResult result, Model model) {
         if (userDto.email().equals(userService.getDetails(userDto.id()).email())) {
             result.rejectValue("email", "", "Given email is current user email.");
         }
@@ -94,9 +92,7 @@ public abstract class AbstractUserCrudController<T extends User> {
             setPathWithUserDto(model, userDto);
             model.addAttribute("emailFormOpen", true);
             model.addAttribute("changePasswordForm", new ChangePasswordForm());
-            if (principal.getName().equalsIgnoreCase(userDto.email())) {
-                model.addAttribute("changePasswordForm", new ChangePasswordForm());
-            }return "user/userDetails";
+            return "user/userDetails";
         }
 
         userService.updateEmail(userDto);
