@@ -34,8 +34,6 @@ class TeacherServiceImplTest {
     @MockBean
     private TeacherRepository teacherRepository;
     @MockBean
-    private LessonRepository lessonRepository;
-    @MockBean
     private UserRepository userRepository;
     @MockBean
     private BCryptPasswordEncoder passwordEncoder;
@@ -177,25 +175,5 @@ class TeacherServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> teacherService.getById(testData.getTeacherId()));
 
         verify(teacherRepository).findById(testData.getTeacherId());
-    }
-
-    @Test
-    void getLessonForDay_shouldReturnListOfLessonsOfTeacher_whenIsInvoke() {
-        when(lessonRepository.getLessonsByTeacherAndDate(any(Teacher.class), any(LocalDate.class))).thenReturn(testItems.getTeacherLessonsPerDay());
-
-        assertThat(teacherService.getLessonForDay(testItems.getFullyTeacher(), testData.getDate())).hasSize(8);
-
-        verify(lessonRepository).getLessonsByTeacherAndDate(testItems.getFullyTeacher(), testData.getDate());
-    }
-
-    @Test
-    void getLessonForWeek_shouldReturnListOfLessonsOfTeacher_whenIsInvoke() {
-        when(lessonRepository.getLessonsByTeacherAndDateBetween(any(Teacher.class), any(LocalDate.class), any(LocalDate.class)))
-                .thenReturn(testItems.getTeacherLessonsPerWeek());
-
-        assertThat(teacherService.getLessonForWeek(testItems.getFullyTeacher(), testItems.getDateOfMonday(), testItems.getDateOfFriday()))
-                .hasSize(26);
-
-        verify(lessonRepository).getLessonsByTeacherAndDateBetween(testItems.getFullyTeacher(), testItems.getDateOfMonday(), testItems.getDateOfFriday());
     }
 }

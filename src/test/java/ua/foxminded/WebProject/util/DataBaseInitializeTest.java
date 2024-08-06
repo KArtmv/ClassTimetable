@@ -8,13 +8,17 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.ApplicationArguments;
 import ua.foxminded.WebProject.generator.LessonGenerator;
 import ua.foxminded.WebProject.service.LessonService;
+import ua.foxminded.WebProject.testDataInstance.TestItems;
+
+import java.util.Collections;
 
 import static org.mockito.Mockito.*;
 
 class DataBaseInitializeTest {
+    private static final TestItems TEST_ITEMS = new TestItems();
 
     @Mock
-    private InitialDataLoader initialDataLoader;
+    private InitialDataLoader dataLoader;
 
     @Mock
     private LessonGenerator lessonGenerator;
@@ -35,34 +39,35 @@ class DataBaseInitializeTest {
 
     @Test
     void run_InitializeDatabaseSuccessfully() {
-        when(lessonService.isTableEmpty()).thenReturn(true);
+        when(lessonService.getAll()).thenReturn(Collections.emptyList());
 
         dataBaseInitialize.run(applicationArguments);
 
-        verify(lessonService).isTableEmpty();
-        verify(initialDataLoader).populate();
+        verify(lessonService).getAll();
+        verify(dataLoader).populate();
         verify(lessonGenerator).fillLessonTable();
     }
 
     @Test
     void run_DatabaseNotInitialized() {
-        when(lessonService.isTableEmpty()).thenReturn(false);
+        when(lessonService.getAll()).thenReturn(TEST_ITEMS.getAllLessons());
 
         dataBaseInitialize.run(applicationArguments);
 
-        verify(lessonService).isTableEmpty();
-        verify(initialDataLoader, never()).populate();
+        verify(lessonService).getAll();
+        verify(dataLoader, never()).populate();
         verify(lessonGenerator, never()).fillLessonTable();
     }
 
     @Test
     void run_ScriptExecutionFails() {
-        when(lessonService.isTableEmpty()).thenReturn(true);
-        doThrow(RuntimeException.class).when(lessonGenerator).fillLessonTable();
+        when(lessonService.getAll()).thenReturn(Collections.emptyList());
+        doThrow(RuntimeException.class).when(dataLoader).populate();
 
         dataBaseInitialize.run(applicationArguments);
 
-        verify(lessonService).isTableEmpty();
-        verify(initialDataLoader).populate();
+        verify(lessonService).getAll();
+        verify(dataLoader).populate();
+        verify(lessonGenerator, never()).fillLessonTable();
     }
 }

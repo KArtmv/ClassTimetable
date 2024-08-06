@@ -1,84 +1,238 @@
 package ua.foxminded.WebProject.generator;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.util.ReflectionTestUtils;
 import ua.foxminded.WebProject.DTO.LessonDto;
+import ua.foxminded.WebProject.persistence.entity.Group;
+import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.service.*;
+import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.random.RandomGenerator;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(classes = LessonGenerator.class)
 class LessonGeneratorTest {
 
     private final TestItems testItems = new TestItems();
+    private final TestData testData = new TestData();
 
-    @Mock
+    @MockBean
     private LessonService lessonService;
-    @Mock
+    @MockBean
     private CourseService courseService;
-    @Mock
+    @MockBean
     private GroupService groupService;
-    @Mock
+    @MockBean
     private TeacherService teacherService;
-    @Mock
+    @MockBean
     private ClassroomService classroomService;
-    @Mock
+    @MockBean
     private RandomGenerator randomGenerator;
-    @InjectMocks
+    @Autowired
     private LessonGenerator lessonGenerator;
-
-    @BeforeEach
-    void init() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void fillLessonTable_shouldGenerateLessonDtoInstance_whenIsInvoke() {
-        ReflectionTestUtils.setField(lessonGenerator, "maxLessons", 1);
+        ReflectionTestUtils.setField(lessonGenerator, "LESSON_COUNT", 1);
+        ReflectionTestUtils.setField(lessonGenerator, "LOCAL_DATE", testData.getDateOfTuesday());
 
         when(courseService.getAll()).thenReturn(testItems.getCourses());
         when(groupService.getAll()).thenReturn(testItems.getGroups());
         when(teacherService.getAll()).thenReturn(testItems.getTeachers());
         when(classroomService.getAll()).thenReturn(testItems.getClassrooms());
+
         when(lessonService.getAll()).thenReturn(Collections.emptyList()).thenReturn(Collections.singletonList(testItems.getLesson()));
-        when(lessonService.saveLesson(any(LessonDto.class))).thenReturn(testItems.getLesson());
-        when(randomGenerator.nextInt()).thenReturn(7).thenReturn(1).thenReturn(3).thenReturn(6);
+
+        when(randomGenerator.nextLong(anyLong(), anyLong())).thenReturn(testData.getCourseId()).thenReturn(testData.getTeacherId()).thenReturn(testData.getClassroomId()).thenReturn(testData.getGroupId());
+
+        when(lessonService.getLessonsByGroupIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(Collections.emptyList());
+        when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(Collections.emptyList());
 
         lessonGenerator.fillLessonTable();
 
+        ArgumentCaptor<LessonDto> capture = ArgumentCaptor.forClass(LessonDto.class);
         verify(courseService).getAll();
         verify(groupService).getAll();
         verify(teacherService).getAll();
         verify(classroomService).getAll();
-        verify(lessonService).saveLesson(any(LessonDto.class));
+        verify(lessonService).saveLesson(capture.capture());
+        LessonDto lessonDto = capture.getValue();
+        assertAll(() -> {
+            assertThat(lessonDto.getLessonNum()).isEqualTo(testData.getLessenNum());
+            assertThat(lessonDto.getDate()).isEqualTo(testData.getDateOfMonday());
+            assertThat(lessonDto.getCourseId()).isEqualTo(testData.getCourseId());
+            assertThat(lessonDto.getTeacherId()).isEqualTo(testData.getTeacherId());
+            assertThat(lessonDto.getClassroomId()).isEqualTo(testData.getClassroomId());
+            assertThat(lessonDto.getGroupId()).isEqualTo(testData.getGroupId());
+        });
     }
 
     @Test
-    void fillLessonTable_shouldThrowException_whenDuplicateConstraints() {
-        ReflectionTestUtils.setField(lessonGenerator, "maxLessons", 1);
+    void fillLessonTable_shouldGenerateLessonDtoInstance_whenDateIsWeekend() {
+        ReflectionTestUtils.setField(lessonGenerator, "LESSON_COUNT", 1);
+        ReflectionTestUtils.setField(lessonGenerator, "LOCAL_DATE", testData.getDateOfTuesday().with(DayOfWeek.SATURDAY));
 
         when(courseService.getAll()).thenReturn(testItems.getCourses());
         when(groupService.getAll()).thenReturn(testItems.getGroups());
         when(teacherService.getAll()).thenReturn(testItems.getTeachers());
         when(classroomService.getAll()).thenReturn(testItems.getClassrooms());
+
         when(lessonService.getAll()).thenReturn(Collections.emptyList()).thenReturn(Collections.singletonList(testItems.getLesson()));
-        when(lessonService.saveLesson(any(LessonDto.class))).thenThrow(DataIntegrityViolationException.class);
+
+        when(randomGenerator.nextLong(anyLong(), anyLong())).thenReturn(testData.getCourseId()).thenReturn(testData.getTeacherId()).thenReturn(testData.getClassroomId()).thenReturn(testData.getGroupId());
+
+        when(lessonService.getLessonsByGroupIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(Collections.emptyList());
+        when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(Collections.emptyList());
 
         lessonGenerator.fillLessonTable();
 
+        ArgumentCaptor<LessonDto> capture = ArgumentCaptor.forClass(LessonDto.class);
         verify(courseService).getAll();
         verify(groupService).getAll();
         verify(teacherService).getAll();
         verify(classroomService).getAll();
+        verify(lessonService).saveLesson(capture.capture());
+        LessonDto lessonDto = capture.getValue();
+        assertAll(() -> {
+            assertThat(lessonDto.getLessonNum()).isEqualTo(testData.getLessenNum());
+            assertThat(lessonDto.getDate()).isEqualTo(testData.getDateOfMonday().plusWeeks(1));
+            assertThat(lessonDto.getCourseId()).isEqualTo(testData.getCourseId());
+            assertThat(lessonDto.getTeacherId()).isEqualTo(testData.getTeacherId());
+            assertThat(lessonDto.getClassroomId()).isEqualTo(testData.getClassroomId());
+            assertThat(lessonDto.getGroupId()).isEqualTo(testData.getGroupId());
+        });
+    }
+
+    @Test
+    void fillLessonTable_shouldSaveLessonToNextWeek_whenCourseCountMoreThenAvailable() {
+        ReflectionTestUtils.setField(lessonGenerator, "LESSON_COUNT", 1);
+        ReflectionTestUtils.setField(lessonGenerator, "LOCAL_DATE", testData.getDateOfTuesday());
+
+        when(courseService.getAll()).thenReturn(testItems.getCourses());
+        when(groupService.getAll()).thenReturn(testItems.getGroups());
+        when(teacherService.getAll()).thenReturn(testItems.getTeachers());
+        when(classroomService.getAll()).thenReturn(testItems.getClassrooms());
+
+        when(lessonService.getAll()).thenReturn(Collections.emptyList()).thenReturn(Collections.singletonList(testItems.getLesson()));
+
+        when(randomGenerator.nextLong(anyLong(), anyLong())).thenReturn(testData.getCourseId()).thenReturn(testData.getTeacherId()).thenReturn(testData.getClassroomId()).thenReturn(testData.getGroupId());
+
+        when(lessonService.getLessonsByGroupIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.groupLessonsBetweenDates(testData.getDateOfMonday(), testData.getDateOfFriday())).thenReturn(Collections.emptyList());
+        when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(Collections.emptyList());
+
+        lessonGenerator.fillLessonTable();
+
+        ArgumentCaptor<LessonDto> capture = ArgumentCaptor.forClass(LessonDto.class);
+        verify(courseService).getAll();
+        verify(groupService).getAll();
+        verify(teacherService).getAll();
+        verify(classroomService).getAll();
+        verify(lessonService).saveLesson(capture.capture());
+        LessonDto lessonDto = capture.getValue();
+        assertAll(() -> {
+            assertThat(lessonDto.getLessonNum()).isEqualTo(testData.getLessenNum());
+            assertThat(lessonDto.getDate()).isEqualTo(testData.getDateOfMonday().plusWeeks(1));
+            assertThat(lessonDto.getCourseId()).isEqualTo(testData.getCourseId());
+            assertThat(lessonDto.getTeacherId()).isEqualTo(testData.getTeacherId());
+            assertThat(lessonDto.getClassroomId()).isEqualTo(testData.getClassroomId());
+            assertThat(lessonDto.getGroupId()).isEqualTo(testData.getGroupId());
+        });
+
+    }
+
+    @Test
+    void fillLessonTable_shouldSaveLessonToNextWeekToTuesday_whenLessonsPerMondayMoreThanAvailable() {
+        ReflectionTestUtils.setField(lessonGenerator, "LESSON_COUNT", 1);
+        ReflectionTestUtils.setField(lessonGenerator, "LOCAL_DATE", testData.getDateOfTuesday());
+
+        when(courseService.getAll()).thenReturn(testItems.getCourses());
+        when(groupService.getAll()).thenReturn(testItems.getGroups());
+        when(teacherService.getAll()).thenReturn(testItems.getTeachers());
+        when(classroomService.getAll()).thenReturn(testItems.getClassrooms());
+
+        when(lessonService.getAll()).thenReturn(Collections.emptyList()).thenReturn(Collections.singletonList(testItems.getLesson()));
+
+        when(randomGenerator.nextLong(anyLong(), anyLong())).thenReturn(testData.getCourseId()).thenReturn(testData.getTeacherId()).thenReturn(testData.getClassroomId()).thenReturn(testData.getGroupId());
+
+        when(lessonService.getLessonsByGroupIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.groupLessonsBetweenDates(testData.getDateOfMonday(), testData.getDateOfFriday())).thenReturn(Collections.emptyList());
+        when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(testItems.groupLessonsPerDate(testData.getDateOfMonday())).thenReturn(Collections.emptyList());
+
+        lessonGenerator.fillLessonTable();
+
+        ArgumentCaptor<LessonDto> capture = ArgumentCaptor.forClass(LessonDto.class);
+        verify(courseService).getAll();
+        verify(groupService).getAll();
+        verify(teacherService).getAll();
+        verify(classroomService).getAll();
+        verify(lessonService).saveLesson(capture.capture());
+        LessonDto lessonDto = capture.getValue();
+        assertAll(() -> {
+            assertThat(lessonDto.getLessonNum()).isEqualTo(testData.getLessenNum());
+            assertThat(lessonDto.getDate()).isEqualTo(testData.getDateOfTuesday().plusWeeks(1).with(DayOfWeek.TUESDAY));
+            assertThat(lessonDto.getCourseId()).isEqualTo(testData.getCourseId());
+            assertThat(lessonDto.getTeacherId()).isEqualTo(testData.getTeacherId());
+            assertThat(lessonDto.getClassroomId()).isEqualTo(testData.getClassroomId());
+            assertThat(lessonDto.getGroupId()).isEqualTo(testData.getGroupId());
+        });
+    }
+
+    @Test
+    void fillLessonTable_shouldSaveLesson_whenLessonsPerDayLesserThanMax() {
+        ReflectionTestUtils.setField(lessonGenerator, "LESSON_COUNT", 1);
+        ReflectionTestUtils.setField(lessonGenerator, "LOCAL_DATE", testData.getDateOfTuesday());
+
+        when(courseService.getAll()).thenReturn(testItems.getCourses());
+        when(groupService.getAll()).thenReturn(testItems.getGroups());
+        when(teacherService.getAll()).thenReturn(testItems.getTeachers());
+        when(classroomService.getAll()).thenReturn(testItems.getClassrooms());
+
+        when(lessonService.getAll()).thenReturn(Collections.emptyList()).thenReturn(Collections.singletonList(testItems.getLesson()));
+
+        when(randomGenerator.nextLong(anyLong(), anyLong())).thenReturn(testData.getCourseId()).thenReturn(testData.getTeacherId()).thenReturn(testData.getClassroomId()).thenReturn(testData.getGroupId());
+
+        when(lessonService.getLessonsByGroupIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.getAllLessonsOfGroupPerWeekWithoutCourse());
+        when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(testItems.groupLessonsPerDate(testData.getDateOfMonday())).thenReturn(testItems.groupLessonWithCourse()).thenReturn(testItems.getAllLessonsOfGroupPerDayWithoutCourse());
+
+        lessonGenerator.fillLessonTable();
+
+        ArgumentCaptor<LessonDto> capture = ArgumentCaptor.forClass(LessonDto.class);
+        verify(courseService).getAll();
+        verify(groupService).getAll();
+        verify(teacherService).getAll();
+        verify(classroomService).getAll();
+        verify(lessonService).saveLesson(capture.capture());
+        LessonDto lessonDto = capture.getValue();
+        assertAll(() -> {
+            assertThat(lessonDto.getLessonNum()).isEqualTo(8);
+            assertThat(lessonDto.getDate()).isEqualTo(testData.getDateOfWednesday());
+            assertThat(lessonDto.getCourseId()).isEqualTo(testData.getCourseId());
+            assertThat(lessonDto.getTeacherId()).isEqualTo(testData.getTeacherId());
+            assertThat(lessonDto.getClassroomId()).isEqualTo(testData.getClassroomId());
+            assertThat(lessonDto.getGroupId()).isEqualTo(testData.getGroupId());
+        });
     }
 }

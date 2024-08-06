@@ -88,7 +88,6 @@ class StudentControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         model().attributeExists("registrationForm"),
-                        model().attributeExists("user"),
                         model().attributeExists("path"),
                         model().attributeExists("groups"),
                         model().attributeDoesNotExist("emptyGroup"),
@@ -215,10 +214,9 @@ class StudentControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         view().name("user/userDetails"),
-                        model().attributeExists("user"),
                         model().attributeExists("path"),
-                        model().attributeDoesNotExist("isMyDetails"),
                         model().attributeExists("userDto"),
+                        model().attributeExists("studentGroupDto"),
                         content().string(containsString(testData.getUserFirstName())),
                         content().string(containsString(testData.getUserFirstName())),
                         content().string(containsString(testData.getUserEmail())));
@@ -251,6 +249,8 @@ class StudentControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff", "student"})
     void updateNames_shouldDisplaysErrorMessage_whenReceivedInvalidNames(String role) throws Exception {
+        when(studentService.getStudentGroup(anyLong())).thenReturn(testItems.getStudentGroupDto());
+
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("id", testData.getStudentId().toString());
         multiValueMap.add("firstName", "");
@@ -288,7 +288,8 @@ class StudentControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff", "student"})
     void updateEmail_shouldOutputErrorMessage_whenReceivedEmailIsActualUserEmail(String role) throws Exception {
-        when(studentService.getDetails(testData.getStudentId())).thenReturn(testItems.getUserDetails());
+        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(studentService.getStudentGroup(anyLong())).thenReturn(testItems.getStudentGroupDto());
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("id", testData.getStudentId().toString());
@@ -369,9 +370,10 @@ class StudentControllerTest {
 
     @Test
     void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenOldPasswordIsInvalid() throws Exception {
-        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
+        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getFullyStudent());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
-        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(studentService.getDetails(anyLong())).thenReturn(testItems.userDto(testItems.getFullyStudent()));
+        when(studentService.getStudentGroup(anyLong())).thenReturn(testItems.getStudentGroupDto());
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", testData.getOldPassword());
@@ -384,16 +386,16 @@ class StudentControllerTest {
                         model().hasErrors(),
                         view().name("user/userDetails"),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
                         content().string(containsString("Old password is incorrect."))
                 );
     }
 
     @Test
     void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenPasswordNotMatchConfirmPassword() throws Exception {
-        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
+        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getFullyStudent());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(studentService.getDetails(anyLong())).thenReturn(testItems.userDto(testItems.getFullyStudent()));
+        when(studentService.getStudentGroup(anyLong())).thenReturn(testItems.getStudentGroupDto());
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", testData.getOldPassword());
@@ -406,16 +408,16 @@ class StudentControllerTest {
                         view().name("user/userDetails"),
                         model().hasErrors(),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
                         content().string(containsString("Oops! Looks like your passwords dont match. Double-check and try again."))
                 );
     }
 
     @Test
     void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenReceivedEmptyForm() throws Exception {
-        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
+        when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getFullyStudent());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
-        when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(studentService.getDetails(anyLong())).thenReturn(testItems.userDto(testItems.getFullyStudent()));
+        when(studentService.getStudentGroup(anyLong())).thenReturn(testItems.getStudentGroupDto());
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", "");
@@ -428,7 +430,6 @@ class StudentControllerTest {
                         view().name("user/userDetails"),
                         model().hasErrors(),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
                         content().string(containsString("Old password is incorrect.")),
                         content().string(containsString("Old password is required.")),
                         content().string(containsString("Password must be between 8 and 16 characters.")),
@@ -447,16 +448,15 @@ class StudentControllerTest {
     void viewMyDetails_shouldReturnUserDetailsPage_whenLoggedUserHasAccess() throws Exception {
         when(studentService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
         when(studentService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(studentService.getStudentGroup(anyLong())).thenReturn(testItems.getStudentGroupDto());
 
         mockMvc.perform(get("/student/details").with(testUser("student"))).andDo(print())
                 .andExpectAll(
                         status().isOk(),
                         view().name("user/userDetails"),
-                        model().attributeExists("user"),
                         model().attributeExists("path"),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
-                        model().attributeDoesNotExist("studentGroupDto"),
+                        model().attributeExists("studentGroupDto"),
                         content().string(containsString(testData.getUserId().toString())),
                         content().string(containsString(testData.getUserFirstName())),
                         content().string(containsString(testData.getUserLastName())),

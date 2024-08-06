@@ -43,7 +43,6 @@ class CourseControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         model().attributeExists("courses"),
-                        model().attribute("courses", courseService.getAll()),
                         view().name("course/course"),
                         content().string(containsString("Principles of Economics")),
                         content().string(containsString("Learn about the fundamentals of economics")),

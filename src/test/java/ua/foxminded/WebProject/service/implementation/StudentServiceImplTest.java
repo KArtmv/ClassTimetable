@@ -156,24 +156,6 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void getLessonsForDay_shouldReturnListOfLessonsPerSpecifyDay_whenIsInvoke() {
-        when(lessonRepository.getLessonByGroupAndDate(any(Group.class), any(LocalDate.class))).thenReturn(testItems.getAllLessonsOfGroupPerDay());
-
-        assertThat(studentService.getLessonsForDay(testItems.getFullyStudent(), testItems.getDateOfMonday())).hasSize(8);
-
-        verify(lessonRepository).getLessonByGroupAndDate(testItems.getGroup(), testItems.getDateOfMonday());
-    }
-
-    @Test
-    void getLessonsForWeek_shouldReturnListOfLessonsPerSpecifyWeek_whenIsInvoke() {
-        when(lessonRepository.findByGroupAndDateBetween(any(Group.class), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.getAllLessonsOfGroupPerWeek());
-
-        assertThat(studentService.getLessonsForWeek(testItems.getFullyStudent(), testItems.getDateOfMonday(), testItems.getDateOfFriday())).hasSize(30);
-
-        verify(lessonRepository).findByGroupAndDateBetween(testItems.getGroup(), testItems.getDateOfMonday(), testItems.getDateOfFriday());
-    }
-
-    @Test
     void getAll_shouldReturnListOfStudent_whenIsInvoke() {
         when(studentRepository.findAll()).thenReturn(testItems.getStudents());
 

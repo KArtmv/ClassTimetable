@@ -34,7 +34,7 @@ class HomeControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"student", "admin", "staff", "teacher"})
     void home_shouldReturnAppropriatePage_whenUserIsAuthenticated(String role) throws Exception {
-        when(localDate.getCurrentDate()).thenReturn(testData.getDate());
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfMonday());
 
         mockMvc.perform(get("/").with(testUser(role)))
                 .andExpectAll(
@@ -44,12 +44,12 @@ class HomeControllerTest {
 
     @Test
     void home_shouldReturnAppropriatePage_whenUserIsNotAuthenticated() throws Exception {
-        when(localDate.getCurrentDate()).thenReturn(testData.getDate());
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfMonday());
 
         mockMvc.perform(get("/").with(anonymous()))
                 .andExpectAll(
                         status().isOk(),
                         view().name("home"),
-                        content().string(containsString(testData.getDate().toString())));
+                        content().string(containsString(testData.getDateOfMonday().toString())));
     }
 }

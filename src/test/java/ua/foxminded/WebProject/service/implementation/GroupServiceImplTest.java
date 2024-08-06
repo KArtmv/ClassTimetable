@@ -41,31 +41,9 @@ class GroupServiceImplTest {
 
     @Test
     void saveGroup_shouldReturnGroupInstanceWithId_whenIsSavedSuccessfully() {
-        when(repository.save(any(Group.class))).thenReturn(testItems.getGroup());
+        service.save(testData.getGroup());
 
-        assertThat(service.saveGroup(testData.getGroupDto()).getId()).isNotNull();
-
-        verify(repository).save(any(Group.class));
-        verify(repository).findAll();
-    }
-
-    @Test
-    void saveGroup_shouldThrowsDataIntegrityViolationException_whenSavingDuplicate() {
-        when(repository.save(any(Group.class))).thenThrow(DataIntegrityViolationException.class);
-
-        assertThat(service.saveGroup(testData.getGroupDto()).getId()).isNull();
-
-        verify(repository).save(any(Group.class));
-        verify(repository).findAll();
-    }
-
-    @Test
-    void saveGroup_shouldReturnEmptyGroupInstance_whenSavingDuplicate() {
-        when(repository.findAll()).thenReturn(testItems.getGroups());
-
-        assertThat(service.saveGroup(testData.getGroupDto()).getId()).isNull();
-
-        verify(repository).findAll();
+        verify(repository).save(testData.getGroup());
     }
 
     @Test
