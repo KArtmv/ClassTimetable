@@ -6,13 +6,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import ua.foxminded.WebProject.util.MyLocalDate;
+
+import java.time.LocalDate;
 
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
-
-    private final MyLocalDate localDate;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -33,7 +32,7 @@ public class HomeController {
                 return "redirect:/staff";
             }
             default -> {
-                model.addAttribute("currentDate", localDate.getCurrentDate());
+                model.addAttribute("currentDate", LocalDate.now());
                 return "home";
             }
         }
