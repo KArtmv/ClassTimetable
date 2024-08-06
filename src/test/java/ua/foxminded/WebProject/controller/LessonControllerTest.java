@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
@@ -831,5 +832,58 @@ class LessonControllerTest {
     void delete_shouldRedirectToLessonPage_whenUserRoleLackAccess(String role) throws Exception {
         mockMvc.perform(post("/lesson/delete-{id}", testData.getLessonId()).with(testUser(role))).andDo(print())
                 .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"admin", "staff"})
+    void fetchLessonNum_shouldReturnAvailableLessonNumbers(String role) throws Exception {
+        when(lessonService.getAvailableNumbersOfLessons(any(LocalDate.class), anyLong())).thenReturn(testItems.getNumbersOfLessons());
+
+        mockMvc.perform(get("/lesson/fetch-lessenNum")
+                        .param("date", testData.getDateOfMonday().toString())
+                        .param("groupId", testData.getGroupId().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(testUser(role)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").value(1))
+                .andExpect(jsonPath("$[1]").value(2))
+                .andExpect(jsonPath("$[2]").value(3))
+                .andExpect(jsonPath("$[3]").value(4))
+                .andExpect(jsonPath("$[4]").value(5))
+                .andExpect(jsonPath("$[5]").value(6))
+                .andExpect(jsonPath("$[6]").value(7))
+                .andExpect(jsonPath("$[7]").value(8))
+        ;
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"admin", "staff"})
+    void fetchTeacher_shouldReturnAvailableTeachers(String role) throws Exception {
+        when(lessonService.getAvailableTeachers(any(LocalDate.class), any(Integer.class))).thenReturn(Collections.singletonList(testItems.getTeacherNameDto()));
+
+        mockMvc.perform(get("/lesson/fetch-teachers")
+                        .param("date", testData.getDateOfMonday().toString())
+                        .param("lessonNum", testData.getLessenNum().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(testUser(role)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].firstName").value(testData.getTeacherFirstName()))
+                .andExpect(jsonPath("$[0].lastName").value(testData.getTeacherLastName()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"admin", "staff"})
+    void fetchClassrooms_shouldReturnAvailableClassrooms(String role) throws Exception {
+        when(lessonService.getAvailableClassrooms(any(LocalDate.class), any(Integer.class))).thenReturn(Collections.singletonList(testItems.getClassroom()));
+
+        mockMvc.perform(get("/lesson/fetch-classrooms")
+                        .param("date", testData.getDateOfMonday().toString())
+                        .param("lessonNum", testData.getLessenNum().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(testUser(role)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(testItems.getClassroomId()))
+                .andExpect(jsonPath("$[0].classroomName").value(testItems.getClassroomName()));
     }
 }
