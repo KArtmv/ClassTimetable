@@ -252,4 +252,5 @@ public class TestItems {
     }
 
     private final List<Integer> numbersOfLessons = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
+    private final NamesDto teacherNameDto = new NamesDto(testData.getTeacherId(), testData.getTeacherFirstName(), testData.getTeacherLastName());
 }
