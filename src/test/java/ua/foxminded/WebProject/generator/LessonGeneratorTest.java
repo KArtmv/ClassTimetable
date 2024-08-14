@@ -10,6 +10,7 @@ import ua.foxminded.WebProject.DTO.LessonDto;
 import ua.foxminded.WebProject.service.*;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
+import ua.foxminded.WebProject.util.MyLocalDate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -41,14 +42,16 @@ class LessonGeneratorTest {
     private ClassroomService classroomService;
     @MockBean
     private RandomGenerator randomGenerator;
+    @MockBean
+    private MyLocalDate localDate;
     @Autowired
     private LessonGenerator lessonGenerator;
 
     @Test
     void fillLessonTable_shouldGenerateLessonDtoInstance_whenIsInvoke() {
         ReflectionTestUtils.setField(lessonGenerator, "LESSON_COUNT", 1);
-        ReflectionTestUtils.setField(lessonGenerator, "LOCAL_DATE", testData.getDateOfTuesday());
 
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfTuesday());
         when(courseService.getAll()).thenReturn(testItems.getCourses());
         when(groupService.getAll()).thenReturn(testItems.getGroups());
         when(teacherService.getAll()).thenReturn(testItems.getTeachers());
@@ -83,8 +86,8 @@ class LessonGeneratorTest {
     @Test
     void fillLessonTable_shouldGenerateLessonDtoInstance_whenDateIsWeekend() {
         ReflectionTestUtils.setField(lessonGenerator, "LESSON_COUNT", 1);
-        ReflectionTestUtils.setField(lessonGenerator, "LOCAL_DATE", testData.getDateOfTuesday().with(DayOfWeek.SATURDAY));
 
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfTuesday().with(DayOfWeek.SATURDAY));
         when(courseService.getAll()).thenReturn(testItems.getCourses());
         when(groupService.getAll()).thenReturn(testItems.getGroups());
         when(teacherService.getAll()).thenReturn(testItems.getTeachers());
@@ -119,9 +122,8 @@ class LessonGeneratorTest {
     @Test
     void fillLessonTable_shouldSaveLessonToNextWeek_whenCourseCountMoreThenAvailable() {
         ReflectionTestUtils.setField(lessonGenerator, "LESSON_COUNT", 1);
-        ReflectionTestUtils.setField(lessonGenerator, "LOCAL_DATE", testData.getDateOfTuesday());
 
-        when(courseService.getAll()).thenReturn(testItems.getCourses());
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfTuesday());
         when(groupService.getAll()).thenReturn(testItems.getGroups());
         when(teacherService.getAll()).thenReturn(testItems.getTeachers());
         when(classroomService.getAll()).thenReturn(testItems.getClassrooms());
@@ -156,9 +158,8 @@ class LessonGeneratorTest {
     @Test
     void fillLessonTable_shouldSaveLessonToNextWeekToTuesday_whenLessonsPerMondayMoreThanAvailable() {
         ReflectionTestUtils.setField(lessonGenerator, "LESSON_COUNT", 1);
-        ReflectionTestUtils.setField(lessonGenerator, "LOCAL_DATE", testData.getDateOfTuesday());
 
-        when(courseService.getAll()).thenReturn(testItems.getCourses());
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfTuesday());
         when(groupService.getAll()).thenReturn(testItems.getGroups());
         when(teacherService.getAll()).thenReturn(testItems.getTeachers());
         when(classroomService.getAll()).thenReturn(testItems.getClassrooms());
@@ -192,9 +193,8 @@ class LessonGeneratorTest {
     @Test
     void fillLessonTable_shouldSaveLesson_whenLessonsPerDayLesserThanMax() {
         ReflectionTestUtils.setField(lessonGenerator, "LESSON_COUNT", 1);
-        ReflectionTestUtils.setField(lessonGenerator, "LOCAL_DATE", testData.getDateOfTuesday());
 
-        when(courseService.getAll()).thenReturn(testItems.getCourses());
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfTuesday());
         when(groupService.getAll()).thenReturn(testItems.getGroups());
         when(teacherService.getAll()).thenReturn(testItems.getTeachers());
         when(classroomService.getAll()).thenReturn(testItems.getClassrooms());

@@ -17,6 +17,7 @@ import ua.foxminded.WebProject.service.*;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 import ua.foxminded.WebProject.util.CustomAuthenticationSuccessHandler;
+import ua.foxminded.WebProject.util.MyLocalDate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -53,6 +54,8 @@ class LessonControllerTest {
     private TeacherService teacherService;
     @MockBean
     private ClassroomService classroomService;
+    @MockBean
+    private MyLocalDate localDate;
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
@@ -374,8 +377,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
     void lessonPerDay_shouldReturnLessonsListPerDay_whenUserRoleHasAccess(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfMonday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfMonday());
         when(lessonService.getLessonsPerDay(any(LocalDate.class))).thenReturn(testItems.lessonsByDate(testData.getDateOfThursday()));
 
         mockMvc.perform(get("/lesson/lessons-per-day").param("date", testData.getDateOfThursday().toString()).with(testUser(role))).andDo(print())
@@ -393,8 +395,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
     void lessonPerDay_shouldReturnLessonsListPerToday_whenDateIsPast(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfFriday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfFriday());
         when(lessonService.getLessonsPerDay(any(LocalDate.class))).thenReturn(testItems.lessonsByDate(testData.getDateOfFriday()));
 
         mockMvc.perform(get("/lesson/lessons-per-day")
@@ -415,8 +416,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
     void lessonPerDay_shouldReturnLessonsListPerToday_whenDateIsEmpty(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfMonday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfMonday());
         when(lessonService.getLessonsPerDay(any(LocalDate.class))).thenReturn(testItems.lessonsByDate(testData.getDateOfMonday()));
         mockMvc.perform(get("/lesson/lessons-per-day")
                         .param("date", "")
@@ -435,8 +435,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"student", "teacher"})
     void lessonPerDay_shouldReturnForbiddenStatus_whenUserRoleLackAccess(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfMonday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfMonday());
         mockMvc.perform(get("/lesson/lessons-per-day").param("date", testData.getDateOfMonday().toString()).with(testUser(role))).andDo(print())
                 .andExpect(status().isForbidden());
     }
@@ -444,8 +443,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"student", "admin", "staff"})
     void lessonPerDay_shouldReturnLessonsListOfGroup_whenUserRoleHasAccess(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfMonday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfMonday());
         when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(testItems.groupLessonsPerDate(testData.getDateOfThursday()));
 
         mockMvc.perform(get("/lesson/lessons-by-group-{id}", testData.getGroupId())
@@ -466,7 +464,7 @@ class LessonControllerTest {
     @ValueSource(strings = {"student", "admin", "staff"})
     void lessonPerDay_shouldReturnLessonsListOfGroupToday_whenDateIsPast(String role) throws Exception {
         LocalDate date = testData.getDateOfThursday();
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", date);
+        when(localDate.getCurrentDate()).thenReturn(date);
 
         when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(testItems.groupLessonsPerDate(date));
 
@@ -488,7 +486,7 @@ class LessonControllerTest {
     @ValueSource(strings = {"student", "admin", "staff"})
     void lessonPerDay_shouldReturnLessonsListOfGroupToday_whenDateIsEmpty(String role) throws Exception {
         LocalDate date = testData.getDateOfThursday();
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", date);
+        when(localDate.getCurrentDate()).thenReturn(date);
 
         when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(testItems.groupLessonsPerDate(date));
 
@@ -519,8 +517,7 @@ class LessonControllerTest {
     @ValueSource(strings = {"teacher", "admin", "staff"})
     void lessonPerDay_shouldReturnLessonsListOfTeacher_whenUserRoleHasAccess(String role) throws Exception {
         LocalDate date = testData.getDateOfMonday();
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", date);
-
+        when(localDate.getCurrentDate()).thenReturn(date);
         when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(testItems.teacherLessonsPerDate(date));
 
         mockMvc.perform(get("/lesson/lessons-by-teacher-{id}", testData.getTeacherId())
@@ -541,8 +538,7 @@ class LessonControllerTest {
     @ValueSource(strings = {"teacher", "admin", "staff"})
     void lessonPerDay_shouldReturnLessonsListOfTeacherToday_whenDateIsPast(String role) throws Exception {
         LocalDate date = testData.getDateOfThursday();
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", date);
-
+        when(localDate.getCurrentDate()).thenReturn(date);
         when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(testItems.teacherLessonsPerDate(date));
 
         mockMvc.perform(get("/lesson/lessons-by-teacher-{id}", testData.getTeacherId())
@@ -563,8 +559,7 @@ class LessonControllerTest {
     @ValueSource(strings = {"teacher", "admin", "staff"})
     void lessonPerDay_shouldReturnLessonsListOfTeacherToday_whenDateIsEmpty(String role) throws Exception {
         LocalDate date = testData.getDateOfThursday();
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", date);
-
+        when(localDate.getCurrentDate()).thenReturn(date);
         when(lessonService.getLessonsByGroupIdPerDay(anyLong(), any(LocalDate.class))).thenReturn(testItems.teacherLessonsPerDate(date));
 
         mockMvc.perform(get("/lesson/lessons-by-teacher-{id}", testData.getTeacherId())
@@ -592,8 +587,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
     void lessonsBetweenDates_shouldReturnLessonList_whenUserRoleHasAccess(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfMonday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfMonday());
         when(lessonService.getLessonsBetweenDates(any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.lessonsBetweenDates(testData.getDateOfTuesday(), testData.getDateOfFriday()));
 
         mockMvc.perform(get("/lesson/lessons-between-dates")
@@ -613,8 +607,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
     void lessonsBetweenDates_shouldReturnLessonList_whenStartDateIsPast(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfThursday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfThursday());
         when(lessonService.getLessonsBetweenDates(any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.lessonsBetweenDates(testData.getDateOfMonday(), testData.getDateOfFriday()));
 
         mockMvc.perform(get("/lesson/lessons-between-dates")
@@ -634,8 +627,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"admin", "staff"})
     void lessonsBetweenDates_shouldReturnLessonList_whenDatesAreEmpty(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfThursday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfThursday());
         when(lessonService.getLessonsBetweenDates(any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.lessonsBetweenDates(testData.getDateOfMonday(), testData.getDateOfFriday()));
 
         mockMvc.perform(get("/lesson/lessons-between-dates")
@@ -665,8 +657,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"student", "admin", "staff"})
     void lessonBetweenDates_shouldReturnLessonListOfGroupBetweenDates_whenUserRoleHasAccess(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfTuesday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfThursday());
         when(lessonService.getLessonsByGroupIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.groupLessonsBetweenDates(testData.getDateOfTuesday(), testData.getDateOfFriday()));
 
         mockMvc.perform(get("/lesson/lessons-between-dates/group-{id}", testData.getGroupId())
@@ -688,8 +679,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"student", "admin", "staff"})
     void lessonBetweenDates_shouldReturnLessonListOfGroupBetweenDates_whenStartDateIsPast(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfTuesday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfThursday());
         when(lessonService.getLessonsByGroupIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.groupLessonsBetweenDates(testData.getDateOfMonday(), testData.getDateOfFriday()));
 
         mockMvc.perform(get("/lesson/lessons-between-dates/group-{id}", testData.getGroupId())
@@ -711,8 +701,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"student", "admin", "staff"})
     void lessonBetweenDates_shouldReturnLessonListOfGroupBetweenDates_whenDatesAreEmpty(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfTuesday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfThursday());
         when(lessonService.getLessonsByGroupIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.groupLessonsBetweenDates(testData.getDateOfMonday(), testData.getDateOfFriday()));
 
         mockMvc.perform(get("/lesson/lessons-between-dates/group-{id}", testData.getGroupId())
@@ -744,8 +733,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"teacher", "admin", "staff"})
     void lessonBetweenDates_shouldReturnLessonListOfTeacherBetweenDates_whenUserRoleHasAccess(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfTuesday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfThursday());
         when(lessonService.getLessonsByTeacherIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.teacherLessonsBetweenDates(testData.getDateOfTuesday(), testData.getDateOfFriday()));
 
         mockMvc.perform(get("/lesson/lessons-between-dates/teacher-{id}", testData.getTeacherId())
@@ -767,8 +755,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"teacher", "admin", "staff"})
     void lessonBetweenDates_shouldReturnLessonListOfTeacherBetweenDates_whenStartDateIsPast(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfThursday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfThursday());
         when(lessonService.getLessonsByTeacherIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.teacherLessonsBetweenDates(testData.getDateOfMonday(), testData.getDateOfFriday()));
 
         mockMvc.perform(get("/lesson/lessons-between-dates/teacher-{id}", testData.getTeacherId())
@@ -790,8 +777,7 @@ class LessonControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"teacher", "admin", "staff"})
     void lessonBetweenDates_shouldReturnLessonListOfTeacherBetweenDates_whenDatesAreEmpty(String role) throws Exception {
-        ReflectionTestUtils.setField(lessonController, "LOCAL_DATE", testData.getDateOfThursday());
-
+        when(localDate.getCurrentDate()).thenReturn(testData.getDateOfThursday());
         when(lessonService.getLessonsByTeacherIdBetweenDates(anyLong(), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.teacherLessonsBetweenDates(testData.getDateOfMonday(), testData.getDateOfFriday()));
 
         mockMvc.perform(get("/lesson/lessons-between-dates/teacher-{id}", testData.getTeacherId())
