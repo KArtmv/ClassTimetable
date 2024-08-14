@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import ua.foxminded.WebProject.DTO.LessonDto;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.service.*;
+import ua.foxminded.WebProject.util.MyLocalDate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -20,9 +21,8 @@ public class LessonGenerator {
     private static final int MAX_AMOUNT_LESSONS_BY_COURSE_PER_WEEK = 3;
     private static final int MAX_AMOUNT_LESSONS_PER_DAY = 8;
     private static int LESSON_COUNT = 350;
-    private static LocalDate LOCAL_DATE = LocalDate.now();
 
-
+    private final MyLocalDate localDate;
     private final GroupService groupService;
     private final CourseService courseService;
     private final TeacherService teacherService;
@@ -71,11 +71,11 @@ public class LessonGenerator {
         } while (attempts < maxAttempts);
     }
 
-    private static LocalDate getMondayDate() {
-        return isWeekend(LOCAL_DATE) ? LOCAL_DATE.plusWeeks(1).with(DayOfWeek.MONDAY) : LOCAL_DATE.with(DayOfWeek.MONDAY);
+    private LocalDate getMondayDate() {
+        return isWeekend(localDate.getCurrentDate()) ? localDate.getCurrentDate().plusWeeks(1).with(DayOfWeek.MONDAY) : localDate.getCurrentDate().with(DayOfWeek.MONDAY);
     }
 
-    private static boolean isWeekend(LocalDate date) {
+    private boolean isWeekend(LocalDate date) {
         return date.isEqual(date.with(DayOfWeek.SATURDAY)) || date.isEqual(date.with(DayOfWeek.SUNDAY));
     }
 

@@ -17,6 +17,7 @@ import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Lesson;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
 import ua.foxminded.WebProject.service.*;
+import ua.foxminded.WebProject.util.MyLocalDate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -35,9 +36,8 @@ public class LessonController {
     private static final String LESSONS_BETWEEN_DATES_PATH = "/lessons-between-dates";
     private static final String LESSONS_BETWEEN_DAYS_BY_GROUP_ID = "/lessons-between-dates/group-{id}";
     private static final String LESSONS_BETWEEN_DAYS_BY_TEACHER_ID = "/lessons-between-dates/teacher-{id}";
-    private static LocalDate LOCAL_DATE = LocalDate.now();
 
-
+    private final MyLocalDate localDate;
     private final LessonService lessonService;
     private final GroupService groupService;
     private final CourseService courseService;
@@ -140,9 +140,9 @@ public class LessonController {
                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                       @RequestParam(value = "end", required = false)
                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
-        if (start == null || end == null || start.isBefore(LOCAL_DATE)) {
-            start = LOCAL_DATE.with(DayOfWeek.MONDAY);
-            end = LOCAL_DATE.with(DayOfWeek.FRIDAY);
+        if (start == null || end == null || start.isBefore(localDate.getCurrentDate())) {
+            start = localDate.getCurrentDate().with(DayOfWeek.MONDAY);
+            end = localDate.getCurrentDate().with(DayOfWeek.FRIDAY);
         }
         model.addAttribute("startDate", start);
         model.addAttribute("endDate", end);
@@ -157,8 +157,8 @@ public class LessonController {
                                 HttpServletRequest request,
                                 @RequestParam(value = "date", required = false)
                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        if (date == null || date.isBefore(LOCAL_DATE)) {
-            date = LOCAL_DATE;
+        if (date == null || date.isBefore(localDate.getCurrentDate())) {
+            date = localDate.getCurrentDate();
         }
         processLessonsPerDay(id, date, request.getRequestURI(), model);
         model.addAttribute("selectedDate", date);
