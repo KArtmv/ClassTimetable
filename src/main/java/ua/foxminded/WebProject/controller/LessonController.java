@@ -156,9 +156,9 @@ public class LessonController {
     @GetMapping(LESSONS_BETWEEN_DAYS_BY_GROUP_ID)
     public String lessonsBetweenDatesByGroupId(@PathVariable Long id, Model model,
                                                @RequestParam(value = "start", required = false)
-                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                                @RequestParam(value = "end", required = false)
-                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
         if (start == null || end == null || start.isBefore(localDate.getCurrentDate()) || end.isBefore(localDate.getCurrentDate())) {
             start = localDate.getCurrentDate().with(DayOfWeek.MONDAY);
             end = localDate.getCurrentDate().with(DayOfWeek.FRIDAY);
@@ -177,9 +177,9 @@ public class LessonController {
     @GetMapping(LESSONS_BETWEEN_DAYS_BY_TEACHER_ID)
     public String lessonsBetweenDatesByTeacherId(@PathVariable Long id, Model model,
                                                  @RequestParam(value = "start", required = false)
-                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                                  @RequestParam(value = "end", required = false)
-                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
         if (start == null || end == null || start.isBefore(localDate.getCurrentDate()) || end.isBefore(localDate.getCurrentDate())) {
             start = localDate.getCurrentDate().with(DayOfWeek.MONDAY);
             end = localDate.getCurrentDate().with(DayOfWeek.FRIDAY);
@@ -199,7 +199,7 @@ public class LessonController {
     public String lessonsPerDayByGroupId(@PathVariable(required = false) Long id,
                                          Model model,
                                          @RequestParam(value = "date", required = false)
-                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         date = getCurrentDayIfDateIsPastOrEmpty(date);
 
         fillLessonModel(model,
@@ -216,7 +216,7 @@ public class LessonController {
     public String lessonsPerDayByTeacherId(@PathVariable(required = false) Long id,
                                            Model model,
                                            @RequestParam(value = "date", required = false)
-                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         date = getCurrentDayIfDateIsPastOrEmpty(date);
 
         fillLessonModel(model,
