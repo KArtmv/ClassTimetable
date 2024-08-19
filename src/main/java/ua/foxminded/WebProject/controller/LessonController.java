@@ -1,6 +1,5 @@
 package ua.foxminded.WebProject.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -55,7 +54,7 @@ public class LessonController {
     @GetMapping("/add-lesson")
     public String addLesson(Model model) {
         model.addAttribute("lessonDto", new LessonDto());
-        model.addAllAttributes(fillModel());
+        model.addAllAttributes(getGroupsAndCourses());
         model.addAttribute("teachers", new Teacher());
         model.addAttribute("classrooms", new Classroom());
         model.addAttribute("edit", false);
@@ -88,7 +87,7 @@ public class LessonController {
             model.addAttribute("lessonsNum", lessonService.getAvailableNumbersOfLessons(lessonDto.getDate(), lessonDto.getGroupId()));
             model.addAttribute("teachers", lessonService.getAvailableTeachers(lessonDto.getDate(), lessonDto.getLessonNum()));
             model.addAttribute("classrooms", lessonService.getAvailableClassrooms(lessonDto.getDate(), lessonDto.getLessonNum()));
-            model.addAllAttributes(fillModel());
+            model.addAllAttributes(getGroupsAndCourses());
             model.addAttribute("edit", false);
             return "lesson/features/newLesson";
         }
@@ -103,7 +102,7 @@ public class LessonController {
         model.addAttribute("lessonsNum", lessonService.getLessonsNums());
         model.addAttribute("teachers", teacherService.getAllNames());
         model.addAttribute("classrooms", classroomService.getAll());
-        model.addAllAttributes(fillModel());
+        model.addAllAttributes(getGroupsAndCourses());
         return "lesson/features/newLesson";
     }
 
@@ -118,7 +117,7 @@ public class LessonController {
             model.addAttribute("lessonsNum", lessonService.getAvailableNumbersOfLessons(lessonDto.getDate(), lessonDto.getGroupId()));
             model.addAttribute("teachers", lessonService.getAvailableTeachers(lessonDto.getDate(), lessonDto.getLessonNum()));
             model.addAttribute("classrooms", lessonService.getAvailableClassrooms(lessonDto.getDate(), lessonDto.getLessonNum()));
-            model.addAllAttributes(fillModel());
+            model.addAllAttributes(getGroupsAndCourses());
             model.addAttribute("edit", true);
             return "lesson/features/newLesson";
         }
@@ -133,34 +132,112 @@ public class LessonController {
         return "lesson/features/details";
     }
 
-    @PreAuthorize("hasAnyRole('admin', 'staff', 'student', 'teacher')")
-    @GetMapping(value = {LESSONS_BETWEEN_DATES_PATH, LESSONS_BETWEEN_DAYS_BY_GROUP_ID, LESSONS_BETWEEN_DAYS_BY_TEACHER_ID})
-    public String lessonsBetweenDates(@PathVariable(required = false) Long id, Model model, HttpServletRequest request,
+    @GetMapping(LESSONS_BETWEEN_DATES_PATH)
+    public String lessonsBetweenDates(Model model,
                                       @RequestParam(value = "start", required = false)
                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                       @RequestParam(value = "end", required = false)
                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
-        if (start == null || end == null || start.isBefore(localDate.getCurrentDate())) {
+        if (start == null || end == null || start.isBefore(localDate.getCurrentDate()) || end.isBefore(localDate.getCurrentDate())) {
             start = localDate.getCurrentDate().with(DayOfWeek.MONDAY);
             end = localDate.getCurrentDate().with(DayOfWeek.FRIDAY);
         }
+        fillLessonModel(model,
+                LESSONS_PER_DAY_PATH,
+                LESSONS_BETWEEN_DATES_PATH,
+                lessonService.getLessonsBetweenDates(start, end));
+
         model.addAttribute("startDate", start);
         model.addAttribute("endDate", end);
-        processLessonsBetweenDates(id, start, end, request.getRequestURI(), model);
         return "lesson/lesson";
     }
 
-    @PreAuthorize("hasAnyRole('admin', 'staff', 'student', 'teacher')")
-    @GetMapping(value = {LESSONS_PER_DAY_BY_GROUP_ID, LESSONS_PER_DAY_BY_TEACHER_ID, LESSONS_PER_DAY_PATH})
-    public String lessonsPerDay(@PathVariable(required = false) Long id,
-                                Model model,
-                                HttpServletRequest request,
+    @PreAuthorize("hasAnyRole('admin', 'staff', 'student')")
+    @GetMapping(LESSONS_BETWEEN_DAYS_BY_GROUP_ID)
+    public String lessonsBetweenDatesByGroupId(@PathVariable Long id, Model model,
+                                               @RequestParam(value = "start", required = false)
+                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+                                               @RequestParam(value = "end", required = false)
+                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        if (start == null || end == null || start.isBefore(localDate.getCurrentDate()) || end.isBefore(localDate.getCurrentDate())) {
+            start = localDate.getCurrentDate().with(DayOfWeek.MONDAY);
+            end = localDate.getCurrentDate().with(DayOfWeek.FRIDAY);
+        }
+        fillLessonModel(model,
+                cutId(LESSONS_PER_DAY_BY_GROUP_ID) + id,
+                cutId(LESSONS_BETWEEN_DAYS_BY_GROUP_ID) + id,
+                lessonService.getLessonsByGroupIdBetweenDates(id, start, end));
+
+        model.addAttribute("startDate", start);
+        model.addAttribute("endDate", end);
+        return "lesson/lesson";
+    }
+
+    @PreAuthorize("hasAnyRole('admin', 'staff', 'teacher')")
+    @GetMapping(LESSONS_BETWEEN_DAYS_BY_TEACHER_ID)
+    public String lessonsBetweenDatesByTeacherId(@PathVariable Long id, Model model,
+                                                 @RequestParam(value = "start", required = false)
+                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+                                                 @RequestParam(value = "end", required = false)
+                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        if (start == null || end == null || start.isBefore(localDate.getCurrentDate()) || end.isBefore(localDate.getCurrentDate())) {
+            start = localDate.getCurrentDate().with(DayOfWeek.MONDAY);
+            end = localDate.getCurrentDate().with(DayOfWeek.FRIDAY);
+        }
+        fillLessonModel(model,
+                cutId(LESSONS_PER_DAY_BY_TEACHER_ID) + id,
+                cutId(LESSONS_BETWEEN_DAYS_BY_TEACHER_ID) + id,
+                lessonService.getLessonsByGroupIdBetweenDates(id, start, end));
+
+        model.addAttribute("startDate", start);
+        model.addAttribute("endDate", end);
+        return "lesson/lesson";
+    }
+
+    @PreAuthorize("hasAnyRole('admin', 'staff', 'student')")
+    @GetMapping(LESSONS_PER_DAY_BY_GROUP_ID)
+    public String lessonsPerDayByGroupId(@PathVariable(required = false) Long id,
+                                         Model model,
+                                         @RequestParam(value = "date", required = false)
+                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        date = getCurrentDayIfDateIsPastOrEmpty(date);
+
+        fillLessonModel(model,
+                cutId(LESSONS_PER_DAY_BY_GROUP_ID) + id,
+                cutId(LESSONS_BETWEEN_DAYS_BY_GROUP_ID) + id,
+                lessonService.getLessonsByGroupIdPerDay(id, date)
+        );
+        model.addAttribute("selectedDate", date);
+        return "lesson/lesson";
+    }
+
+    @PreAuthorize("hasAnyRole('admin', 'staff', 'teacher')")
+    @GetMapping(LESSONS_PER_DAY_BY_TEACHER_ID)
+    public String lessonsPerDayByTeacherId(@PathVariable(required = false) Long id,
+                                           Model model,
+                                           @RequestParam(value = "date", required = false)
+                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        date = getCurrentDayIfDateIsPastOrEmpty(date);
+
+        fillLessonModel(model,
+                cutId(LESSONS_PER_DAY_BY_TEACHER_ID) + id,
+                cutId(LESSONS_BETWEEN_DAYS_BY_TEACHER_ID) + id,
+                lessonService.getLessonsByTeacherIdPerDay(id, date)
+        );
+        model.addAttribute("selectedDate", date);
+        return "lesson/lesson";
+    }
+
+    @GetMapping(LESSONS_PER_DAY_PATH)
+    public String lessonsPerDay(Model model,
                                 @RequestParam(value = "date", required = false)
                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        if (date == null || date.isBefore(localDate.getCurrentDate())) {
-            date = localDate.getCurrentDate();
-        }
-        processLessonsPerDay(id, date, request.getRequestURI(), model);
+        date = getCurrentDayIfDateIsPastOrEmpty(date);
+
+        fillLessonModel(model,
+                LESSONS_PER_DAY_PATH,
+                LESSONS_BETWEEN_DATES_PATH,
+                lessonService.getLessonsPerDay(date));
         model.addAttribute("selectedDate", date);
         return "lesson/lesson";
     }
@@ -171,39 +248,7 @@ public class LessonController {
         return "redirect:/lesson";
     }
 
-    private void processLessonsPerDay(Long id, LocalDate date, String url, Model model) {
-        if (url.contains("group")) {
-            model.addAttribute("lessonPerDayPath", cutId(LESSONS_PER_DAY_BY_GROUP_ID) + id);
-            model.addAttribute("lessonByDatesPath", cutId(LESSONS_BETWEEN_DAYS_BY_GROUP_ID) + id);
-            model.addAttribute("classtables", sortLessonsByDateMap(lessonService.getLessonsByGroupIdPerDay(id, date)));
-        } else if (url.contains("teacher")) {
-            model.addAttribute("lessonPerDayPath", cutId(LESSONS_PER_DAY_BY_TEACHER_ID) + id);
-            model.addAttribute("lessonByDatesPath", cutId(LESSONS_BETWEEN_DAYS_BY_TEACHER_ID) + id);
-            model.addAttribute("classtables", sortLessonsByDateMap(lessonService.getLessonsByTeacherIdPerDay(id, date)));
-        } else {
-            model.addAttribute("lessonPerDayPath", LESSONS_PER_DAY_PATH);
-            model.addAttribute("lessonByDatesPath", LESSONS_BETWEEN_DATES_PATH);
-            model.addAttribute("classtables", sortLessonsByDateMap(lessonService.getLessonsPerDay(date)));
-        }
-    }
-
-    private void processLessonsBetweenDates(Long id, LocalDate start, LocalDate end, String url, Model model) {
-        if (url.contains("group")) {
-            model.addAttribute("lessonPerDayPath", cutId(LESSONS_PER_DAY_BY_GROUP_ID) + id);
-            model.addAttribute("lessonByDatesPath", cutId(LESSONS_BETWEEN_DAYS_BY_GROUP_ID) + id);
-            model.addAttribute("classtables", sortLessonsByDateMap(lessonService.getLessonsByGroupIdBetweenDates(id, start, end)));
-        } else if (url.contains("teacher")) {
-            model.addAttribute("lessonPerDayPath", cutId(LESSONS_PER_DAY_BY_TEACHER_ID) + id);
-            model.addAttribute("lessonByDatesPath", cutId(LESSONS_BETWEEN_DAYS_BY_TEACHER_ID) + id);
-            model.addAttribute("classtables", sortLessonsByDateMap(lessonService.getLessonsByTeacherIdBetweenDates(id, start, end)));
-        } else {
-            model.addAttribute("lessonPerDayPath", LESSONS_PER_DAY_PATH);
-            model.addAttribute("lessonByDatesPath", LESSONS_BETWEEN_DATES_PATH);
-            model.addAttribute("classtables", sortLessonsByDateMap(lessonService.getLessonsBetweenDates(start, end)));
-        }
-    }
-
-    private Map<String, Object> fillModel() {
+    private Map<String, Object> getGroupsAndCourses() {
         Map<String, Object> modelMap = new HashMap<>();
         modelMap.put("groups", groupService.getAll());
         modelMap.put("courses", courseService.getAll());
@@ -233,6 +278,16 @@ public class LessonController {
 
     private String cutId(String string) {
         return string.replace("{id}", "");
+    }
+
+    private void fillLessonModel(Model model, String urlPerDay, String urlBetweenDates, List<Lesson> lessons) {
+        model.addAttribute("lessonPerDayPath", urlPerDay);
+        model.addAttribute("lessonByDatesPath", urlBetweenDates);
+        model.addAttribute("classtables", sortLessonsByDateMap(lessons));
+    }
+
+    private LocalDate getCurrentDayIfDateIsPastOrEmpty(LocalDate date) {
+        return date == null || date.isBefore(localDate.getCurrentDate()) ? localDate.getCurrentDate() : date;
     }
 }
 
