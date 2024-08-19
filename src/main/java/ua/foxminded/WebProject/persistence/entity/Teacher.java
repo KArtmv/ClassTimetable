@@ -2,13 +2,9 @@ package ua.foxminded.WebProject.persistence.entity;
 
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -16,9 +12,6 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue(value = "teacher")
 public class Teacher extends User {
-
-    @OneToMany(mappedBy = "teacher", orphanRemoval = true)
-    private Set<Lesson> lessons = new LinkedHashSet<>();
 
     public Teacher(Long id) {
         super(id);

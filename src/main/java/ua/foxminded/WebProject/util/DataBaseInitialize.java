@@ -22,7 +22,7 @@ public class DataBaseInitialize implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         try {
-            if (lessonService.isTableEmpty()) {
+            if (lessonService.getAll().isEmpty()) {
                 dataLoader.populate();
                 lessonGenerator.fillLessonTable();
             }

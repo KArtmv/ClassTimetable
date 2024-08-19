@@ -71,7 +71,6 @@ class AdminControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         model().attributeExists("registrationForm"),
-                        model().attributeExists("user"),
                         model().attributeExists("path"),
                         view().name("user/addUser"));
     }
@@ -152,9 +151,7 @@ class AdminControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         view().name("user/userDetails"),
-                        model().attributeExists("user"),
                         model().attributeExists("path"),
-                        model().attributeDoesNotExist("isMyDetails"),
                         model().attributeExists("userDto"),
                         content().string(containsString(testData.getUserFirstName())),
                         content().string(containsString(testData.getUserFirstName())),
@@ -259,9 +256,9 @@ class AdminControllerTest {
 
     @Test
     void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenOldPasswordIsInvalid() throws Exception {
-        when(adminService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
+        when(adminService.getUserByEmail(anyString())).thenReturn(testItems.getFullyAdmin());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
-        when(adminService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(adminService.getDetails(anyLong())).thenReturn(testItems.userDto(testItems.getFullyAdmin()));
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", testData.getOldPassword());
@@ -273,16 +270,15 @@ class AdminControllerTest {
                         status().isOk(),
                         model().hasErrors(),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
                         view().name("user/userDetails"),
                         content().string(containsString("Old password is incorrect.")));
     }
 
     @Test
     void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenPasswordNotMatchConfirmPassword() throws Exception {
-        when(adminService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
+        when(adminService.getUserByEmail(anyString())).thenReturn(testItems.getFullyAdmin());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(adminService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(adminService.getDetails(anyLong())).thenReturn(testItems.userDto(testItems.getFullyAdmin()));
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", testData.getOldPassword());
@@ -294,7 +290,6 @@ class AdminControllerTest {
                         status().isOk(),
                         view().name("user/userDetails"),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
                         model().hasErrors(),
                         content().string(containsString("Oops! Looks like your passwords dont match. Double-check and try again."))
                 );
@@ -302,9 +297,9 @@ class AdminControllerTest {
 
     @Test
     void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenReceivedEmptyForm() throws Exception {
-        when(adminService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
+        when(adminService.getUserByEmail(anyString())).thenReturn(testItems.getFullyAdmin());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
-        when(adminService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(adminService.getDetails(anyLong())).thenReturn(testItems.userDto(testItems.getFullyAdmin()));
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", "");
@@ -316,7 +311,6 @@ class AdminControllerTest {
                         status().isOk(),
                         view().name("user/userDetails"),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
                         model().hasErrors(),
                         content().string(containsString("Old password is incorrect.")),
                         content().string(containsString("Old password is required.")),
@@ -333,10 +327,8 @@ class AdminControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         view().name("user/userDetails"),
-                        model().attributeExists("user"),
                         model().attributeExists("path"),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
                         model().attributeDoesNotExist("studentGroupDto"),
                         content().string(containsString(testData.getUserId().toString())),
                         content().string(containsString(testData.getUserFirstName())),

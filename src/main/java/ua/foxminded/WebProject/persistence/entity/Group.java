@@ -2,14 +2,10 @@ package ua.foxminded.WebProject.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -20,12 +16,6 @@ public class Group extends BaseEntity {
 
     @Column(name = "group_name", length = 50)
     private String groupName;
-
-    @OneToMany(mappedBy = "group")
-    private Set<Student> students = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "group")
-    private Set<Lesson> lessons = new LinkedHashSet<>();
 
     public Group(Long id) {
         super(id);

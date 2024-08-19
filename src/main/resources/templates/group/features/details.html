@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Group details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
+    <th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
+</head>
+<body>
+<main>
+    <div class="container">
+        <h2 class="mb-2">Group name:
+            <small class="text-body-secondary" th:text="${group.groupName}"></small>
+        </h2>
+        <div class="d-grid gap-2 col-3 mb-4">
+            <a class="btn btn-primary" th:href="@{'/group/students-of-group-' + ${group.id}}">Get student of group</a>
+            <a class="btn btn-primary" th:href="@{'/lesson/lessons-by-group-' + ${group.id}}">View lessons of group</a>
+        </div>
+        <a class="btn btn-success" href="/">Home page</a>
+    </div>
+</main>
+</body>
+</html>

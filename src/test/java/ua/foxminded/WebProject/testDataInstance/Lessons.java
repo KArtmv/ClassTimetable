@@ -12,7 +12,7 @@ public class Lessons {
 
     @Getter(lazy = true)
     private final Set<Lesson> lessons = new HashSet<>(Arrays.asList(
-            new Lesson(1L, LocalDate.of(2024, 3, 11), 1, new Course(8L), new Group(5L), new Classroom(1L), new Teacher(1L)),
+            new Lesson(1L, LocalDate.of(2024, 3, 11), 8, new Course(8L), new Group(5L), new Classroom(1L), new Teacher(1L)),
             new Lesson(2L, LocalDate.of(2024, 3, 11), 1, new Course(7L), new Group(1L), new Classroom(3L), new Teacher(6L)),
             new Lesson(3L, LocalDate.of(2024, 3, 11), 1, new Course(7L), new Group(4L), new Classroom(5L), new Teacher(4L)),
             new Lesson(4L, LocalDate.of(2024, 3, 11), 1, new Course(2L), new Group(9L), new Classroom(8L), new Teacher(7L)),

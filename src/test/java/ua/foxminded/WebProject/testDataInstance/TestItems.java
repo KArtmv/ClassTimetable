@@ -2,6 +2,7 @@ package ua.foxminded.WebProject.testDataInstance;
 
 import lombok.Getter;
 import ua.foxminded.WebProject.DTO.LessonDto;
+import ua.foxminded.WebProject.DTO.NamesDto;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
@@ -10,8 +11,8 @@ import ua.foxminded.WebProject.persistence.entity.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 @Getter
@@ -19,12 +20,13 @@ public class TestItems {
 
     private final String password = "password";
 
-    private final TestData testData = new TestData();
-    private final Lessons lessons = new Lessons();
+    private static final TestData testData = new TestData();
+    private static final Lessons lessons = new Lessons();
 
     private final Long classroomId = 3L;
     private final String classroomName = "Room 103";
     private final Classroom classroom = new Classroom(classroomId, classroomName);
+    private final Classroom firstClassroom = new Classroom(testData.getClassroomId(), testData.getClassroomName());
 
     private final Long courseId = 7L;
     private final String courseName = "Principles of Marketing";
@@ -32,6 +34,7 @@ public class TestItems {
     private final Course courseWithIdSeven = new Course(getCourseId(), getCourseName(), getCourseDescription());
     private final Course course = new Course(testData.getCourseId(), testData.getCourseName(), testData.getCourseDescription());
     private final Course secondCourse = new Course(testData.getCourseId(), testData.getSecondCourseName(), testData.getSecondCourseDescription());
+    private final Course secondCourse2 = new Course(testData.getSecondCourseId(), testData.getSecondCourseName(), testData.getSecondCourseDescription());
 
     private final Group group = new Group(testData.getGroupId(), testData.getGroupName());
     private final Group secondGroup = new Group(testData.getSecondGroupId(), testData.getSecondGroupName());
@@ -40,8 +43,10 @@ public class TestItems {
     private final String teacherFirstName = "Jessica";
     private final String teacherLastName = "Brown";
 
-    private final Lesson lesson = new Lesson(testData.getLessonId(), testData.getDate(), testData.getLessenNum(), getCourseWithIdSeven(), getGroup(), getClassroom(), getFullyTeacher());
-    private final LessonDto lessonDto = new LessonDto(new Course(getCourseId()), new Group(testData.getGroupId()), new Classroom(getClassroomId()), new Teacher(getTeacherId()));
+    private final Lesson lesson = new Lesson(testData.getLessonId(), testData.getDateOfMonday(), testData.getLessenNum(), getCourse(), getGroup(), getClassroom(), getFullyTeacher());
+    private final LessonDto newLesson = new LessonDto(null, testData.getDateOfMonday(), testData.getLessenNum(), testData.getCourseId(), testData.getGroupId(), testData.getClassroomId(), testData.getTeacherId());
+    private final LessonDto lessonDto = new LessonDto(testData.getLessonId(), testData.getDateOfMonday(), testData.getLessenNum(), testData.getCourseId(), testData.getGroupId(), testData.getClassroomId(), testData.getTeacherId());
+    private final LessonDto lessonDtoUpdated = new LessonDto(testData.getLessonId(), testData.getDateOfMonday(), testData.getLessenNum(), testData.getSecondCourseId(), testData.getSecondGroupId(), testData.getClassroomId(), testData.getTeacherId());
 
     private final User savedStudent = new Student(testData.getStudentId(), testData.getStudentFirstName(), testData.getStudentLastName(), null);
 
@@ -65,15 +70,19 @@ public class TestItems {
 
     private final UserDto userDetails = new UserDto(testData.getUserId(), testData.getUserFirstName(), testData.getUserLastName(), testData.getUserEmail());
 
+    public UserDto userDto(User user) {
+        return new UserDto(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
+    }
+
     private final String encodedPassword = "thisIsEncodedPassword";
     private final String encodedPassword2 = "thisIsEncodedPassword2";
 
     private final StudentGroupDto studentGroupDto = new StudentGroupDto(testData.getStudentId(), testData.getGroupId(), testData.getGroupName());
     private final StudentGroupDto studentGroupDto2 = new StudentGroupDto(testData.getStudentId(), testData.getSecondGroupId(), testData.getSecondGroupName());
 
-    private final LocalDate dateOfMonday = testData.getDate().with(DayOfWeek.MONDAY);
+    private final LocalDate dateOfMonday = testData.getDateOfMonday().with(DayOfWeek.MONDAY);
 
-    private final LocalDate dateOfFriday = testData.getDate().with(DayOfWeek.FRIDAY);
+    private final LocalDate dateOfFriday = testData.getDateOfMonday().with(DayOfWeek.FRIDAY);
 
     public UserRegistrationForm userRegistrationForm() {
         UserRegistrationForm userRegistrationForm = new UserRegistrationForm();
@@ -107,12 +116,6 @@ public class TestItems {
             getSecondGroup(),
             new Group(3L, "QM-09"));
 
-    public Lesson getParticipants() {
-        Lesson lesson1 = getLesson();
-        lesson1.getGroup().setStudents(new HashSet<>(getStudents()));
-        return lesson1;
-    }
-
     private final List<Teacher> teachers = Arrays.asList(
             getFullyTeacher(),
             new Teacher(2L, "Emily", "Johnson"),
@@ -124,24 +127,68 @@ public class TestItems {
             new Teacher(8L, "Olivia", "Anderson")
     );
 
-    private final List<Lesson> lessonsPerDay = lessons.getLessons().stream().filter(l -> l.getDate().isEqual(testData.getDate())).toList();
+    public List<NamesDto> teacherNames() {
+        List<NamesDto> teacherDtos = new ArrayList<>();
+        teachers.forEach(teacher -> teacherDtos.add(new NamesDto(teacher.getId(), teacher.getFirstName(), teacher.getLastName())));
+        return teacherDtos;
+    }
+
+    public List<UserDto> getStudentNames() {
+        List<UserDto> studentDtos = new ArrayList<>();
+        students.forEach(student -> studentDtos.add(new UserDto(student.getId(), student.getFirstName(), student.getLastName(), student.getEmail())));
+        return studentDtos;
+    }
 
     private final List<Lesson> allLessons = lessons.getLessons().stream().toList();
 
-    private final List<Lesson> allLessonsOfGroupPerWeek = lessons.getLessons()
+    public List<Lesson> lessonsByDate(LocalDate date) {
+        return lessons.getLessons().stream().filter(l -> l.getDate().isEqual(date)).toList();
+    }
+
+    public List<Lesson> lessonsBetweenDates(LocalDate start, LocalDate end) {
+        return lessons.getLessons().stream()
+                .filter(l -> !l.getDate().isBefore(start) && !l.getDate().isAfter(end)).toList();
+    }
+
+    private final List<Lesson> groupLessons = lessons.getLessons()
             .stream().filter(l -> l.getGroup().getId().equals(getGroup().getId())).toList();
-    private final List<Lesson> allLessonsOfGroupPerDay = getAllLessonsOfGroupPerWeek()
-            .stream().filter(l -> l.getDate().equals(dateOfMonday)).toList();
 
-    private final List<Lesson> allLessonsOfGroupPerWeekWithoutCourse = getAllLessonsOfGroupPerWeek()
-            .stream().filter(l -> !l.getCourse().getId().equals(getCourseId())).toList();
-    private final List<Lesson> allLessonsOfGroupPerDayWithoutCourse = getAllLessonsOfGroupPerDay()
-            .stream().filter(l -> !l.getCourse().getId().equals(getCourseId())).toList();
+    public List<Lesson> groupLessonsPerDate(LocalDate date) {
+        return getGroupLessons().stream().filter(l -> l.getDate().equals(date)).toList();
+    }
 
-    private final List<Lesson> teacherLessonsPerWeek = lessons.getLessons().stream()
-            .filter(l -> l.getTeacher().getId().equals(getFullyTeacher().getId())).toList();
-    private final List<Lesson> teacherLessonsPerDay = getTeacherLessonsPerWeek().stream()
-            .filter(l -> l.getDate().isEqual(testData.getDate())).toList();
+    public List<Lesson> groupLessonsBetweenDates(LocalDate startDate, LocalDate endDate) {
+        return getGroupLessons().stream()
+                .filter(l -> !l.getDate().isBefore(startDate) && !l.getDate().isAfter(endDate)).toList();
+    }
+
+    private final List<Lesson> teacherLessons = lessons.getLessons().stream()
+            .filter(l -> l.getTeacher().getId().equals(testData.getTeacherId())).toList();
+
+    public List<Lesson> teacherLessonsPerDate(LocalDate date) {
+        return getTeacherLessons().stream()
+                .filter(l -> l.getDate().isEqual(date)).toList();
+    }
+
+    public List<Lesson> teacherLessonsBetweenDates(LocalDate startDate, LocalDate endDate) {
+        return teacherLessons.stream()
+                .filter(l -> !l.getDate().isBefore(startDate) && !l.getDate().isAfter(endDate)).toList();
+    }
+
+    public List<Lesson> groupLessonWithCourse() {
+        List<Lesson> list = groupLessons.stream().filter(l -> l.getDate().isEqual(testData.getDateOfTuesday())).toList();
+        return Arrays.asList(list.get(1), list.get(2), list.get(3), list.get(4), list.get(5), list.get(6), list.get(7));
+    }
+
+    private final List<Lesson> allLessonsOfGroupPerWeekWithoutCourse = getGroupLessons()
+            .stream().filter(l -> !l.getCourse().getId().equals(testData.getCourseId())).toList();
+
+    private final List<Lesson> allLessonsOfGroupPerDayWithoutCourse = groupLessonsPerDate(testData.getDateOfWednesday())
+            .stream().filter(l -> !l.getCourse().getId().equals(testData.getCourseId())).toList();
+
+    private final List<Lesson> lessonsByDateAndLessonNum = lessons.getLessons().stream()
+            .filter(l -> l.getDate().isEqual(testData.getDateOfMonday()))
+            .filter(l -> l.getLessonNum().equals(testData.getLessenNum())).toList();
 
     public Student getStudent() {
         Student student1 = new Student();
@@ -190,17 +237,20 @@ public class TestItems {
     }
 
     public Teacher getTeacher() {
-        Teacher teacher1 = new Teacher();
-        teacher1.setFirstName(testData.getTeacherFirstName());
-        teacher1.setLastName(testData.getTeacherLastName());
-        teacher1.setEmail(testData.getTeacherEmail());
-        teacher1.setPassword(getEncodedPassword());
-        return teacher1;
+        Teacher teacher = new Teacher();
+        teacher.setFirstName(testData.getTeacherFirstName());
+        teacher.setLastName(testData.getTeacherLastName());
+        teacher.setEmail(testData.getTeacherEmail());
+        teacher.setPassword(getEncodedPassword());
+        return teacher;
     }
 
     public Teacher getFullyTeacher() {
-        Teacher teacher1 = getTeacher();
-        teacher1.setId(testData.getTeacherId());
-        return teacher1;
+        Teacher teacher = getTeacher();
+        teacher.setId(testData.getTeacherId());
+        return teacher;
     }
+
+    private final List<Integer> numbersOfLessons = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
+    private final NamesDto teacherNameDto = new NamesDto(testData.getTeacherId(), testData.getTeacherFirstName(), testData.getTeacherLastName());
 }

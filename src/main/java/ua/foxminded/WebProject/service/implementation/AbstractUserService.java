@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import ua.foxminded.WebProject.DTO.NamesDto;
 import ua.foxminded.WebProject.DTO.UserDto;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.form.UserRegistrationForm;
@@ -81,6 +82,10 @@ public abstract class AbstractUserService<T extends User> {
 
     public User getUserByEmail(String email) {
         return userRepository.findUserByEmail(email).orElseThrow(EntityNotFoundException::new);
+    }
+
+    public List<NamesDto> getAllNames() {
+        return repository.getNamesOfAllUsers();
     }
 
     private T getNewInstance() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {

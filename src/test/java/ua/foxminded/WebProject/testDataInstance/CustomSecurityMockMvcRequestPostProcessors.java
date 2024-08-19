@@ -7,6 +7,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 public class CustomSecurityMockMvcRequestPostProcessors {
 
     public static RequestPostProcessor testUser(String role) {
-        return user("user@gmail.com").password("password").roles(role);
+        return user(role + "@gmail.com").password("password").roles(role);
     }
 }

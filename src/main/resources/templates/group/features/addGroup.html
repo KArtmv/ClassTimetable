@@ -11,25 +11,18 @@
 <main>
     <div class="container mb-3">
         <h1>Add New Group</h1>
-        <div th:if="${duplicate}">
-            <h3 class="error p-1 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center">
-                Given group name: "[[${groupDto.groupName()}]]" already exists, try again.
-            </h3>
-            <a href="/group/addGroup" class="btn btn-warning">Take new group name</a>
+        <h2>Save group with this name:
+            <span class="text-body-secondary" th:text="${group.groupName}"></span>
+        </h2>
+        <form th:action="@{/group/save}" th:object="${group}" method="post">
+            <input type="hidden" th:field="*{groupName}" id="groupNameField">
+            <div th:if="${#fields.hasErrors('groupName')}"
+                 class="error text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3 text-center mt-1 mb-3"
+                 th:errors="*{groupName}">
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
             <a href="/group" class="btn btn-danger">Cancel</a>
-        </div>
-        <div th:if="${!duplicate}">
-            <h2>Save group with this name:
-                <span th:text="${groupDto.groupName()}"></span>
-            </h2>
-            <form th:action="@{/group/save}" th:object="${groupDto}" method="post">
-                <div class="mb-3">
-                    <input type="hidden" th:field="*{groupName}">
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a href="/group" class="btn btn-danger">Cancel</a>
-            </form>
-        </div>
+        </form>
     </div>
 </main>
 </body>

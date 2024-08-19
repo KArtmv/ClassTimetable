@@ -27,6 +27,3 @@ server:
     whitelabel:
       enabled: false
     path: '/error'
-
-amount:
-  maxLessons: 350

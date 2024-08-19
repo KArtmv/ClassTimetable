@@ -1,7 +1,6 @@
 package ua.foxminded.WebProject.testDataInstance;
 
 import lombok.Getter;
-import ua.foxminded.WebProject.DTO.GroupDto;
 import ua.foxminded.WebProject.persistence.entity.*;
 
 import java.time.DayOfWeek;
@@ -18,7 +17,6 @@ public class TestData {
     private final Long groupId = 1L;
     private final String groupName = "YS-27";
     private final Group group = new Group(groupName);
-    private final GroupDto groupDto = new GroupDto(groupName);
     private final Long secondGroupId = 2L;
     private final String secondGroupName = "HV-14";
 
@@ -34,7 +32,7 @@ public class TestData {
 
     private final Long lessonId = 2L;
     private final Integer lessenNum = 1;
-    private final Lesson lesson = new Lesson(getDate(),
+    private final Lesson lesson = new Lesson(getDateOfMonday(),
             lessenNum,
             new Course(getCourseId()),
             new Group(getGroupId()),
@@ -67,11 +65,12 @@ public class TestData {
     private final String oldPassword = "testPassword";
     private final String newEmail = "new@gmail.com";
 
-    private final LocalDate date = LocalDate.of(2024, 3, 11);
+    private final LocalDate dateOfMonday = LocalDate.of(2024, 3, 11);
+    private final LocalDate dateOfTuesday = getDateOfMonday().with(DayOfWeek.TUESDAY);
+    private final LocalDate dateOfWednesday = getDateOfMonday().with(DayOfWeek.WEDNESDAY);
+    private final LocalDate dateOfThursday = getDateOfMonday().with(DayOfWeek.THURSDAY);
+    private final LocalDate dateOfFriday = getDateOfMonday().with(DayOfWeek.FRIDAY);
 
-    private final LocalDate dateStudentStart = getDate().with(DayOfWeek.TUESDAY);
-    private final LocalDate dateStudentEnd = getDate().with(DayOfWeek.THURSDAY);
 
-    private final LocalDate dateTeacherStart = getDate().with(DayOfWeek.WEDNESDAY);
-    private final LocalDate dateTeacherEnd = getDate().with(DayOfWeek.FRIDAY);
+    private final Long secondCourseId = 2L;
 }

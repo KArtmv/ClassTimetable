@@ -75,7 +75,6 @@ class StaffControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         model().attributeExists("registrationForm"),
-                        model().attributeExists("user"),
                         model().attributeExists("path"),
                         view().name("user/addUser"));
     }
@@ -159,9 +158,7 @@ class StaffControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         view().name("user/userDetails"),
-                        model().attributeExists("user"),
                         model().attributeExists("path"),
-                        model().attributeDoesNotExist("isMyDetails"),
                         model().attributeExists("userDto"),
                         content().string(containsString(testData.getUserFirstName())),
                         content().string(containsString(testData.getUserFirstName())),
@@ -266,9 +263,9 @@ class StaffControllerTest {
 
     @Test
     void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenOldPasswordIsInvalid() throws Exception {
-        when(staffService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
+        when(staffService.getUserByEmail(anyString())).thenReturn(testItems.getFullyStaff());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
-        when(staffService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(staffService.getDetails(anyLong())).thenReturn(testItems.userDto(testItems.getFullyStaff()));
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", testData.getOldPassword());
@@ -280,16 +277,15 @@ class StaffControllerTest {
                         status().isOk(),
                         model().hasErrors(),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
                         view().name("user/userDetails"),
                         content().string(containsString("Old password is incorrect.")));
     }
 
     @Test
     void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenPasswordNotMatchConfirmPassword() throws Exception {
-        when(staffService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
+        when(staffService.getUserByEmail(anyString())).thenReturn(testItems.getFullyStaff());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-        when(staffService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(staffService.getDetails(anyLong())).thenReturn(testItems.userDto(testItems.getFullyStaff()));
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", testData.getOldPassword());
@@ -301,7 +297,6 @@ class StaffControllerTest {
                         status().isOk(),
                         view().name("user/userDetails"),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
                         model().hasErrors(),
                         content().string(containsString("Oops! Looks like your passwords dont match. Double-check and try again."))
                 );
@@ -309,9 +304,9 @@ class StaffControllerTest {
 
     @Test
     void updatePassword_shouldOutputErrorMessageOnUserDetailsPage_whenReceivedEmptyForm() throws Exception {
-        when(staffService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
+        when(staffService.getUserByEmail(anyString())).thenReturn(testItems.getFullyStaff());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
-        when(staffService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(staffService.getDetails(anyLong())).thenReturn(testItems.userDto(testItems.getFullyStaff()));
 
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("oldPassword", "");
@@ -323,7 +318,6 @@ class StaffControllerTest {
                         status().isOk(),
                         view().name("user/userDetails"),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
                         model().hasErrors(),
                         content().string(containsString("Old password is incorrect.")),
                         content().string(containsString("Old password is required.")),
@@ -333,22 +327,21 @@ class StaffControllerTest {
 
     @Test
     void viewMyDetails_shouldReturnUserDetailsPage_whenLoggedUserHasAccess() throws Exception {
-        when(staffService.getUserByEmail(anyString())).thenReturn(testItems.getCompliteUser());
-        when(staffService.getDetails(anyLong())).thenReturn(testItems.getUserDetails());
+        when(staffService.getUserByEmail(anyString())).thenReturn(testItems.getFullyStaff());
+        when(staffService.getDetails(anyLong())).thenReturn(testItems.userDto(testItems.getFullyStaff()));
 
         mockMvc.perform(get("/staff/details").with(testUser("staff"))).andDo(print())
                 .andExpectAll(
                         status().isOk(),
                         view().name("user/userDetails"),
-                        model().attributeExists("user"),
                         model().attributeExists("path"),
                         model().attributeExists("userDto"),
-                        model().attributeExists("isMyDetails"),
+                        model().attributeExists("changePasswordForm"),
                         model().attributeDoesNotExist("studentGroupDto"),
-                        content().string(containsString(testData.getUserId().toString())),
-                        content().string(containsString(testData.getUserFirstName())),
-                        content().string(containsString(testData.getUserLastName())),
-                        content().string(containsString(testData.getUserEmail())));
+                        content().string(containsString(testData.getStaffId().toString())),
+                        content().string(containsString(testData.getStaffFirstName())),
+                        content().string(containsString(testData.getStaffLastName())),
+                        content().string(containsString(testData.getStaffEmail())));
     }
 
     @ParameterizedTest

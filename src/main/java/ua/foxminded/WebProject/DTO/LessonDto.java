@@ -1,16 +1,44 @@
 package ua.foxminded.WebProject.DTO;
 
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
-import ua.foxminded.WebProject.persistence.entity.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
+import ua.foxminded.WebProject.persistence.entity.Lesson;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  * DTO for {@link Lesson}
  */
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class LessonDto implements Serializable {
+    private Long id;
 
-public record LessonDto(@NotNull(message = "Course can not be empty") Course course,
-                        @NotNull(message = "Group can not be empty") Group group,
-                        @NotNull(message = "Classroom can not be empty") Classroom classroom,
-                        @NotNull(message = "Teacher can not be empty.") Teacher teacher) implements Serializable {
+    @NotNull(message = "Date is required")
+    @FutureOrPresent(message = "Can`t be past date")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate date;
+
+    @NotNull(message = "Lesson number can be empty")
+    private Integer lessonNum;
+
+    @NotNull(message = "Course is required")
+    private Long courseId;
+
+    @NotNull(message = "Group is required")
+    private Long groupId;
+
+    @NotNull(message = "Classroom is required")
+    private Long classroomId;
+
+    @NotNull(message = "Teacher is required")
+    private Long teacherId;
 }

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.dao.DataIntegrityViolationException;
 import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.repository.GroupRepository;
 import ua.foxminded.WebProject.testDataInstance.TestData;
@@ -16,7 +15,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -41,31 +39,9 @@ class GroupServiceImplTest {
 
     @Test
     void saveGroup_shouldReturnGroupInstanceWithId_whenIsSavedSuccessfully() {
-        when(repository.save(any(Group.class))).thenReturn(testItems.getGroup());
+        service.save(testData.getGroup());
 
-        assertThat(service.saveGroup(testData.getGroupDto()).getId()).isNotNull();
-
-        verify(repository).save(any(Group.class));
-        verify(repository).findAll();
-    }
-
-    @Test
-    void saveGroup_shouldThrowsDataIntegrityViolationException_whenSavingDuplicate() {
-        when(repository.save(any(Group.class))).thenThrow(DataIntegrityViolationException.class);
-
-        assertThat(service.saveGroup(testData.getGroupDto()).getId()).isNull();
-
-        verify(repository).save(any(Group.class));
-        verify(repository).findAll();
-    }
-
-    @Test
-    void saveGroup_shouldReturnEmptyGroupInstance_whenSavingDuplicate() {
-        when(repository.findAll()).thenReturn(testItems.getGroups());
-
-        assertThat(service.saveGroup(testData.getGroupDto()).getId()).isNull();
-
-        verify(repository).findAll();
+        verify(repository).save(testData.getGroup());
     }
 
     @Test

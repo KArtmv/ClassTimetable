@@ -10,19 +10,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
 import ua.foxminded.WebProject.persistence.entity.Teacher;
 import ua.foxminded.WebProject.persistence.entity.User;
-import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.TeacherRepository;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -33,8 +32,6 @@ class TeacherServiceImplTest {
 
     @MockBean
     private TeacherRepository teacherRepository;
-    @MockBean
-    private LessonRepository lessonRepository;
     @MockBean
     private UserRepository userRepository;
     @MockBean
@@ -177,25 +174,5 @@ class TeacherServiceImplTest {
         assertThrows(EntityNotFoundException.class, () -> teacherService.getById(testData.getTeacherId()));
 
         verify(teacherRepository).findById(testData.getTeacherId());
-    }
-
-    @Test
-    void getLessonForDay_shouldReturnListOfLessonsOfTeacher_whenIsInvoke() {
-        when(lessonRepository.getLessonsByTeacherAndDate(any(Teacher.class), any(LocalDate.class))).thenReturn(testItems.getTeacherLessonsPerDay());
-
-        assertThat(teacherService.getLessonForDay(testItems.getFullyTeacher(), testData.getDate())).hasSize(8);
-
-        verify(lessonRepository).getLessonsByTeacherAndDate(testItems.getFullyTeacher(), testData.getDate());
-    }
-
-    @Test
-    void getLessonForWeek_shouldReturnListOfLessonsOfTeacher_whenIsInvoke() {
-        when(lessonRepository.getLessonsByTeacherAndDateBetween(any(Teacher.class), any(LocalDate.class), any(LocalDate.class)))
-                .thenReturn(testItems.getTeacherLessonsPerWeek());
-
-        assertThat(teacherService.getLessonForWeek(testItems.getFullyTeacher(), testItems.getDateOfMonday(), testItems.getDateOfFriday()))
-                .hasSize(26);
-
-        verify(lessonRepository).getLessonsByTeacherAndDateBetween(testItems.getFullyTeacher(), testItems.getDateOfMonday(), testItems.getDateOfFriday());
     }
 }

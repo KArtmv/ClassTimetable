@@ -9,23 +9,22 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ua.foxminded.WebProject.DTO.StudentGroupDto;
 import ua.foxminded.WebProject.form.ChangePasswordForm;
-import ua.foxminded.WebProject.persistence.entity.Group;
 import ua.foxminded.WebProject.persistence.entity.Student;
 import ua.foxminded.WebProject.persistence.entity.User;
-import ua.foxminded.WebProject.persistence.repository.LessonRepository;
 import ua.foxminded.WebProject.persistence.repository.StudentRepository;
 import ua.foxminded.WebProject.persistence.repository.UserRepository;
 import ua.foxminded.WebProject.service.GroupService;
 import ua.foxminded.WebProject.testDataInstance.TestData;
 import ua.foxminded.WebProject.testDataInstance.TestItems;
 
-import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,8 +39,6 @@ class StudentServiceImplTest {
     private StudentRepository studentRepository;
     @MockBean
     private BCryptPasswordEncoder passwordEncoder;
-    @MockBean
-    private LessonRepository lessonRepository;
     @MockBean
     private UserRepository userRepository;
     @Autowired
@@ -156,24 +153,6 @@ class StudentServiceImplTest {
     }
 
     @Test
-    void getLessonsForDay_shouldReturnListOfLessonsPerSpecifyDay_whenIsInvoke() {
-        when(lessonRepository.getLessonByGroupAndDate(any(Group.class), any(LocalDate.class))).thenReturn(testItems.getAllLessonsOfGroupPerDay());
-
-        assertThat(studentService.getLessonsForDay(testItems.getFullyStudent(), testItems.getDateOfMonday())).hasSize(8);
-
-        verify(lessonRepository).getLessonByGroupAndDate(testItems.getGroup(), testItems.getDateOfMonday());
-    }
-
-    @Test
-    void getLessonsForWeek_shouldReturnListOfLessonsPerSpecifyWeek_whenIsInvoke() {
-        when(lessonRepository.findByGroupAndDateBetween(any(Group.class), any(LocalDate.class), any(LocalDate.class))).thenReturn(testItems.getAllLessonsOfGroupPerWeek());
-
-        assertThat(studentService.getLessonsForWeek(testItems.getFullyStudent(), testItems.getDateOfMonday(), testItems.getDateOfFriday())).hasSize(30);
-
-        verify(lessonRepository).findByGroupAndDateBetween(testItems.getGroup(), testItems.getDateOfMonday(), testItems.getDateOfFriday());
-    }
-
-    @Test
     void getAll_shouldReturnListOfStudent_whenIsInvoke() {
         when(studentRepository.findAll()).thenReturn(testItems.getStudents());
 
@@ -228,5 +207,14 @@ class StudentServiceImplTest {
 
         verify(studentRepository).findById(testData.getStudentId());
         verify(studentRepository).delete(testItems.getFullyStudent());
+    }
+
+    @Test
+    void getStudentsByGroupId_shouldReturnStudentsNamesList_whenIsFound() {
+        when(studentRepository.getAllByGroupId(anyLong())).thenReturn(Collections.singletonList(testItems.userDto(testItems.getFullyStudent())));
+
+        assertThat(studentService.getStudentsByGroupId(testData.getGroupId())).hasSize(1);
+
+        verify(studentRepository).getAllByGroupId(testData.getGroupId());
     }
 }

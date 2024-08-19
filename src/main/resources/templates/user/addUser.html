@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Add New [[${user}]]</title>
+    <title>Add New [[${path}]]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}" th:rel="stylesheet"/>
     <th:block th:replace="~{fragments/navbar :: navbar}"></th:block>
@@ -10,7 +10,7 @@
 <body>
 <main>
     <div class="container mb-3">
-        <h1>Create New [[${user}]]</h1>
+        <h1>Create New [[${path}]]</h1>
         <form th:action="@{'/' + ${path} + '/save'}" th:object="${registrationForm}" method="post">
             <div class="mb-3">
                 <label for="firstName">First name:</label>

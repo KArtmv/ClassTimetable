@@ -35,7 +35,7 @@ class LessonRepositoryTest {
     @Test
     @Sql("/sql/lesson/lessons.sql")
     void getAllLessonsPerDay_shouldReturnListOfLessons_whenIsInvoke() {
-        assertThat(repository.getAllByDate(testData.getDate())).hasSize(63);
+        assertThat(repository.getAllByDate(testData.getDateOfMonday())).hasSize(63);
     }
 
     @Test
@@ -46,7 +46,7 @@ class LessonRepositoryTest {
             assertTrue(result.isPresent());
             Lesson lesson = result.get();
             assertThat(lesson.getLessonNum()).isEqualTo(testData.getLessenNum());
-            assertThat(lesson.getDate()).isEqualTo(testData.getDate());
+            assertThat(lesson.getDate()).isEqualTo(testData.getDateOfMonday());
             assertThat(lesson.getCourse().getId()).isEqualTo(testItems.getCourseWithIdSeven().getId());
             assertThat(lesson.getGroup().getId()).isEqualTo(testItems.getGroup().getId());
             assertThat(lesson.getClassroom().getId()).isEqualTo(testItems.getClassroom().getId());
@@ -55,38 +55,59 @@ class LessonRepositoryTest {
     }
 
     @Test
-    @Sql(scripts = {"/sql/lesson/lessons.sql"})
-    void getLessonByGroupAndDate_shouldReturnListOfLesson_whenIsInvoke() {
-        assertThat(repository.getLessonByGroupAndDate(testItems.getGroup(), testData.getDate())).hasSize(8);
+    @Sql(scripts = {"/sql/lesson/lessons.sql", "/sql/group/group.sql"})
+    void getLessonByGroupIdAndDate_shouldReturnListOfLesson_whenIsInvoke() {
+        assertThat(repository.getLessonByGroupIdAndDate(testData.getGroupId(), testData.getDateOfMonday())).hasSize(8);
     }
 
     @Test
-    @Sql("/sql/lesson/lessons.sql")
+    @Sql(scripts = {"/sql/lesson/lessons.sql", "/sql/group/group.sql"})
     void findByGroupAndDateBetween() {
-        assertThat(repository.findByGroupAndDateBetween(
-                testItems.getGroup(),
-                testData.getDateStudentStart(),
-                testData.getDateStudentEnd())).hasSize(20);
+        assertThat(repository.getLessonsByGroupIdAndDateBetween(
+                testData.getGroupId(),
+                testData.getDateOfMonday(),
+                testData.getDateOfThursday())).hasSize(28);
     }
 
     @Test
-    @Sql("/sql/lesson/lessons.sql")
+    @Sql(scripts = {"/sql/lesson/lessons.sql", "/sql/teacher/teacher.sql"})
     void getLessonsByTeacherAndDate() {
-        assertThat(repository.getLessonsByTeacherAndDate(testItems.getFullyTeacher(), testData.getDate())).hasSize(8);
+        assertThat(repository.getLessonsByTeacherIdAndDate(testData.getTeacherId(), testData.getDateOfMonday())).hasSize(8);
     }
 
     @Test
-    @Sql("/sql/lesson/lessons.sql")
+    @Sql(scripts = {"/sql/lesson/lessons.sql", "/sql/teacher/teacher.sql"})
     void getLessonsByTeacherAndDateBetween() {
-        assertThat(repository.getLessonsByTeacherAndDateBetween(
-                testItems.getFullyTeacher(),
-                testData.getDateTeacherStart(),
-                testData.getDateTeacherEnd())).hasSize(11);
+        assertThat(repository.getLessonsByTeacherIdAndDateBetween(
+                testData.getTeacherId(),
+                testData.getDateOfWednesday(),
+                testData.getDateOfFriday())).hasSize(11);
     }
 
     @Test
     void save_shouldReturnLessonInstanceWithId_whenIsSavedSuccessfully() {
-        Lesson result = repository.save(testData.getLesson());
-        assertThat(result.getId()).isNotNull();
+        assertThat(repository.save(testData.getLesson()).getId()).isNotNull();
+    }
+
+    @Test
+    @Sql(scripts = {"/sql/lesson/lessons.sql"})
+    void getLessonsByDateAndLessonNum_shouldReturnListOfLessons_whenIsInvoke() {
+        assertThat(repository.getLessonsByDateAndLessonNum(testData.getDateOfMonday(), testData.getLessenNum())).hasSize(8);
+    }
+
+    @Test
+    @Sql(scripts = {"/sql/lesson/lessons.sql"})
+    void getLessonsByDateBetween() {
+        assertThat(repository.getLessonsByDateBetween(testData.getDateOfWednesday(), testData.getDateOfFriday())).hasSize(88);
+    }
+
+    @Test
+    @Sql(scripts = {"/sql/lesson/lessons.sql"})
+    void deleteById() {
+        assertAll(() -> {
+            assertThat(repository.findAll()).hasSize(206);
+            repository.deleteById(testData.getLessonId());
+            assertThat(repository.findAll()).hasSize(205);
+        });
     }
 }

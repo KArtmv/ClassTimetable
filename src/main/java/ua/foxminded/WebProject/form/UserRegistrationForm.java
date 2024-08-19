@@ -1,13 +1,9 @@
 package ua.foxminded.WebProject.form;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ua.foxminded.WebProject.annotations.AlphabeticChars;
 import ua.foxminded.WebProject.annotations.FieldsCompare;
 import ua.foxminded.WebProject.annotations.UniqueEmail;
 
@@ -19,12 +15,12 @@ public class UserRegistrationForm {
 
     @NotBlank(message = "First name is required.")
     @Size(min = 2, max = 15, message = "First name must be between 2 and 15 characters.")
-    @AlphabeticChars
+    @Pattern(message = "To enter only available alphabetic characters", regexp = "^[a-zA-Z\\s]+")
     private String firstName;
 
     @NotBlank(message = "Last name is required.")
     @Size(min = 2, max = 20, message = "Last name must be between 2 and 20 characters.")
-    @AlphabeticChars
+    @Pattern(message = "To enter only available alphabetic characters", regexp = "^[a-zA-Z\\s]+")
     private String lastName;
 
     @Email(message = "Please enter a valid email address.")

@@ -18,7 +18,7 @@ public abstract class AbstractUserCrudController<T extends User> {
 
     protected final String user;
     protected final UserService<T> userService;
-    private final BCryptPasswordEncoder passwordEncoder;
+    protected final BCryptPasswordEncoder passwordEncoder;
 
     protected AbstractUserCrudController(UserService<T> userService, BCryptPasswordEncoder passwordEncoder, Class<T> clazz) {
         this.user = clazz.getSimpleName().toLowerCase();
@@ -30,7 +30,6 @@ public abstract class AbstractUserCrudController<T extends User> {
     public String userPage(Model model) {
         model.addAttribute("users", userService.getAll());
         model.addAttribute("path", this.user);
-        model.addAttribute("user", this.user);
         return "user/user";
     }
 
@@ -38,7 +37,6 @@ public abstract class AbstractUserCrudController<T extends User> {
     @PreAuthorize("hasAnyRole('admin', 'staff')")
     public String addUser(Model model) {
         model.addAttribute("registrationForm", new UserRegistrationForm());
-        model.addAttribute("user", this.user);
         model.addAttribute("path", this.user);
         return "user/addUser";
     }
@@ -50,7 +48,6 @@ public abstract class AbstractUserCrudController<T extends User> {
                            @RequestParam(required = false) Long groupId,
                            Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("user", this.user);
             model.addAttribute("path", this.user);
             return "user/addUser";
         }
@@ -61,29 +58,22 @@ public abstract class AbstractUserCrudController<T extends User> {
     @GetMapping("/details")
     protected String viewMyDetails(Model model, Principal principal) {
         User loggedUser = userService.getUserByEmail(principal.getName());
-        model.addAttribute("user", this.user);
-        model.addAttribute("path", this.user);
-        model.addAttribute("userDto", userService.getDetails(loggedUser.getId()));
+        setPathWithUserDto(model, userService.getDetails(loggedUser.getId()));
         model.addAttribute("changePasswordForm", new ChangePasswordForm());
-        model.addAttribute("isMyDetails", true);
         return "user/userDetails";
     }
 
     @GetMapping("/details/{id}")
     @PreAuthorize("hasAnyRole('admin', 'staff')")
     public String viewUserDetails(@PathVariable Long id, Model model) {
-        model.addAttribute("user", this.user);
-        model.addAttribute("path", this.user);
-        model.addAttribute("userDto", userService.getDetails(id));
-
+        setPathWithUserDto(model, userService.getDetails(id));
         return "user/userDetails";
     }
 
     @PostMapping("/update-names")
     public String updateUserNames(@Valid UserDto userDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("user", this.user);
-            model.addAttribute("path", this.user);
+            setPathWithUserDto(model, userDto);
             model.addAttribute("nameFormOpen", true);
             model.addAttribute("changePasswordForm", new ChangePasswordForm());
             return "user/userDetails";
@@ -99,7 +89,7 @@ public abstract class AbstractUserCrudController<T extends User> {
         }
 
         if (result.hasErrors()) {
-            model.addAttribute("path", this.user);
+            setPathWithUserDto(model, userDto);
             model.addAttribute("emailFormOpen", true);
             model.addAttribute("changePasswordForm", new ChangePasswordForm());
             return "user/userDetails";
@@ -118,11 +108,9 @@ public abstract class AbstractUserCrudController<T extends User> {
         }
 
         if (result.hasErrors()) {
-            model.addAttribute("path", this.user);
             model.addAttribute("passwordFormOpen", true);
-            model.addAttribute("userDto", userService.getDetails(loggedUser.getId()));
             model.addAttribute("changePasswordForm", changePasswordForm);
-            model.addAttribute("isMyDetails", true);
+            setPathWithUserDto(model, userService.getDetails(loggedUser.getId()));
             return "user/userDetails";
         }
         changePasswordForm.setId(loggedUser.getId());
@@ -133,8 +121,7 @@ public abstract class AbstractUserCrudController<T extends User> {
     @GetMapping("/remove/{id}")
     @PreAuthorize("hasRole('admin')")
     public String deleteForm(@PathVariable Long id, Model model) {
-        model.addAttribute("path", user);
-        model.addAttribute("userDto", userService.getDetails(id));
+        setPathWithUserDto(model, userService.getDetails(id));
         return "user/deleteUser";
     }
 
@@ -143,5 +130,10 @@ public abstract class AbstractUserCrudController<T extends User> {
     public String delete(@PathVariable Long id) {
         userService.deleteUser(id);
         return "redirect:/" + this.user;
+    }
+
+    protected void setPathWithUserDto(Model model, UserDto userDto) {
+        model.addAttribute("path", user);
+        model.addAttribute("userDto", userDto);
     }
 }

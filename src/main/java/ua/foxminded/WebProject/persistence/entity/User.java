@@ -1,8 +1,7 @@
 package ua.foxminded.WebProject.persistence.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,18 +19,24 @@ import java.util.Objects;
 public class User extends BaseEntity {
 
     @Column(name = "first_name", length = 20)
+    @NotBlank(message = "First name is required.")
+    @Size(min = 2, max = 15, message = "First name must be between 2 and 15 characters.")
+    @Pattern(message = "To enter only available alphabetic characters", regexp = "^[a-zA-Z\\s]+")
     private String firstName;
 
     @Column(name = "last_name", length = 20)
+    @NotBlank(message = "Last name is required.")
+    @Size(min = 2, max = 20, message = "Last name must be between 2 and 20 characters.")
+    @Pattern(message = "To enter only available alphabetic characters", regexp = "^[a-zA-Z\\s]+")
     private String lastName;
 
     @Column(name = "email", unique = true)
-    @Email
-    @NotNull
+    @Email(message = "Please enter a valid email address.")
+    @NotEmpty(message = "Email address is required.")
     private String email;
 
     @Column(name = "password", length = 128)
-    @NotNull
+    @NotEmpty(message = "Password is required.")
     private String password;
 
     @Transient
